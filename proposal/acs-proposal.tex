@@ -13,8 +13,12 @@
 \vspace{1em}
 
 \begin{abstract}
-\textsl{Write an ``elevator pitch''. In other words what's the
-  problem, why is it important or interesting, and what's your approach. (100 words)} 
+\textsl{
+Memory-safe languages such as Rust are a safer alternative to systems programming in C, as they prevent traditional paths to security exploits, such as buffer overflows and unauthorised reads.
+However, runtime checks such as those on array overrun or invalid type/trait coercion to maintain safety incur performance penalties.
+The CHERI architecture provides \emph{capabilities} in hardware, which eliminate the possibility of accessing or modifying unauthorised regions of memory while incurring minimal overheads.
+We therefore propose to extend Rust to use capabilities, potentially providing stronger safety guarantees while reducing runtime overheads, where safety guarantees would have been absent before.
+(98 words)} 
 \end{abstract}
 
 \section{Introduction, approach and outcomes (500 words)}
