@@ -69,7 +69,23 @@ the proposal by the Head of Department, and the submission of the dissertation. 
 should account for what you intend to do during that time. You should divide the time into two-week chunks including dates, and 
 describe the work to be done (and, as relevant, milestones to be 
 achieved) in each chunk. You should leave two 
-chunks for writing a project dissertation. You should leave 1 chunk for contingencies.} 
+chunks for writing a project dissertation. You should leave 1 chunk for contingencies.}
+
+\begin{description}
+  \item [Dec 10--23] Initial project work: set up of environment, toolchain; finesse a working process for compiling Rust programs to CHERI. Survey of literature for capabilities and their implications on memory-safe languages with runtime checks and Rust specifically.
+  \item [Dec 24--Jan 6] Devise tests and microbenchmarks as mentioned above.
+  \item [Jan 7--Jan 20] Identify relevant checks that may be removed, attempt to do so and consider if changes at other layers of the compiler need to be made; derive tests that need to be made to ensure that the compiler is still operable/other runtime checks not compromised.
+  \item [Jan 21--Feb 3] Continue removing redundant checks, continually testing that this works. Additional (fresh) review of related work.
+  \item [Feb 4--17]  Finalise the removal of checks and functional testing.
+  \item [Feb 18--Mar 3] Experimental performance testing: simple cases. Rework of test methodology as needed.
+  \item [Mar 4--17] Initial performance testing with straightforward but realistic/relevant systems programming applications.
+  \item [Mar 18--31] More intricate performance testing: traits and generics, quicksort etc.
+  \item [Apr 1--14] Examine implications of capability-aware \texttt{memcpy} and other instances of calling into C for CHERI-Rust.
+  \item [Apr 15--28] Examine results and performance visualisation; final literature review (to continue into dissertation writing).
+  \item [Apr 29--May 13] Dissertation writing: continuing review to ensure relevance, writing up of results.
+  \item [May 13--26] Dissertation writing: reconsider context and motivation, contemplate future work.
+  \item [May 27--Jun 9] Contingency.
+\end{description}
 
 \bibliography{../project}
 \bibliographystyle{plain}
