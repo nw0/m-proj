@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
 \usepackage{a4wide,parskip,times}
+\usepackage{microtype}
 
 \begin{document}
 
@@ -39,6 +40,29 @@ academic literature, or evaluate a published result or proof. Try to
 name the specific things (and describe them) in this part of the 
 proposal -- this will allow you to refer to them in the next.} 
 
+Many security vulnerabilities are bugs arising from the lack of memory safety in C; a traditional exploit is the buffer overflow.
+The C language specification includes a number of situations that lead to \emph{undefined behaviour}: akin to a deduction of `falsity' in logic, after these points the state of the program might be arbitrary.
+Undefined behaviour allows compilers to assume that certain conditions never hold, enabling them to make powerful (but dangerous) optimisations.
+As a result, crucial checks can be optimised away and invariants violated by compilers, resulting in executables vulnerable to memory attacks~\cite{simon2018wygiwyc}.
+Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appear to function correctly, and gloss over the subtleties of the standard~\cite{memarian2016cdepths};
+these represent future opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
+(137 words)
+
+The CHERI project provides capabilities...we can solve memory safety issues by using them. (How?)
+
+Observe that Rust is memory-safe and designed for systems programming, but runtime checks can be slow.
+Some checks are redundant due to capabilities.
+I will remove them for optimisation.
+This is `easy' due to object lifetimes and ownership being very explicit in Rust.
+
+Intended contributions:
+\begin{itemize}
+  \item Functional Rust (cross-)compiler to CHERI which removes some redundant runtime checks (e.g. array bounds)
+  \item A set of microbenchmarks (test cases) consisting of proof-of-concept exploits which are stopped by both capabilities and checks; these represent the redundant checks
+  \item *non-contribution: exhaustive removal of redundant checks...might be acceptable to break some language features
+  \item Performance evaluation on some relevant systems code (such as?)
+\end{itemize}
+
 \section{Workplan (500 words)}
 \textsl{Project students have approximately 26 weeks between the approval of 
 the proposal by the Head of Department, and the submission of the dissertation. This section
@@ -46,6 +70,9 @@ should account for what you intend to do during that time. You should divide the
 describe the work to be done (and, as relevant, milestones to be 
 achieved) in each chunk. You should leave two 
 chunks for writing a project dissertation. You should leave 1 chunk for contingencies.} 
+
+\bibliography{../project}
+\bibliographystyle{plain}
 
 \newpage
 \appendix
