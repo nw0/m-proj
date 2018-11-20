@@ -1,5 +1,24 @@
 \documentclass[11pt]{article}
 \usepackage{a4wide,parskip,times}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{inconsolata}
+\usepackage{color}
+\usepackage{listings}
+\lstdefinelanguage
+   [x64]{Assembler}     % add a "x64" dialect of Assembler
+   [x86masm]{Assembler} % based on the "x86masm" dialect
+   % with these extra keywords:
+   {morekeywords={CDQE,CQO,CMPSQ,CMPXCHG16B,JRCXZ,LODSQ,MOVSXD, %
+                  POPFQ,PUSHFQ,SCASQ,STOSQ,IRETQ,RDTSCP,SWAPGS, %
+                  rax,rdx,rcx,rbx,rsi,rdi,rsp,rbp, %
+                  r8,r8d,r8w,r8b,r9,r9d,r9w,r9b, %
+                  r10,r10d,r10w,r10b,r11,r11d,r11w,r11b, %
+                  r12,r12d,r12w,r12b,r13,r13d,r13w,r13b, %
+                  r14,r14d,r14w,r14b,r15,r15d,r15w,r15b}} % etc.
+
+\lstset{language={[x64]Assembler},frame=single,basicstyle=\ttfamily}
 \usepackage{microtype}
 
 \begin{document}
@@ -22,7 +41,7 @@ We therefore propose to extend Rust to use capabilities, potentially providing s
 (98 words)} 
 \end{abstract}
 
-\section{Introduction, approach and outcomes (500 words)}
+\section{Introduction, approach and outcomes (402 words)}
 
 \textsl{Provide an introduction to your project or essay. In particular, try to
   motivate the work and explain the relevant context (general
@@ -43,24 +62,55 @@ proposal -- this will allow you to refer to them in the next.}
 Many security vulnerabilities are bugs arising from the lack of memory safety in C; a traditional exploit is the buffer overflow.
 The C language specification includes a number of situations that lead to \emph{undefined behaviour}: akin to a deduction of `falsity' in logic, after these points the state of the program might be arbitrary.
 Undefined behaviour allows compilers to assume that certain conditions never hold, enabling them to make powerful (but dangerous) optimisations.
-As a result, crucial checks can be optimised away and invariants violated by compilers, resulting in executables vulnerable to memory attacks~\cite{simon2018wygiwyc}.
-Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appear to function correctly, and gloss over the subtleties of the standard~\cite{memarian2016cdepths};
+
+Consequently, crucial checks can be optimised away and invariants violated by compilers, resulting in executables vulnerable to memory attacks~\cite{simon2018wygiwyc}.
+Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appears to function correctly, and gloss over the subtleties of the C standard~\cite{memarian2016cdepths};
 these represent future opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
-(137 words)
 
-The CHERI project provides capabilities...we can solve memory safety issues by using them. (How?)
+The CHERI project provides \emph{capabilities}, which stops unauthorised access or modification to data by erroneous and malicious code~\cite{cheri-v6}.
+In the CHERI architecture, capabilities replace pointers and internal addresses to prevent unauthorised use; capabilities restrict usage by storing permissions alongside the address data while making these unforgeable, as they can only be manipulated by the hardware.
 
-Observe that Rust is memory-safe and designed for systems programming, but runtime checks can be slow.
-Some checks are redundant due to capabilities.
-I will remove them for optimisation.
-This is `easy' due to object lifetimes and ownership being very explicit in Rust.
+Rust is a \emph{memory-safe} language designed for systems programming.
+It includes runtime checks that prevent many of these attacks, but these safety measures incur a performance overhead.
+Figure~\ref{lst:array-check} shows an example of a runtime check.
+The semantics of Rust allow us to precisely determine which operations are valid, as they provide detailed insight into data ownership and lifetimes.
+We will modify some of these checks to use capabilities instead, providing a performance speedup on the CHERI architecture.
+
+\begin{figure}[ht]
+\begin{lstlisting}
+example::iterate:
+  sub     rsp, 24
+  mov     eax, 100                  ; access array index 100
+  mov     ecx, eax
+  cmp     rcx, rsi
+  setb    dl
+  test    dl, 1
+  mov     qword ptr [rsp + 16], rdi
+  mov     qword ptr [rsp + 8], rsi
+  jne     .LBB0_1
+  jmp     .LBB0_2
+.LBB0_1:
+  mov     rax, qword ptr [rsp + 16]
+  mov     eax, dword ptr [rax + 400]
+  add     rsp, 24
+  ret
+.LBB0_2:
+  lea     rdi, [rip + .L__unnamed_1]
+  mov     esi, 100
+  mov     rdx, qword ptr [rsp + 8]
+  call    core::panicking::panic_bounds_check@PLT
+  ud2
+\end{lstlisting}
+\caption{Compiled array access in function: a bounds check manifests as a branch instruction on line 10. This adds complexity to program execution paths; instead of this check, we can simply trap a hardware exception in CHERI.}
+\label{lst:array-check}
+\end{figure}
 
 Intended contributions:
 \begin{itemize}
-  \item Functional Rust (cross-)compiler to CHERI which removes some redundant runtime checks (e.g. array bounds)
-  \item A set of microbenchmarks (test cases) consisting of proof-of-concept exploits which are stopped by both capabilities and checks; these represent the redundant checks
-  \item *non-contribution: exhaustive removal of redundant checks...might be acceptable to break some language features
-  \item Performance evaluation on some relevant systems code (such as?)
+  \item Functional Rust (cross-)compiler to CHERI which modifies redundant runtime checks, such as array bounds checks.
+  \item A set of microbenchmarks (test cases) consisting of proof-of-concept exploits which are stopped by both capabilities and checks; these represent the checks that may be modified.
+  \item Performance evaluation on the resultant Rust compiler, with a mixture of test examples, utility library code (such as sorting algorithms), and relevant systems code.
+  \item A \emph{non}-contribution: exhaustive removal of redundant checks: the project is intended to illustrate and quantify the benefit of using CHERI capabilities to optimise a safe language, rather than a full implementation of an optimised memory-safe language. It may be acceptable to break some language features that do not contradict the resultant memory model.
 \end{itemize}
 
 \section{Workplan (426 words)}
