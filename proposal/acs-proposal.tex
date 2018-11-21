@@ -18,7 +18,7 @@
                   r12,r12d,r12w,r12b,r13,r13d,r13w,r13b, %
                   r14,r14d,r14w,r14b,r15,r15d,r15w,r15b}} % etc.
 
-\lstset{language={[x64]Assembler},frame=single,basicstyle=\ttfamily}
+\lstset{language={[x64]Assembler},frame=single,basicstyle=\ttfamily,numbers=left}
 \usepackage{microtype}
 
 \begin{document}
@@ -41,23 +41,7 @@ We therefore propose to extend Rust to use capabilities, potentially providing s
 (98 words)} 
 \end{abstract}
 
-\section{Introduction, approach and outcomes (402 words)}
-
-\textsl{Provide an introduction to your project or essay. In particular, try to
-  motivate the work and explain the relevant context (general
-  background, as well as sufficient detail about any related
-  work).}
-
-\textsl{What's the basic idea and approach? What are you thinking of 
-doing, and how is it going to solve the problem (or need) you've 
-identified. What are you going to ``produce''? 
-A project will typically produce one (or perhaps more) of the following:
-a piece of software, an evaluation of a published result, a proof, or
-the design (and perhaps the construction of) a new piece of hardware. An
-essay will typically either review and critique a particular area of the
-academic literature, or evaluate a published result or proof. Try to 
-name the specific things (and describe them) in this part of the 
-proposal -- this will allow you to refer to them in the next.} 
+\section{Introduction, approach and outcomes (457 words)}
 
 Many security vulnerabilities are bugs arising from the lack of memory safety in C; a traditional exploit is the buffer overflow.
 The C language specification includes a number of situations that lead to \emph{undefined behaviour}: akin to a deduction of `falsity' in logic, after these points the state of the program might be arbitrary.
@@ -107,9 +91,11 @@ example::iterate:
 
 Intended contributions:
 \begin{itemize}
-  \item Functional Rust (cross-)compiler to CHERI which modifies redundant runtime checks, such as array bounds checks.
-  \item A set of microbenchmarks (test cases) consisting of proof-of-concept exploits which are stopped by both capabilities and checks; these represent the checks that may be modified.
+  \item Functional Rust (cross-)compiler to CHERI which instead of runtime bounds checks, replaces these to use capabilities which the processor can efficiently undertake in parallel with other operations.
+  \item A set of microbenchmarks (test cases) consisting of proof-of-concept exploits which are stopped by both capabilities and checks; these represent the checks that may be replaced with capabilities.
+  These cases demonstrate the viability of replacing runtime checks with capabilities, as this replacement does not violate Rust's desired safety properties.
   \item Performance evaluation on the resultant Rust compiler, with a mixture of test examples, utility library code (such as sorting algorithms), and relevant systems code.
+  These evaluations would determine the utility of replacing runtime checks with capabilities, by measuring and quantifying the resultant performance improvement.
   \item A \emph{non}-contribution: exhaustive removal of redundant checks: the project is intended to illustrate and quantify the benefit of using CHERI capabilities to optimise a safe language, rather than a full implementation of an optimised memory-safe language. It may be acceptable to break some language features that do not contradict the resultant memory model.
 \end{itemize}
 
