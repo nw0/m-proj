@@ -51,8 +51,9 @@ Consequently, crucial checks can be optimised away and invariants violated by co
 Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appears to function correctly, and gloss over the subtleties of the C standard~\cite{memarian2016cdepths};
 these represent future opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
 
-The CHERI project provides \emph{capabilities}, which stops unauthorised access or modification to data by erroneous and malicious code~\cite{cheri-v6}.
-In the CHERI architecture, capabilities replace pointers and internal addresses to prevent unauthorised use; capabilities restrict usage by storing permissions alongside the address data while making these unforgeable, as they can only be manipulated by the hardware.
+The CHERI project provides \emph{capabilities}, which stops unauthorised access or modification of data by erroneous and malicious code~\cite{cheri-v6}.
+In the CHERI architecture, capabilities restrict usage by associating bounds and access permissions with address data while making these unforgeable, as they can only be manipulated by the hardware.
+This prevents abuse of pointers and internal addresses.
 
 Rust is a \emph{memory-safe} language designed for systems programming.
 It includes runtime checks that prevent many of these attacks, but these safety measures incur a performance overhead.
@@ -85,7 +86,7 @@ example::iterate:
   call    core::panicking::panic_bounds_check@PLT
   ud2
 \end{lstlisting}
-\caption{Compiled array access in function: a bounds check manifests as a branch instruction on line 10. This adds complexity to program execution paths; instead of this check, we can simply trap a hardware exception in CHERI.}
+\caption{Compiled array access in function: a bounds check manifests as a branch instruction on line 10. This adds complexity to program execution paths; instead of this check, CHERI would check bounds on access (line 14), eliminating the runtime test and branch (lines 10--11), and the path invoking the exception (lines 17--22). This allows more efficient pipelining.}
 \label{lst:array-check}
 \end{figure}
 
