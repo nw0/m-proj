@@ -1,3 +1,26 @@
 \documentclass[dissertation.tex]{subfile}
 
 \chapter{Introduction}
+\label{ch:intro}
+
+\section{Motivation}
+\label{sec:intro-motiv}
+
+\wip{This is chopped up from the proposal}
+\subsection{Background}
+Many security vulnerabilities are bugs arising from the lack of memory safety in C; an example of a traditional exploit is the buffer overflow.
+The C language specification includes a number of situations that lead to \emph{undefined behaviour}: akin to a deduction of `falsity' in logic, after these points the state of the program might be arbitrary.
+Undefined behaviour allows compilers to assume that certain conditions never hold, enabling them to make powerful (but dangerous) optimisations.
+
+Consequently, crucial checks can be optimised away and invariants violated by compilers, resulting in executables vulnerable to memory attacks~\cite{simon2018wygiwyc}.
+Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appears to function correctly, and gloss over the subtleties of the C standard~\cite{memarian2016cdepths};
+these represent future opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
+
+\subsection{Capabilities and the CHERI architecture}
+The CHERI project provides \emph{capabilities}, which stops unauthorised access or modification of data by erroneous and malicious code~\cite{cheri-v6}.
+In the CHERI architecture, capabilities restrict usage by associating bounds and access permissions with address data while making these unforgeable, as they can only be manipulated by the hardware.
+This prevents abuse of pointers and internal addresses.
+
+
+\section{Intended contributions}
+\label{sec:intro-contrib}
