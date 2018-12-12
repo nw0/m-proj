@@ -21,6 +21,21 @@ The CHERI project provides \emph{capabilities}, which stops unauthorised access 
 In the CHERI architecture, capabilities restrict usage by associating bounds and access permissions with address data while making these unforgeable, as they can only be manipulated by the hardware.
 This prevents abuse of pointers and internal addresses.
 
+\subsection{The Rust programming language}
+\wip{Mostly experimental; citations would be nice}
+Rust is a \emph{memory-safe} language designed for systems programming.
+It uses compile-time and runtime checks that prevent many of these attacks; relying on a combination of LLVM optimisations and \emph{unsafe} Rust code to minimise the performance overhead.
+
+\wip{Listing from proposal?}
+
+\wip{List Rust guarantees? Mention the unsafe conditions?}
+
+Unsafe Rust allows a programmer to violate conditions that Rust uses to guarantee memory safety, shifting the responsibility away from the compiler to the programmer.
+The language designers reason that smaller chunks of \emph{unsafe} Rust provides a smaller surface area for attack, as the proof obligations for the programmer are more localised.
+However, by November 2018 there have been 3 CVEs reported in Rust (among other bugs of varying severity), including a bug that could allow arbitrary code execution through the standard library, showing that this approach is not infallible.
+
+Just as using capabilities in C programs can prevent unintended operations on memory, applying capabilities to unsafe Rust code would provide an additional layer of safety, guarding against undiscovered vulnerabilities and potentially shrinking the set of unsafe operations.
+
 
 \section{Intended contributions}
 \label{sec:intro-contrib}
