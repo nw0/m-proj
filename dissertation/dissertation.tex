@@ -1,0 +1,41 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{inconsolata}
+\usepackage{microtype}
+
+\usepackage{fullpage}
+\usepackage[hidelinks]{hyperref}
+\usepackage{afterpage}
+
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{subfiles}
+
+
+\setlength{\parskip}{.5\baselineskip}
+\linespread{1.15}
+
+\newcommand{\wip}[1]{\fcolorbox{red}{white}{\color{red}\textbf{WIP}\quad#1}}
+\newcommand{\clar}[1]{\fcolorbox{RoyalBlue}{white}{\color{RoyalBlue}\textbf{To clarify}\quad#1}}
+
+
+
+\begin{document}
+
+    \tableofcontents{}
+
+    \subfile{introduction}
+
+    \clearpage
+    \addcontentsline{toc}{chapter}{Bibliography}
+    \bibliographystyle{plain}
+    \bibliography{../project}
+
+\end{document}
