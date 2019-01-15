@@ -254,3 +254,7 @@ TSWLatexianTemp*
 
 # standalone packages
 *.sta
+
+# Rust
+test-progs/*/target
+**/*.rs.bk
