@@ -1,0 +1,11 @@
+[package]
+name = "mergesort"
+version = "0.1.0"
+authors = ["Nicholas Sim <nicholassimws@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+libc = { git = "https://github.com/CTSRD-CHERI/rust-crate-libc.git", branch = "cheri" }
+
+[profile.release]
+panic = "abort"
