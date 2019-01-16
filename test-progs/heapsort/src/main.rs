@@ -29,12 +29,9 @@ fn sift(v: &mut Vec<i64>, start: usize, end: usize) {
 
 
 fn heapify(mut v: &mut Vec<i64>, i: usize) {
-    let mut start = par(i-1);
+    let mut start: isize = par(i-1) as isize;
     while start >= 0 {
-        sift(&mut v, start, i-1);
-        if start == 0 {
-            break;
-        }
+        sift(&mut v, start as usize, i-1);
         start -= 1;
     }
 }
