@@ -1,3 +1,5 @@
+use std::env;
+
 fn lf(i: usize) -> usize { i * 2 + 1 }
 fn rt(i: usize) -> usize { i * 2 + 2 }
 fn par(i: usize) -> usize { i / 2 }
@@ -55,5 +57,15 @@ fn main() {
     println!("Hello, world!");
     let mut vec = vec![53, 235, 45, 2, 65, -1];
     sort(&mut vec);
-    println!("{:?}", vec);
+    println!("A built-in sorted vector: {:?}", vec);
+
+    println!("Sorting the input arguments...");
+    let args: Vec<String> = env::args().collect();
+    if args.len() > 1 {
+        let mut iv: Vec<i64> = (&args[1..]).iter().map(|s| s.parse::<i64>().unwrap()).collect();
+        sort(&mut iv);
+        println!("{:?}", iv);
+    } else {
+        println!("No input given.");
+    }
 }
