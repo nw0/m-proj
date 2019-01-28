@@ -1,0 +1,7 @@
+[package]
+name = "nostd"
+version = "0.1.0"
+authors = ["Nicholas Sim <nicholassimws@gmail.com>"]
+
+[dependencies]
+libc = {default-features = false}
