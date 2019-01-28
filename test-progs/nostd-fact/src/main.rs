@@ -6,7 +6,6 @@ use core::slice::from_raw_parts;
 use core::char;
 
 extern crate libc;
-use libc::c_uint;
 
 #[lang = "owned_box"]
 pub struct Box<T>(*mut T);
@@ -65,7 +64,7 @@ fn main(argc: isize, argv: *const *const u8) -> isize {
 }
 
 #[lang = "eh_personality"] extern fn rust_eh_personality() {}
-#[lang = "panic_impl"] extern fn rust_begin_panic(info: &PanicInfo) -> ! { unsafe { intrinsics::abort() } }
+#[lang = "panic_impl"] extern fn rust_begin_panic(_info: &PanicInfo) -> ! { unsafe { intrinsics::abort() } }
 #[lang = "eh_unwind_resume"] extern fn rust_eh_unwind_resume() {}
 #[no_mangle] pub extern fn rust_eh_register_frames () {}
 #[no_mangle] pub extern fn rust_eh_unregister_frames () {}
