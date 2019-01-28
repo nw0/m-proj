@@ -5,7 +5,7 @@ authors = ["Nicholas Sim <nicholassimws@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-libc = { git = "https://github.com/CTSRD-CHERI/rust-crate-libc.git", branch = "cheri" }
+libc = { git = "https://github.com/nw0/rust-crate-libc.git", branch = "cheri-47" }
 
 [profile.release]
 panic = "abort"

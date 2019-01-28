@@ -2,13 +2,13 @@
 name = "heapsort"
 version = "0.1.0"
 dependencies = [
- "libc 0.2.46 (git+https://github.com/CTSRD-CHERI/rust-crate-libc.git?branch=cheri)",
+ "libc 0.2.47 (git+https://github.com/nw0/rust-crate-libc.git?branch=cheri-47)",
 ]
 
 [[package]]
 name = "libc"
-version = "0.2.46"
-source = "git+https://github.com/CTSRD-CHERI/rust-crate-libc.git?branch=cheri#5936262063704db85d24e53d28f1a4a2925cf868"
+version = "0.2.47"
+source = "git+https://github.com/nw0/rust-crate-libc.git?branch=cheri-47#4facdf9f778030927b217d18d90517e6aa0e92b8"
 
 [metadata]
-"checksum libc 0.2.46 (git+https://github.com/CTSRD-CHERI/rust-crate-libc.git?branch=cheri)" = "<none>"
+"checksum libc 0.2.47 (git+https://github.com/nw0/rust-crate-libc.git?branch=cheri-47)" = "<none>"
