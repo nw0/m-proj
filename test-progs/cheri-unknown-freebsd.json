@@ -1,0 +1,30 @@
+{
+  "abi-return-struct-as-int": true,
+  "arch": "cheri",
+  "cpu": "cheri128",
+  "data-layout": "E-m:e-pf200:128:128:128:64-i8:8:32-i16:16:32-i64:64-n32:64-S128-A200-G200-P200",
+  "target-pointer-width": "128",
+  "dynamic-linking": true,
+  "eliminate-frame-pointer": false,
+  "env": "",
+  "executables": true,
+  "features": "+mips64r2",
+  "has-rpath": true,
+  "linker-flavor": "gcc",
+  "linker-is-gnu": true,
+  "llvm-target": "cheri-unknown-freebsd",
+  "max-atomic-width": 64,
+  "os": "freebsd",
+  "position-independent-executables": true,
+  "pre-link-args": {
+    "gcc": [
+      "-Wl,--as-needed",
+      "-Wl,-z,noexecstack"
+    ]
+  },
+  "relro-level": "full",
+  "target-c-int-width": "32",
+  "target-endian": "big",
+  "target-family": "unix",
+  "vendor": "unknown"
+}
