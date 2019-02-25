@@ -19,7 +19,8 @@
   "pre-link-args": {
     "gcc": [
       "-Wl,--as-needed",
-      "-Wl,-z,noexecstack"
+      "-Wl,-z,noexecstack",
+      "-mabi=purecap"
     ]
   },
   "relro-level": "full",
