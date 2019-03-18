@@ -1,0 +1,16 @@
+[package]
+name = "noc-hello"
+version = "0.1.0"
+authors = ["Nicholas Sim <nicholassimws@gmail.com>"]
+
+[dependencies]
+# libc = { git = "https://github.com/nw0/rust-crate-libc.git", branch = "cheri-47", default-features = false }
+
+[profile.dev]
+panic = "abort"
+opt-level = 0
+
+[profile.release]
+panic = "abort"
+lto = false
+opt-level = 0
