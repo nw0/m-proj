@@ -19,3 +19,6 @@ cpurecap.o: cpurecap.ll
 cpurecap: cpurecap.o
 	clang --target=cheri-unknown-freebsd --sysroot=/home/nwss2/cheri/output/sdk/sysroot128 -fuse-ld=/home/nwss2/work/build/bin/ld.lld -mcpu=cheri128 -mabi=purecap -v cpurecap.o -lc -o cpurecap
 	cp cpurecap ~/cheri/output/rootfs128
+
+clean:
+	rm -f main.o main cpurecap.o cpurecap
