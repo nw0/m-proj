@@ -29,7 +29,7 @@ pub unsafe auto trait Sync {}
 #[lang = "start"]
 fn start(_main: *const u8, _argc: isize, _argv: *const *const u8) -> isize {
     unsafe {
-        printf(b"Hello, world\n" as *const u8);
+        printf(b"Hello, world\n\0" as *const u8);
     }
     0
 }
