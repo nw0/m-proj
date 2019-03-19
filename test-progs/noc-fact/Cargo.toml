@@ -1,0 +1,16 @@
+[package]
+name = "noc-fact"
+version = "0.1.0"
+authors = ["Nicholas Sim <nicholassimws@gmail.com>"]
+
+[dependencies]
+libcore_cheri = { path = "/home/nwss2/libcore-cheri" }
+
+[profile.dev]
+panic = "abort"
+opt-level = 0
+
+[profile.release]
+panic = "abort"
+lto = false
+opt-level = 0
