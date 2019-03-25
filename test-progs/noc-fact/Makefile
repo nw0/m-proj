@@ -1,5 +1,11 @@
-OUT_DIR = ~/cheri/output/rootfs128/rustprogs
 CRATE_NAME = noc-fact
+HOME = /home/nwss2
+LIBCORE_CHERI = $(HOME)/libcore-cheri/lib.rs
+CHERIBUILD = $(HOME)/cheri
+OUT_DIR = $(CHERIBUILD)/output/rootfs128/rustprogs
+LLVM_BUILD = $(HOME)/work/llvm-project/build
+LLD = $(LLVM_BUILD)/bin/ld.lld
+RUSTC = /home/nwss2/rust/build/x86_64-unknown-freebsd/stage1/bin/rustc
 
 test: src/main.rs
 	cargo build --release
@@ -9,29 +15,23 @@ deploy:
 	cargo build --target cheri-unknown-freebsd --release
 	cp target/cheri-unknown-freebsd/release/$(CRATE_NAME) $(OUT_DIR)
 
-rs:
-	/home/nwss2/work/rust/build/x86_64-unknown-freebsd/stage1/bin/rustc --crate-name rs src/main.rs --crate-type bin --emit=dep-info,link -C panic=abort -C debug-assertions=off --target cheri-unknown-freebsd -C linker=/home/nwss2/cheri/output/sdk/bin/cheri-unknown-freebsd-clang -C link-arg=--sysroot=/home/nwss2/cheri/output/sdk/sysroot128 -C target-feature=+soft-float -C link-arg=-fPIC
-	cp rs $(OUT_DIR)
+stage: main.out
+	cp main.out $(OUT_DIR)
 
-main.ll: src/main.rs
-	$(RUSTC) src/main.rs --target cheri-unknown-freebsd --emit=llvm-ir
+main.out: main.o
+	clang --target=cheri-unknown-freebsd --sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -fuse-ld=$(LLD) -mcpu=cheri128 -mabi=purecap -fPIC -v main.o -lc -o main.out
 
 main.o: main.ll
 	llc -mcpu=cheri128 -cheri-cap-table-abi=pcrel -mattr="+cheri128,+soft-float" -filetype obj -target-abi=purecap -relocation-model=pic -o main.o main.ll
 
-main: main.o
-	clang --target=cheri-unknown-freebsd --sysroot=/home/nwss2/cheri/output/sdk/sysroot128 -fuse-ld=/home/nwss2/work/build/bin/ld.lld -mcpu=cheri128 -mabi=purecap -fPIC -v main.o -lc -o main
-	cp main $(OUT_DIR)
+main.ll: libcore_cheri.rlib src/main.rs
+	$(RUSTC) src/main.rs --emit=llvm-ir --target cheri-unknown-freebsd --extern libcore_cheri=libcore_cheri.rlib -C panic=abort -C debug-assertions=off
 
-c.ll: c.c
-	clang --target=cheri-unknown-freebsd --sysroot=/home/nwss2/cheri/output/sdk/sysroot128 -fuse-ld=/home/nwss2/work/build/bin/ld.lld -mcpu=cheri128 -mabi=purecap -cheri-cap-table-abi=pcrel -msoft-float -v -emit-llvm -S c.c
+libcore_cheri.rlib: $(LIBCORE_CHERI)
+	$(RUSTC) $(LIBCORE_CHERI) --crate-type lib --emit=link=libcore_cheri.rlib -C panic=abort -C debug-assertions=off --target cheri-unknown-freebsd -C linker=$(CHERIBUILD)/output/sdk/bin/cheri-unknown-freebsd-clang -C link-arg=--sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -C link-arg=-fPIC -C target-feature=+soft-float -C panic=abort
 
-c.o: c.ll
-	llc -mcpu=cheri128 -cheri-cap-table-abi=pcrel -mattr="+cheri128,+soft-float" -filetype obj -target-abi=purecap -relocation-model=pic -o c.o c.ll
+clmain:
+	rm main.ll main.o main
 
-c: c.o
-	clang --target=cheri-unknown-freebsd --sysroot=/home/nwss2/cheri/output/sdk/sysroot128 -fuse-ld=/home/nwss2/work/build/bin/ld.lld -mcpu=cheri128 -mabi=purecap -fPIC -v c.o -lc -o c
-	cp c $(OUT_DIR)
-
-clean:
-	rm -f *.o *.ll *.d c main rs
+clean: clmain
+	rm libcore_cheri.rlib
