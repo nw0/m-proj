@@ -260,6 +260,8 @@ TSWLatexianTemp*
 ### Rust
 test-progs/*/target
 **/*.rs.bk
+**/Cargo.lock
+*.rlib
 
 
 ### Vim
@@ -284,3 +286,5 @@ tags
 
 ### General
 *.o
+*.ll
+*.out
