@@ -286,5 +286,7 @@ tags
 
 ### General
 *.o
+*.so
+*.z
 *.ll
 *.out
