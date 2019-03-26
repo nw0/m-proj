@@ -8,7 +8,7 @@
 #[cfg(target_os = "freebsd")]
 #[link(name = "c")]
 extern {
-    pub fn printf(format: *const u8, ...) -> i32;
+    pub fn printf(format: *const u8) -> i32;
 }
 
 #[lang = "sized"]
