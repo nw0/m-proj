@@ -1,0 +1,13 @@
+[package]
+name = "noc-ctr"
+version = "0.1.0"
+authors = ["Nicholas Sim <nicholassimws@gmail.com>"]
+
+[dependencies]
+libcore_cheri = { path = "/home/nwss2/libcore-cheri" }
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
