@@ -18,8 +18,8 @@ deploy:
 stage: $(CRATE_NAME).out
 	cp $> $(OUT_DIR)
 
-$(CRATE_NAME).out: $*.o
-	clang --target=cheri-unknown-freebsd --sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -fuse-ld=$(LLD) -mcpu=cheri128 -mabi=purecap -fPIC -v $*.o -lc -o $@
+$(CRATE_NAME).out: $*.o $(LIBCORE_CHERI)/libcore_cheri.so
+	clang --target=cheri-unknown-freebsd --sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -fuse-ld=$(LLD) -mcpu=cheri128 -mabi=purecap -fPIC -fno-lto -fno-strict-aliasing -v $> -lc -o $@
 
 $(CRATE_NAME).o: $*.ll
 	llc -mtriple=cheri-unknown-freebsd -mcpu=cheri128 -mattr="+cheri128,+soft-float" -verify-machineinstrs -target-abi=purecap -relocation-model=pic -filetype=obj -o $@ $*.ll
