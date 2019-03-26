@@ -8,9 +8,6 @@ libcore_cheri = { path = "/home/nwss2/libcore-cheri" }
 
 [profile.dev]
 panic = "abort"
-opt-level = 0
 
 [profile.release]
 panic = "abort"
-lto = false
-opt-level = 0
