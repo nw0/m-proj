@@ -20,7 +20,6 @@ fn start(_main: *const u8, _argc: isize, _argv: *const *const u8) -> isize {
 }
 
 fn lf(i: usize) -> usize { i * 2 + 1 }
-fn rt(i: usize) -> usize { i * 2 + 2 }
 fn par(i: usize) -> usize { i / 2 }
 
 fn sift(v: &mut [i32], start: usize, end: usize) {
@@ -68,11 +67,19 @@ fn sort(mut v: &mut [i32]) {
     }
 }
 
+fn print_sp(i: i32) {
+    unsafe {
+        printf(b"%d \0" as *const u8, i);
+    }
+}
+
 fn main() {
     let mut arr: [i32; 6] = [53, 235, 45, 2, 65, -1];
     sort(&mut arr);
 
-    unsafe {
-        printf(b"Sorted? %d %d %d %d %d %d\n\0" as *const u8, arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
-    }
+    use core::prelude::Iterator;
+    arr.iter().for_each(|x| print_sp(*x));
+    let m = arr.iter().sum();
+    print_sp(m);
+    unsafe { printf(b"\n\0" as *const u8); }
 }
