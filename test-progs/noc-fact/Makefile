@@ -15,23 +15,23 @@ deploy:
 	cargo build --target cheri-unknown-freebsd --release
 	cp target/cheri-unknown-freebsd/release/$(CRATE_NAME) $(OUT_DIR)
 
-stage: main.out
-	cp main.out $(OUT_DIR)
+stage: $(CRATE_NAME).out
+	cp $> $(OUT_DIR)
 
-main.out: main.o
-	clang --target=cheri-unknown-freebsd --sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -fuse-ld=$(LLD) -mcpu=cheri128 -mabi=purecap -fPIC -v main.o -lc -o main.out
+$(CRATE_NAME).out: $*.o
+	clang --target=cheri-unknown-freebsd --sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -fuse-ld=$(LLD) -mcpu=cheri128 -mabi=purecap -fPIC -v $*.o -lc -o $@
 
-main.o: main.ll
-	llc -mcpu=cheri128 -cheri-cap-table-abi=pcrel -mattr="+cheri128,+soft-float" -filetype obj -target-abi=purecap -relocation-model=pic -o main.o main.ll
+$(CRATE_NAME).o: $*.ll
+	llc -mtriple=cheri-unknown-freebsd -mcpu=cheri128 -mattr="+cheri128,+soft-float" -verify-machineinstrs -target-abi=purecap -relocation-model=pic -filetype=obj -o $@ $*.ll
 
-main.ll: libcore_cheri.rlib src/main.rs
-	$(RUSTC) src/main.rs --emit=llvm-ir --target cheri-unknown-freebsd --extern libcore_cheri=libcore_cheri.rlib -C panic=abort -C debug-assertions=off
+$(CRATE_NAME).ll: libcore_cheri.rlib src/main.rs
+	$(RUSTC) --extern libcore_cheri=$> --emit=llvm-ir --target cheri-unknown-freebsd -C panic=abort -C debug-assertions=off -o $@
 
 libcore_cheri.rlib: $(LIBCORE_CHERI)
-	$(RUSTC) $(LIBCORE_CHERI) --crate-type lib --emit=link=libcore_cheri.rlib -C panic=abort -C debug-assertions=off --target cheri-unknown-freebsd -C linker=$(CHERIBUILD)/output/sdk/bin/cheri-unknown-freebsd-clang -C link-arg=--sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -C link-arg=-fPIC -C target-feature=+soft-float -C panic=abort
+	$(RUSTC) $(LIBCORE_CHERI) --crate-type lib --emit=link=$@ -C panic=abort -C debug-assertions=off --target cheri-unknown-freebsd -C linker=$(CHERIBUILD)/output/sdk/bin/cheri-unknown-freebsd-clang -C link-arg=--sysroot=$(CHERIBUILD)/output/sdk/sysroot128 -C link-arg=-fPIC -C target-feature=+soft-float
 
-clmain:
-	rm main.ll main.o main
+cloc:
+	rm -f *.ll *.z *.o *.out
 
-clean: clmain
-	rm libcore_cheri.rlib
+clean: cloc
+	rm -f *.rlib
