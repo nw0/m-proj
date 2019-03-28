@@ -25,7 +25,7 @@ $(CRATE_NAME).o: $*.ll
 	llc -mtriple=cheri-unknown-freebsd -mcpu=cheri128 -mattr="+cheri128,+soft-float" -verify-machineinstrs -target-abi=purecap -relocation-model=pic -filetype=obj -o $@ $*.ll
 
 $(CRATE_NAME).ll: $(LIBCORE_CHERI)/libcore_cheri.rlib src/main.rs
-	$(RUSTC) --extern libcore_cheri=$> --emit=llvm-ir --target cheri-unknown-freebsd -C panic=abort -C debug-assertions=off -o $@
+	$(RUSTC) --extern libcore_cheri=$> --emit=llvm-ir --target cheri-unknown-freebsd -C panic=abort -C debug-assertions=off -O -o $@
 
 cloc:
 	rm -f *.ll *.z *.o *.out
