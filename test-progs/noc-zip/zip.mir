@@ -1,0 +1,161 @@
+// WARNING: This output format is intended for human consumers only
+// and is subject to change without notice. Knock yourself out.
+ main::{{constant}}#1: usize = {
+    let mut _0: usize;                   // return place
+
+    bb0: {
+        _0 = const 1usize;               // bb0[0]: scope 0 at src/main.rs:26:19: 26:20
+                                         // ty::Const
+                                         // + ty: usize
+                                         // + val: Scalar(Bits { size: 16, bits: 1 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:26:19: 26:20
+                                         // + ty: usize
+                                         // + literal: Const { ty: usize, val: Scalar(Bits { size: 16, bits: 1 }) }
+        return;                          // bb0[1]: scope 0 at src/main.rs:26:19: 26:20
+    }
+}
+
+fn  start(_1: *const u8, _2: isize, _3: *const *const u8) -> isize {
+    let mut _0: isize;                   // return place
+    let mut _4: ();
+
+    bb0: {
+        _4 = const main() -> bb1;        // bb0[0]: scope 0 at src/main.rs:20:5: 20:11
+                                         // ty::Const
+                                         // + ty: fn() {main}
+                                         // + val: Scalar(Bits { size: 0, bits: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:20:5: 20:9
+                                         // + ty: fn() {main}
+                                         // + literal: Const { ty: fn() {main}, val: Scalar(Bits { size: 0, bits: 0 }) }
+    }
+
+    bb1: {
+        _0 = const 0isize;               // bb1[0]: scope 0 at src/main.rs:21:5: 21:6
+                                         // ty::Const
+                                         // + ty: isize
+                                         // + val: Scalar(Bits { size: 16, bits: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:21:5: 21:6
+                                         // + ty: isize
+                                         // + literal: Const { ty: isize, val: Scalar(Bits { size: 16, bits: 0 }) }
+        return;                          // bb1[1]: scope 0 at src/main.rs:22:2: 22:2
+    }
+}
+
+ main::{{constant}}#0: usize = {
+    let mut _0: usize;                   // return place
+
+    bb0: {
+        _0 = const 1usize;               // bb0[0]: scope 0 at src/main.rs:25:19: 25:20
+                                         // ty::Const
+                                         // + ty: usize
+                                         // + val: Scalar(Bits { size: 16, bits: 1 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:25:19: 25:20
+                                         // + ty: usize
+                                         // + literal: Const { ty: usize, val: Scalar(Bits { size: 16, bits: 1 }) }
+        return;                          // bb0[1]: scope 0 at src/main.rs:25:19: 25:20
+    }
+}
+
+fn  main() -> () {
+    let mut _0: ();                      // return place
+    scope 1 {
+        scope 3 {
+            scope 5 {
+            }
+            scope 6 {
+                let _3: core::iter::Zip<core::slice::Iter<i32>, core::slice::Iter<i32>>; // "a3" in scope 6 at src/main.rs:27:9: 27:11
+            }
+        }
+        scope 4 {
+            let _2: [i32; 1] as UserTypeProjection { base: UserType(2), projs: [] }; // "a2" in scope 4 at src/main.rs:26:9: 26:11
+        }
+    }
+    scope 2 {
+        let _1: [i32; 1] as UserTypeProjection { base: UserType(0), projs: [] }; // "a1" in scope 2 at src/main.rs:25:9: 25:11
+    }
+    let mut _4: core::slice::Iter<i32>;
+    let mut _5: &[i32];
+    let mut _6: &[i32; 1];
+    let mut _7: core::slice::Iter<i32>;
+    let mut _8: &[i32];
+    let mut _9: &[i32; 1];
+
+    bb0: {
+        StorageLive(_1);                 // bb0[0]: scope 0 at src/main.rs:25:9: 25:11
+        _1 = [const 0i32];               // bb0[1]: scope 0 at src/main.rs:25:24: 25:27
+                                         // ty::Const
+                                         // + ty: i32
+                                         // + val: Scalar(Bits { size: 4, bits: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:25:25: 25:26
+                                         // + ty: i32
+                                         // + literal: Const { ty: i32, val: Scalar(Bits { size: 4, bits: 0 }) }
+        StorageLive(_2);                 // bb0[2]: scope 1 at src/main.rs:26:9: 26:11
+        _2 = [const 0i32];               // bb0[3]: scope 1 at src/main.rs:26:24: 26:27
+                                         // ty::Const
+                                         // + ty: i32
+                                         // + val: Scalar(Bits { size: 4, bits: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:26:25: 26:26
+                                         // + ty: i32
+                                         // + literal: Const { ty: i32, val: Scalar(Bits { size: 4, bits: 0 }) }
+        StorageLive(_3);                 // bb0[4]: scope 3 at src/main.rs:27:9: 27:11
+        StorageLive(_4);                 // bb0[5]: scope 3 at src/main.rs:27:14: 27:23
+        StorageLive(_5);                 // bb0[6]: scope 3 at src/main.rs:27:14: 27:16
+        StorageLive(_6);                 // bb0[7]: scope 3 at src/main.rs:27:14: 27:16
+        _6 = &_1;                        // bb0[8]: scope 3 at src/main.rs:27:14: 27:16
+        _5 = move _6 as &[i32] (Unsize); // bb0[9]: scope 3 at src/main.rs:27:14: 27:16
+        StorageDead(_6);                 // bb0[10]: scope 3 at src/main.rs:27:15: 27:16
+        _4 = const core::slice::<impl [T]>::iter(move _5) -> bb1; // bb0[11]: scope 3 at src/main.rs:27:14: 27:23
+                                         // ty::Const
+                                         // + ty: for<'r> fn(&'r [i32]) -> core::slice::Iter<'r, i32> {core::slice::<impl [i32]>::iter}
+                                         // + val: Scalar(Bits { size: 0, bits: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:27:17: 27:21
+                                         // + ty: for<'r> fn(&'r [i32]) -> core::slice::Iter<'r, i32> {core::slice::<impl [i32]>::iter}
+                                         // + literal: Const { ty: for<'r> fn(&'r [i32]) -> core::slice::Iter<'r, i32> {core::slice::<impl [i32]>::iter}, val: Scalar(Bits { size: 0, bits: 0 }) }
+    }
+
+    bb1: {
+        StorageDead(_5);                 // bb1[0]: scope 3 at src/main.rs:27:22: 27:23
+        StorageLive(_7);                 // bb1[1]: scope 3 at src/main.rs:27:28: 27:37
+        StorageLive(_8);                 // bb1[2]: scope 3 at src/main.rs:27:28: 27:30
+        StorageLive(_9);                 // bb1[3]: scope 3 at src/main.rs:27:28: 27:30
+        _9 = &_2;                        // bb1[4]: scope 3 at src/main.rs:27:28: 27:30
+        _8 = move _9 as &[i32] (Unsize); // bb1[5]: scope 3 at src/main.rs:27:28: 27:30
+        StorageDead(_9);                 // bb1[6]: scope 3 at src/main.rs:27:29: 27:30
+        _7 = const core::slice::<impl [T]>::iter(move _8) -> bb2; // bb1[7]: scope 3 at src/main.rs:27:28: 27:37
+                                         // ty::Const
+                                         // + ty: for<'r> fn(&'r [i32]) -> core::slice::Iter<'r, i32> {core::slice::<impl [i32]>::iter}
+                                         // + val: Scalar(Bits { size: 0, bits: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:27:31: 27:35
+                                         // + ty: for<'r> fn(&'r [i32]) -> core::slice::Iter<'r, i32> {core::slice::<impl [i32]>::iter}
+                                         // + literal: Const { ty: for<'r> fn(&'r [i32]) -> core::slice::Iter<'r, i32> {core::slice::<impl [i32]>::iter}, val: Scalar(Bits { size: 0, bits: 0 }) }
+    }
+
+    bb2: {
+        StorageDead(_8);                 // bb2[0]: scope 3 at src/main.rs:27:36: 27:37
+        _3 = const core::prelude::Iterator::zip(move _4, move _7) -> bb3; // bb2[1]: scope 3 at src/main.rs:27:14: 27:38
+                                         // ty::Const
+                                         // + ty: fn(core::slice::Iter<i32>, core::slice::Iter<i32>) -> core::iter::Zip<core::slice::Iter<i32>, <core::slice::Iter<i32> as core::prelude::IntoIterator>::IntoIter> {<core::slice::Iter<i32> as core::prelude::Iterator>::zip::<core::slice::Iter<i32>>}
+                                         // + val: Scalar(Bits { size: 0, bits: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:27:24: 27:27
+                                         // + ty: fn(core::slice::Iter<i32>, core::slice::Iter<i32>) -> core::iter::Zip<core::slice::Iter<i32>, <core::slice::Iter<i32> as core::prelude::IntoIterator>::IntoIter> {<core::slice::Iter<i32> as core::prelude::Iterator>::zip::<core::slice::Iter<i32>>}
+                                         // + literal: Const { ty: fn(core::slice::Iter<i32>, core::slice::Iter<i32>) -> core::iter::Zip<core::slice::Iter<i32>, <core::slice::Iter<i32> as core::prelude::IntoIterator>::IntoIter> {<core::slice::Iter<i32> as core::prelude::Iterator>::zip::<core::slice::Iter<i32>>}, val: Scalar(Bits { size: 0, bits: 0 }) }
+    }
+
+    bb3: {
+        StorageDead(_7);                 // bb3[0]: scope 3 at src/main.rs:27:37: 27:38
+        StorageDead(_4);                 // bb3[1]: scope 3 at src/main.rs:27:37: 27:38
+        StorageDead(_3);                 // bb3[2]: scope 3 at src/main.rs:28:1: 28:2
+        StorageDead(_2);                 // bb3[3]: scope 1 at src/main.rs:28:1: 28:2
+        StorageDead(_1);                 // bb3[4]: scope 0 at src/main.rs:28:1: 28:2
+        return;                          // bb3[5]: scope 0 at src/main.rs:28:2: 28:2
+    }
+}
