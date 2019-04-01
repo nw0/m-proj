@@ -1,0 +1,1 @@
+mkdir -p /rootfs && mount_smbfs -I 10.0.2.4 -N //10.0.2.4/qemu4 /rootfs
