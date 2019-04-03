@@ -8,11 +8,11 @@ LLD = $(LLVM_BUILD)/bin/ld.lld
 RUSTC = /home/nwss2/rust/build/x86_64-unknown-freebsd/stage1/bin/rustc
 
 test: src/main.rs
-	cargo build --release
+	xargo build --release
 	target/release/$(CRATE_NAME)
 
 deploy:
-	cargo build --target cheri-unknown-freebsd --release
+	xargo build --target cheri-unknown-freebsd --release
 	cp target/cheri-unknown-freebsd/release/$(CRATE_NAME) $(OUT_DIR)
 
 stage: $(CRATE_NAME).out

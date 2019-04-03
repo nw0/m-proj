@@ -5,7 +5,7 @@
 
 #![no_core]
 
-extern crate libcore_cheri as core;
+extern crate core;
 
 #[cfg(target_os = "freebsd")]
 #[link(name = "c")]
@@ -77,9 +77,15 @@ fn main() {
     let mut arr: [i32; 6] = [53, 235, 45, 2, 65, -1];
     sort(&mut arr);
 
-    use core::prelude::Iterator;
+    use core::iter::Iterator;
     arr.iter().for_each(|x| print_sp(*x));
     let m = arr.iter().sum();
     print_sp(m);
     unsafe { printf(b"\n\0" as *const u8); }
+}
+
+use core::panic::PanicInfo;
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    loop {}
 }
