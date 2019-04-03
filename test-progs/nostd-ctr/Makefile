@@ -12,7 +12,7 @@ test: src/main.rs
 	target/release/$(CRATE_NAME)
 
 deploy:
-	cargo build --target cheri-unknown-freebsd --release
+	xargo build --target cheri-unknown-freebsd --release
 	cp target/cheri-unknown-freebsd/release/$(CRATE_NAME) $(OUT_DIR)
 
 stage: $(CRATE_NAME).out

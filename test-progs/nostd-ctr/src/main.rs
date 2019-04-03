@@ -76,7 +76,6 @@ impl Iterator for Counter {
 }
 
 fn main() {
-    let _x: Box<u8> = Box::new(4);
     let mut ctr = Counter::new();
     print_sp(ctr.next().unwrap() as i32);
 }
