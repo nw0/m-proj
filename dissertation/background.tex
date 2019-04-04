@@ -13,6 +13,16 @@ Throughout this work, a recurring theme will be the arbitrary
 dereferencing of pointers, an action permitted in Unsafe Rust, but not
 Safe Rust.
 
+Capabilities have a long history: while the concept had been established
+beforehand, they were implemented and expounded in
+Multics~\cite{bell-lapadula}, and there is recurring interest in fat
+pointers today~\cite{hardbound-devietti,lowfat-kwon}.
+They can prevent common classes of attacks, such as the
+eternal buffer overflow (1,613 published CVEs in 2018
+alone~\cite{nist-nvd-overflow-2018}), and obviate other mitigations,
+such as address-space layout randomisation and \(W \oplus X\) protection
+against execution of data.
+
 
 \section{CHERI: Capability Hardware Enhanced RISC Instructions}
 CHERI extends a 64-bit RISC ISA to support capabilities.
