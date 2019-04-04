@@ -5,6 +5,19 @@
 
 
 \section{Capabilities}
+A \emph{capability} is the address of an entity combined with the
+permitted actions using that reference~\cite{Dennis:1966:PSM}.
+An entity may traditionally be a memory segment, and actions could be to
+write or execute that segment.
+Throughout this work, a recurring theme will be the arbitrary
+dereferencing of pointers, an action permitted in Unsafe Rust, but not
+Safe Rust.
 
 
 \section{CHERI: Capability Hardware Enhanced RISC Instructions}
+CHERI extends a 64-bit RISC ISA to support capabilities.
+Its design emphasises incremental adoption, and the principles of least
+privilege and intentional use, to mitigate unintended vulnerabilities.
+Its hybrid approach enables capability code to be used alongside
+non-capability code, allowing a concentration on higher-risk code and
+libraries~\cite{cheri-v6}.
