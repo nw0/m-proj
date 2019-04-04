@@ -7,6 +7,7 @@ use core::alloc::{GlobalAlloc, Layout};
 extern {
     pub fn printf(format: *const u8, ...) -> i32;
     pub fn malloc(size: u64) -> *mut u8;
+    pub fn realloc(ptr: *mut u8, new_size: u64) -> *mut u8;
     pub fn free(ptr: *mut u8);
 }
 
@@ -16,8 +17,13 @@ unsafe impl GlobalAlloc for HeapAlloc {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         malloc(layout.size() as u64)
     }
+
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         free(ptr)
+    }
+
+    unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
+        realloc(ptr, new_size as u64)
     }
 }
 
