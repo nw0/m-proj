@@ -5,6 +5,7 @@
 
 #![no_std]
 
+use core::mem;
 use core::iter::Iterator;
 
 #[cfg(target_os = "freebsd")]
@@ -29,7 +30,12 @@ fn main() {
     let a1: [i32; 4] = [1, 3, 4, 5];
     let a2: [i32; 4] = [3, 3, 3, 4];
     a1.iter().zip(a2.iter()).for_each(|(a, b)| print_sp(*a + *b));
+    a1.iter().for_each(|x| print_sp(*x));
+
     unsafe { printf(b"\n\0" as *const u8); }
+    unsafe { printf(b"len of array above: %d\n\0" as *const u8, a1.len() as u32); }
+    unsafe { printf(b"len of `hello`: %d\n\0" as *const u8, "hello".chars().count() as u32); }
+    unsafe { printf(b"usize width: %d bytes\n\0" as *const u8, mem::size_of::<usize>() as u32); }
 }
 
 use core::panic::PanicInfo;
