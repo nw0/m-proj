@@ -3,11 +3,9 @@
 #![feature(optin_builtin_traits)]
 #![feature(on_unimplemented)]
 
-#![no_core]
+#![no_std]
 
-extern crate libcore_cheri as core;
-
-use core::prelude::Iterator;
+use core::iter::Iterator;
 
 #[cfg(target_os = "freebsd")]
 #[link(name = "c")]
@@ -32,4 +30,10 @@ fn main() {
     let a2: [i32; 4] = [3, 3, 3, 4];
     a1.iter().zip(a2.iter()).for_each(|(a, b)| print_sp(*a + *b));
     unsafe { printf(b"\n\0" as *const u8); }
+}
+
+use core::panic::PanicInfo;
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    loop {}
 }
