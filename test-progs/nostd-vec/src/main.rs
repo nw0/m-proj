@@ -33,14 +33,14 @@ fn main() {
 
     unsafe { printf(b"A vector with cap 2: \0" as *const u8); }
     let mut v: Vec<i32> = Vec::with_capacity(2);
-    v.push(13);
     v.push(14);
+    v.push(11);
     for e in v.iter() {
         print_sp(*e);
     }
 
     unsafe { printf(b"\nPushing a third int: \0" as *const u8); }
-    v.push(15);
+    v.push(12);
     for e in v.iter() {
         print_sp(*e);
     }
@@ -50,10 +50,21 @@ fn main() {
         print_sp(v[i]);
     }
 
+    unsafe { printf(b"\nsorting the vector: \0" as *const u8); }
+    v.sort();
+    for e in v.iter() {
+        print_sp(*e);
+    }
+
     unsafe { printf(b"\npop after extension: \0" as *const u8); }
     v.pop();
     for e in v.iter() {
         print_sp(*e);
     }
+
+    unsafe { printf(b"\nanother vector: \0" as *const u8); }
+    use alloc::vec;
+    let u = vec![0, 3, -2, -1, 8];
+    u.iter().for_each(|x| print_sp(*x));
     unsafe { printf(b"\n\0" as *const u8); }
 }

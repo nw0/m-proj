@@ -33,7 +33,9 @@ $(CRATE_NAME).ll: $(LIBCORE_CHERI_RLIB) src/main.rs
 	$(RUSTC) src/main.rs --emit=llvm-ir --target cheri-unknown-freebsd -C panic=abort -C debug-assertions=off --extern core=$(LIBCORE_CHERI_RLIB) --extern compiler_builtins=$(COMPILER_BUILTINS_RLIB) --extern alloc=$(LIBALLOC_RLIB) -o $@
 
 cloc:
+	cargo clean
 	rm -f *.ll *.z *.o *.out
 
 clean: cloc
+	rm -rf ~/.xargo/lib/rustlib/cheri-unknown-freebsd
 	rm -f *.rlib
