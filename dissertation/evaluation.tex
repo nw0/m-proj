@@ -1,0 +1,20 @@
+\documentclass[dissertation.tex]{subfile}
+
+\chapter{Evaluation}
+\label{ch:eval}
+
+\wip{Benefits to Rust}
+
+Buffer overflows and microbenchmarks shown.
+Look at optimised MIPS code and performance---not much to be gained?
+But: no unwind?
+Sealed capabilities, FFI and capabilities---maybe some FFI code can be
+made safe!
+
+\wip{Benefits to CHERI}
+
+Better defined semantics? Less room for miscompilation?
+Lifetimes and borrowing mean less guessing about capabilities.
+If Rust is already fast, will CHERI make it even faster -> natural
+choice? Since CHERI adds smaller overheads than e.g.~C.
+
