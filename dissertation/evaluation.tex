@@ -37,11 +37,77 @@ The key points of this evaluation are:
 
 \wip{Benefits to Rust}
 
-Buffer overflows and microbenchmarks shown.
 Look at optimised MIPS code and performance---not much to be gained?
 But: no unwind?
 Sealed capabilities, FFI and capabilities---maybe some FFI code can be
 made safe!
+
+\subsection{Traditional vulnerabilities in Rust}
+\label{sec:rust-vulns}
+
+\wip{Buffer overflows and microbenchmarks}
+
+One class of attacks that Rust aims to mitigate is buffer overflows.
+In Safe Rust, bounds checks are inserted (Figure~\ref{lst:rust-index})
+to prevent out-of-bounds accesses and writes.
+
+\begin{figure}[ht]
+\begin{lstlisting}
+impl<T> SliceIndex<[T]> for usize {
+    #[inline]
+    fn index(self, slice: &[T]) -> &T {
+        // N.B., use intrinsic indexing
+        &(*slice)[self]
+    }
+}
+\end{lstlisting}
+\caption{\wip{rewrite; asm} Rust's intrinsic indexing, which applies to
+arrays and vectors.}
+\label{lst:rust-index}
+\end{figure}
+
+However, as Section~\ref{sec:rust-unsafe} discusses, checks are
+sometimes omitted for performance.
+An example of this is the \texttt{repeat} function on slices, which
+returns a vector containing a slice repeated
+(Figure~\ref{lst:slice-repeat}).
+Unfortunately, this particular optimisation contained a flaw: a buffer
+overflow occurs if the length of returned vector would exceed the
+target's \texttt{usize} (essentially, \texttt{size\_t}).
+
+\begin{figure}[ht]
+\begin{lstlisting}
+impl<T> [T] {
+    pub fn repeat(&self, n: usize) -> Vec<T> where T: Copy {
+        // omitted: trivial n = 0 case
+        let mut buf = Vec::with_capacity(self.len() * n);
+
+        buf.extend(self);
+        {
+            let mut m = n >> 1;
+            while m > 0 {
+                unsafe {
+                    // memcpy existing elements to double the length
+                }
+            }
+        }
+        // omitted: copy into the remainder of the vector
+    }
+}
+\end{lstlisting}
+\caption{\wip{rewrite} Rust's slice \texttt{repeat}, from
+\texttt{alloc::slice}. Parts omitted for brevity. This code will attempt
+to write beyond the end of a buffer.}
+\label{lst:slice-repeat}
+\end{figure}
+
+This is difficult to exploit, as it would require a long slice or a
+large number \(n\) of repetitions, increasing the change of a
+segmentation fault.
+Nonetheless, it is certainly not thread-safe, and Rust does target
+platforms with 16-bit \texttt{usize}, i.e.~at most \(65,536\) elements,
+making an attack plausible, if not possible.
+\wip{What values would work?}
 
 
 \section{Benefits to CHERI as a Rust target}
