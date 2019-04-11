@@ -3,6 +3,38 @@
 \chapter{Evaluation}
 \label{ch:eval}
 
+\section{Objectives}
+This project evaluates whether Rust is particularly suited to running on
+CHERI.
+Chapter~\ref{ch:impl} defined the scope of this evaluation, and
+discussed the compromises that were made to compile Rust's core
+libraries for CHERI.
+
+The key points of this evaluation are:
+
+\begin{itemize}
+    \item What benefits does running on a CHERI architecture have for Rust?
+    More concretely, how convincing are the safety and performance
+    improvements as opposed to other platforms such as x86 and MIPS?
+    (Section~\ref{sec:eval-rust})
+    \item Can the safety guarantees and boundaries of unsafe code be
+    changed with the use of capabilities, or: do capabilities generate
+    different definitions of unsafe code?
+    For example, we can guarantee that an FFI call does not change the
+    contents of a buffer.
+    \item What benefits do Rust programs and a compilation toolchain
+    have for CHERI?
+    Specifically, do borrow semantics and object lifetimes naturally
+    translate to capabilities?
+    Generally, are safe languages easier to port to CHERI? Do they
+    derive more benefit from capabilities than unsafe languages?
+    (Section~\ref{sec:eval-cheri})
+\end{itemize}
+
+
+\section{Benefits to Rust from CHERI capabilities}
+\label{sec:eval-rust}
+
 \wip{Benefits to Rust}
 
 Buffer overflows and microbenchmarks shown.
@@ -10,6 +42,10 @@ Look at optimised MIPS code and performance---not much to be gained?
 But: no unwind?
 Sealed capabilities, FFI and capabilities---maybe some FFI code can be
 made safe!
+
+
+\section{Benefits to CHERI as a Rust target}
+\label{sec:eval-cheri}
 
 \wip{Benefits to CHERI}
 
