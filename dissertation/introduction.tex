@@ -26,6 +26,32 @@ This prevents abuse of pointers and internal addresses.
 Rust is a \emph{memory-safe} language designed for systems programming.
 It uses compile-time and runtime checks that prevent many of these attacks; relying on a combination of LLVM optimisations and \emph{unsafe} Rust code to minimise the performance overhead.
 
+\subsubsection{Vulnerabilities in Rust}
+There have been a number of potentially exploitable vulnerabilities in
+Rust, including:
+
+\begin{itemize}
+    \item Potential overflow in slice \texttt{repeat} (Sep 2018), CVE-2018-1000810
+    \url{https://github.com/rust-lang/rust/pull/54399}
+    \url{https://blog.rust-lang.org/2018/09/21/Security-advisory-for-std.html}
+    Hints \url{https://github.com/rust-lang/rust/issues/15482}
+    \item Potential overflow when pushing to a \texttt{VecDeque}, CVE-2018-1000657
+    \url{https://github.com/rust-lang/rust/issues/44800}
+    \item Miscellaneous UB, e.g.~\url{https://github.com/rust-lang/rust/issues/53566}
+    \item Jemalloc bug \url{https://github.com/rust-lang/rust/issues/15123}
+    \item In general, violating no shared mut
+    \url{https://github.com/rust-lang/rust/issues/39465}
+    \item Interesting mutation in match arm -- not in scope
+    \url{https://github.com/rust-lang/rust/issues/27282}
+    \item Overflows have caught bugs
+    \url{https://huonw.github.io/blog/2016/04/myths-and-legends-about-integer-overflow-in-rust/}
+\end{itemize}
+
+Related, protection:
+
+Lamowski: Sandcrust.
+Ralf Jung: RustBelt.
+
 \wip{Listing from proposal?}
 
 \wip{List Rust guarantees? Mention the unsafe conditions?}
