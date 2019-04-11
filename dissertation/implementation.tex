@@ -3,59 +3,6 @@
 \chapter{Compiling Rust for CHERI}
 \label{ch:impl}
 
-\section{Overview}
-This chapter gives an overview of Rust and the major differences from
-comparable programming languages.
-
-\wip{What else?}
-
-
-\section{The Rust programming language}
-Rust is billed as a fast and safe systems programming language.
-It uses both compile-time and runtime checks to prevent overflows,
-widely employing fat pointers for built-in data structures such as
-\texttt{Vec}~\cite{blandy-orendorff}.
-
-\wip{Probably a lot more to say}
-
-\subsection{Optimisation opportunity}
-With checks preventing out-of-bounds accesses, for instance, Rust might
-initially appear to harbour large overheads.
-Indeed, for code compiled in \emph{debug mode with assertions}, all
-checks are performed, from checks on bounds to those on integer
-overflows.
-However, with optimisations enabled, many of these checks are elided:
-for instance, array sizes are fixed at compile time, and most accesses
-take the form of iteration, making a check redundant.
-In this way, a number of checks are removed either by the Rust compiler
-or LLVM.
-
-\subsection{Unsafe Rust}
-Another area of optimisation is the use of \emph{Unsafe} Rust.
-Unsafe Rust allows a few actions:
-
-\begin{itemize}
-    \item Dereferencing a raw pointer
-    \item Calling unsafe functions
-    \item Accessing or modifying a mutable static variable
-    \item Implementing an unsafe trait~\cite{rust-unsafe-powers}
-\end{itemize}
-
-While these seem fairly innocuous (considering the large body of
-existing C code), this is significant in the restrictions imposed on
-safe Rust.
-It's important to note that unsafety need not necessarily come from
-the \texttt{unsafe} code block itself, but also from how the output of
-such code is used.
-
-Many unsafe optimisations in the Rust compiler take the form of
-unchecked accesses: the suppression of unneeded or repeated checks, such
-as slice accesses into objects of known size and layout.
-Another example is arbitrarily indexing into a (Unicode) string, where
-the chosen index is known to be a character boundary.
-
-\subsection{Move semantics and borrowing}
-
 
 \section{The Rust compiler and LLVM}
 
