@@ -11,5 +11,47 @@ No memchr? Optimisations not possible, \texttt{no\_std}, 128-bitness.
 
 
 \section{Strategy}
+\label{ch:impl-what}
+
+One contribution of this project is an extension of the Rust compiler to
+target FreeBSD on CHERI128.
+This extension exclusively targets \emph{pure capability mode}, which
+uses capabilities \wip{rephrase} for all pointers, rather than hybrid mode.
+
+In order to evaluate \wip{(evaluate what?)} Rust on CHERI, I identified
+a minimal necessary subset of the standard library:
+
+\begin{description}
+    \item[\texttt{libcore}] for key definitions of traits and types,
+    typechecking, compiler intrinsics, and other fundamental operations.
+    \item[\texttt{liballoc}] for heap allocation and built-in data
+    structures and operations on them.
+    \texttt{liballoc} also included two (patched) vulnerabilities in the
+    Rust standard library.
+\end{description}
+
+The rest of the standard library includes \wip{helpful things e.g. IO},
+where capabilities are not immediately relevant.
+\wip{So?}
+
+Some modification of these libraries was needed for them to work, as
+Section~\ref{sec:impl-divergences} details.
+
 
 \section{Notable compromises}
+\label{sec:impl-divergences}
+
+The \cuf target has several differences to most existing targets in the
+Rust compiler:
+
+\begin{itemize}
+    \item A pointer width of 128 bits.
+    \item Use of LLVM address spaces other than 0, the default.
+    \item The inability to arbitrarily manipulate pointers through
+    unsafe code. In particular, certain routines in the standard library
+    will not compile.
+    \item The impossibility of indexing by pointer-width sized integers,
+    or using these in operations such as \texttt{ptrtoint}.
+    This is entirely consistent with LLVM, but the Rust compiler assumes
+    otherwise.
+\end{itemize}
