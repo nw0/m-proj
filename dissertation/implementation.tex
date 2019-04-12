@@ -64,7 +64,6 @@ modifications required to compile Rust for CHERI.
 \wip{remove list}
 \begin{itemize}
     \item A pointer width of 128 bits.
-    \item Use of LLVM address spaces other than 0, the default.
     \item The inability to arbitrarily manipulate pointers through
     unsafe code. In particular, certain routines in the standard library
     will not compile.
@@ -96,6 +95,21 @@ width, which is 128 bits for a CHERI capability.
 
 \wip{ptrtoint, intcasts}
 
+\subsection{Address spaces}
+
+\subsubsection{Differences}
+There is no support in the Rust compiler to use LLVM address spaces
+other than 0, the default.
+By implication, there is also no support for multiple address spaces
+within or across compilation units.
+
+\subsubsection{Changes required}
+As only one address space is recognised, I decided to use pure
+capability mode, in which all pointers are capabilities, rather than
+hybrid mode, which accepts untagged pointers as well.
+Minor changes were made to refer to Rust's
+\texttt{instruction\_address\_space} for all pointers, instead of only
+pointers to types.
 
 \subsection{Manipulation of pointers}
 \label{sec:impl-manipulation}
