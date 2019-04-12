@@ -75,13 +75,27 @@ Sections~\ref{sec:impl-width} and~\ref{sec:impl-manipulation}.
 \subsection{Pointer width and index sizes}
 \label{sec:impl-width}
 
-\wip{}
+In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
+conventionally equivalent to C's \texttt{uintptr\_t}, which \emph{may
+not be equivalent to \texttt{size\_t}}~\cite{rust-rfc-isize}.
+The width of a \texttt{usize} is derived from the data layout's pointer
+width, which is 128 bits for a CHERI capability.
+
+\wip{AS200}
+
+\wip{128 not supported because of const\_eval}
 
 \subsection{Manipulation of pointers}
 \label{sec:impl-manipulation}
 
-\wip{memchr}
+\wip{e.g.~memchr}
 
 
 \section{Modifications to the compiler and standard library}
 \label{sec:impl-modification}
+
+\wip{purecap abi, chericap, etc.}
+
+\wip{memset.i128}
+
+\wip{ptrtoint, intcasts}
