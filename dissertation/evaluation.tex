@@ -35,12 +35,11 @@ The key points of this evaluation are:
 \section{Benefits to Rust from CHERI capabilities}
 \label{sec:eval-rust}
 
-\wip{Benefits to Rust}
-
+\subsection{Removal of bounds checks}
 Look at optimised MIPS code and performance---not much to be gained?
 But: no unwind?
-Sealed capabilities, FFI and capabilities---maybe some FFI code can be
-made safe!
+Compiler likely/unlikely hints (e.g.~panic) doesn't do anything for optimised code?
+
 
 \subsection{Traditional vulnerabilities in Rust}
 \label{sec:rust-vulns}
@@ -109,14 +108,29 @@ platforms with 16-bit \texttt{usize}, i.e.~at most \(65,536\) elements,
 making an attack plausible, if not possible.
 \wip{What values would work?}
 
+\wip{The other microbenchmark?}
+
+\subsection{Unsafe semantics}
+
+Sealed capabilities, FFI and capabilities---maybe some FFI code can be
+made safe!
+Not everything is unsafe any more? Dereferencing arbitrary pointers now
+guaranteed to crash rather than leak.
+
 
 \section{Benefits to CHERI as a Rust target}
 \label{sec:eval-cheri}
 
-\wip{Benefits to CHERI}
+\clar{Why Rust is a natural choice for CHERI?}
+
+\subsection{Borrow semantics and object lifetimes}
+Rust's semantics mean that programmers are less inclined to do
+interesting pointer manipulations or storage, so porting might be easy.
+On the other hand, CTSRD previously discovered that most C code isn't
+that bad in this regard?
 
 Better defined semantics? Less room for miscompilation?
-Lifetimes and borrowing mean less guessing about capabilities.
 If Rust is already fast, will CHERI make it even faster -> natural
 choice? Since CHERI adds smaller overheads than e.g.~C.
 
+Read the CHERI-JNI paper for inspiration.
