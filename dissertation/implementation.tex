@@ -4,19 +4,32 @@
 \label{ch:impl}
 
 \wip{Problems, details}
-No memchr? Optimisations not possible, \texttt{no\_std}, 128-bitness.
+Optimisations not possible, \texttt{no\_std}.
 
 
-\section{The Rust compiler and LLVM}
+\section{Overview}
+\wip{What is this chapter for?}
+
+This chapter discusses key details in compiling Rust for CHERI, as
+opposed to other architectures.
+
+\subsection{The Rust compiler and LLVM}
+\label{sec:impl-rustllvm}
+
+Rust uses LLVM a backend for compilation.
+The CTSRD project also develop a fork of LLVM with support for the
+current CHERI implementation, with changes to the MIPS backend to
+support CHERI targets, and generic code to handle
+capabilities~\cite{cheri-prog-guide}.
 
 
 \section{Strategy}
-\label{ch:impl-what}
+\label{sec:impl-what}
 
 One contribution of this project is an extension of the Rust compiler to
 target FreeBSD on CHERI128.
-This extension exclusively targets \emph{pure capability mode}, which
-uses capabilities \wip{rephrase} for all pointers, rather than hybrid mode.
+This extension exclusively targets \emph{pure capability mode}, where
+all pointers are capabilities~\cite{cheri-prog-guide}.
 
 In order to evaluate \wip{(evaluate what?)} Rust on CHERI, I identified
 a minimal necessary subset of the standard library:
@@ -27,7 +40,7 @@ a minimal necessary subset of the standard library:
     \item[\texttt{liballoc}] for heap allocation and built-in data
     structures and operations on them.
     \texttt{liballoc} also included two (patched) vulnerabilities in the
-    Rust standard library.
+    Rust standard library, used in the evaluation (Section~\wip{x}).
 \end{description}
 
 The rest of the standard library includes \wip{helpful things e.g. IO},
@@ -35,14 +48,16 @@ where capabilities are not immediately relevant.
 \wip{So?}
 
 Some modification of these libraries was needed for them to work, as
-Section~\ref{sec:impl-divergences} details.
+Section~\ref{sec:impl-divergences} details. \wip{So?}
 
 
-\section{Notable compromises}
+\section{Notable differences}
 \label{sec:impl-divergences}
 
 The \cuf target has several differences to most existing targets in the
-Rust compiler:
+Rust compiler.
+These can be split in two categories, discussed in
+Sections~\ref{sec:impl-width} and~\ref{sec:impl-manipulation}.
 
 \begin{itemize}
     \item A pointer width of 128 bits.
@@ -54,4 +69,19 @@ Rust compiler:
     or using these in operations such as \texttt{ptrtoint}.
     This is entirely consistent with LLVM, but the Rust compiler assumes
     otherwise.
+    \item \wip{usize, uintptr\_t, size\_t}
 \end{itemize}
+
+\subsection{Pointer width and index sizes}
+\label{sec:impl-width}
+
+\wip{}
+
+\subsection{Manipulation of pointers}
+\label{sec:impl-manipulation}
+
+\wip{memchr}
+
+
+\section{Modifications to the compiler and standard library}
+\label{sec:impl-modification}
