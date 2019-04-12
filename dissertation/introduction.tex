@@ -16,10 +16,6 @@ Consequently, crucial checks can be optimised away and invariants violated by co
 Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appears to function correctly, and gloss over the subtleties of the C standard~\cite{memarian2016cdepths};
 these represent future opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
 
-\subsection{Capabilities and the CHERI architecture}
-The CHERI project provides \emph{capabilities}, which stops unauthorised access or modification of data by erroneous and malicious code~\cite{cheri-v6}.
-In the CHERI architecture, capabilities restrict usage by associating bounds and access permissions with address data while making these unforgeable, as they can only be manipulated by the hardware.
-This prevents abuse of pointers and internal addresses.
 
 \subsection{The Rust programming language}
 
@@ -72,6 +68,11 @@ Ralf Jung: RustBelt.
 
 \wip{List Rust guarantees? Mention the unsafe conditions?}
 
+
+\subsection{Capabilities and the CHERI architecture}
+The CHERI project provides \emph{capabilities}, which stops unauthorised access or modification of data by erroneous and malicious code~\cite{cheri-v6}.
+In the CHERI architecture, capabilities restrict usage by associating bounds and access permissions with address data while making these unforgeable, as they can only be manipulated by the hardware.
+This prevents abuse of pointers and internal addresses.
 
 Just as using capabilities in C programs can prevent unintended operations on memory, applying capabilities to unsafe Rust code would provide an additional layer of safety, guarding against undiscovered vulnerabilities and potentially shrinking the set of unsafe operations.
 
