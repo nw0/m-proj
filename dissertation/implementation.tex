@@ -13,6 +13,8 @@ Optimisations not possible, \texttt{no\_std}.
 This chapter discusses key details in compiling Rust for CHERI, as
 opposed to other architectures.
 
+\wip{Sectional overview might be useful}
+
 \subsection{The Rust compiler and LLVM}
 \label{sec:impl-rustllvm}
 
@@ -51,14 +53,15 @@ Some modification of these libraries was needed for them to work, as
 Section~\ref{sec:impl-divergences} details. \wip{So?}
 
 
-\section{Notable differences}
+\section{Differences arising from the CHERI target}
 \label{sec:impl-divergences}
 
 The \cuf target has several differences to most existing targets in the
 Rust compiler.
-These can be split in two categories, discussed in
-Sections~\ref{sec:impl-width} and~\ref{sec:impl-manipulation}.
+This section documents these differences, their implications, and the
+modifications required to compile Rust for CHERI.
 
+\wip{remove list}
 \begin{itemize}
     \item A pointer width of 128 bits.
     \item Use of LLVM address spaces other than 0, the default.
@@ -72,30 +75,33 @@ Sections~\ref{sec:impl-width} and~\ref{sec:impl-manipulation}.
     \item \wip{usize, uintptr\_t, size\_t}
 \end{itemize}
 
-\subsection{Pointer width and index sizes}
+
+\subsection{Definitions of pointers and indices}
 \label{sec:impl-width}
 
+\subsubsection{Differences}
 In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
 conventionally equivalent to C's \texttt{uintptr\_t}, which \emph{may
 not be equivalent to \texttt{size\_t}}~\cite{rust-rfc-isize}.
 The width of a \texttt{usize} is derived from the data layout's pointer
 width, which is 128 bits for a CHERI capability.
 
-\wip{AS200}
+\subsubsection{Changes required}
 
 \wip{128 not supported because of const\_eval}
-
-\subsection{Manipulation of pointers}
-\label{sec:impl-manipulation}
-
-\wip{e.g.~memchr}
-
-
-\section{Modifications to the compiler and standard library}
-\label{sec:impl-modification}
 
 \wip{purecap abi, chericap, etc.}
 
 \wip{memset.i128}
 
 \wip{ptrtoint, intcasts}
+
+
+\subsection{Manipulation of pointers}
+\label{sec:impl-manipulation}
+
+\subsubsection{Differences}
+
+\wip{e.g.~memchr}
+
+\subsubsection{Changes required}
