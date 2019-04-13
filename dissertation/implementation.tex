@@ -63,7 +63,6 @@ modifications required to compile Rust for CHERI.
 
 \wip{remove list}
 \begin{itemize}
-    \item A pointer width of 128 bits.
     \item The inability to arbitrarily manipulate pointers through
     unsafe code. In particular, certain routines in the standard library
     will not compile.
@@ -75,8 +74,25 @@ modifications required to compile Rust for CHERI.
 \end{itemize}
 
 
-\subsection{Definitions of pointers and indices}
+\subsection{Pointer width of 128 bits}
 \label{sec:impl-width}
+
+\subsubsection{Differences}
+Under pure capability mode in CHERI128, all pointers are 128-bit wide
+capabilities.
+The Rust compiler has built-in support for 16-, 32-, and 64-bit
+pointers, through compile-time macros; these are primarily used to
+determine the \texttt{usize} (Section~\ref{sec:impl-usize}).
+
+\subsubsection{Implications and changes}
+This meant defining a \texttt{usize}, and exposing a 128-bit integer
+type from LLVM as suitable for this value.
+As Section~\ref{sec:impl-usize} shows, it was not possible to use a
+64-bit \texttt{usize}, with its own implications.
+
+
+\subsection{Definitions of pointers and indices}
+\label{sec:impl-usize}
 
 \subsubsection{Differences}
 In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
