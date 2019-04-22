@@ -127,11 +127,8 @@ than the index size.
 
 \wip{128 not supported because of const\_eval}
 
-\wip{purecap abi, chericap, etc.}
-
 \wip{memset.i128}
 
-\wip{ptrtoint, intcasts}
 
 \subsection{Address spaces}
 
@@ -149,11 +146,42 @@ Minor changes were made to refer to Rust's
 \texttt{instruction\_address\_space} for all pointers, instead of only
 pointers to types.
 
+
 \subsection{Manipulation of pointers}
 \label{sec:impl-manipulation}
 
 \subsubsection{Differences}
+\clar{Is this really a problem? Known: using iterators causes
+compilation (with optimisations) to fail due to (pointer manipulation?).
+But I can no longer compile with optimisations anyway---out of scope.
+Worth noting as a current blocker.}
 
-\wip{e.g.~memchr}
+\wip{Consider showing MIPS generated code: prove roundtrip exists}
+
+CHERI does not support round-tripping between pointers and integers.
 
 \subsubsection{Changes required}
+This is not a current problem for this project, as it does not attempt
+to compile the core libraries with optimisations.
+While the core libraries do not attempt to dereference pointers cast
+from integers, built-in slice iterators attempt this \wip{evidence?}.
+
+Note that Rust is considering implementing the integer-pointer cast
+model proposed by Kang et
+al.~\cite{kang-intptrcast,rust-miri-intptrcast}
+\footnote{To be clear, this does \emph{not} suggest that pointers and
+integers will be freely cast and used. However, it highlights that
+Rust's memory model is very much under debate and that future
+optimisations in the Rust compiler may invalidate this section.}
+
+
+\subsection{Targeting CHERI}
+
+\subsubsection{Differences}
+CHERI is an extension to the big-endian 64-bit MIPS architecture.
+A target specification was added to the Rust compiler, specifying the
+pure-capability ABI, and the CPU.
+
+\subsubsection{Changes required}
+Modify Rust compiler to pass on target information such as
+\texttt{purecap} ABI and use the \texttt{cheri128} CPU.
