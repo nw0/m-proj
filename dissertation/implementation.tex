@@ -65,7 +65,7 @@ modifications required to compile Rust for CHERI.
 \begin{itemize}
     \item The inability to arbitrarily manipulate pointers through
     unsafe code. In particular, certain routines in the standard library
-    will not compile.
+    will not compile. \wip{such as memchr}
     \item The impossibility of indexing by pointer-width sized integers,
     or using these in operations such as \texttt{ptrtoint}.
     This is entirely consistent with LLVM, but the Rust compiler assumes
@@ -92,6 +92,9 @@ As Section~\ref{sec:impl-usize} shows, it was not possible to use a
 
 \subsection{Definitions of pointers and indices}
 \label{sec:impl-usize}
+
+\clar{Move this to new section? This is a major issue blocking the
+porting of Rust to CHERI.}
 
 \subsubsection{Differences}
 In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
