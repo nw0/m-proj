@@ -7,10 +7,10 @@
 \clar{What is relevant? Most capability/fat pointer literature discusses
 C, where I'm very much focussed on a `safe' language.}
 
-\wip{Related work}
-CHERI-JNI, CHERI in C.
-Fat pointers/capabilities in C.
-Capabilities on any other safe language?
+\wip{rephrase} This chapter provides an overview of capabilities, CHERI,
+and safe languages with capabilities.
+Rust is discussed in Chapter~\ref{ch:rust}.
+
 
 \section{Capabilities}
 A \emph{capability} is the address of an entity combined with the
@@ -39,3 +39,18 @@ privilege and intentional use, to mitigate unintended vulnerabilities.
 Its hybrid approach enables capability code to be used alongside
 non-capability code, allowing a concentration on higher-risk code and
 libraries~\cite{cheri-v6}.
+
+
+\section{Survey of related work}
+\label{sec:bg-related}
+
+\wip{Overview}
+Primarily examining safe languages and capabilities: there has been a
+lot of work on C and capabilities.
+
+CHERI-JNI, CHERI in C.
+Fat pointers/capabilities in C.
+Capabilities on any other safe language?
+
+\clar{How much subtlety is required in the following sections? At
+present, none is attempted.}
