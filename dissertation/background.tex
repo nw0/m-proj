@@ -48,6 +48,9 @@ libraries~\cite{cheri-v6}.
 Primarily examining safe languages and capabilities: there has been a
 lot of work on C and capabilities.
 
+\clar{Seems everybody stops short of actually implementing Java on a
+capability platform.}
+
 CHERI in C.
 Fat pointers/capabilities in C.
 Capabilities on any other safe language?
@@ -55,6 +58,20 @@ Capabilities on any other safe language?
 \clar{How much subtlety is required in the following sections? At
 present, none is attempted.}
 
+\todo{Hardbound? This would be a nice contrast to CHERI, but isn't
+strongly related. Can I spare the wordcount?}
+
+\todo{Caja: capabilities for a subset of javascript. `Object
+Capabilities and Isolation of Untrusted Web Applications', 2010.
+No discussion of optimisation, but relevant to the Rust angle.}
+
+\todo{J-Kernel: 1999, isolation of web applications (server-side).
+Little discussion of overheads (``small''), or hardware; left to future
+work.}
+
+\todo{Peaks: capability model for Java. Primarily JNI, but ostensibly
+geared for library use which may not include JNI.
+\url{http://www.thewhitespace.de/projects/peaks/}}
 
 \subsection{CHERI and the Java Native Interface}
 \label{sec:bg-cheri-jni}
