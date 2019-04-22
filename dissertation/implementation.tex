@@ -61,17 +61,6 @@ Rust compiler.
 This section documents these differences, their implications, and the
 modifications required to compile Rust for CHERI.
 
-\wip{remove list}
-\begin{itemize}
-    \item The inability to arbitrarily manipulate pointers through
-    unsafe code. In particular, certain routines in the standard library
-    will not compile. \wip{such as memchr}
-    \item The impossibility of indexing by pointer-width sized integers,
-    or using these in operations such as \texttt{ptrtoint}.
-    This is entirely consistent with LLVM, but the Rust compiler assumes
-    otherwise.
-\end{itemize}
-
 
 \subsection{Pointer width of 128 bits}
 \label{sec:impl-width}
@@ -89,9 +78,16 @@ type from LLVM as suitable for this value.
 As Section~\ref{sec:rust-usize} shows, it was not possible to use a
 64-bit \texttt{usize}, with its own implications.
 
-\wip{128 not supported because of const\_eval}
-
-\wip{memset.i128}
+Additionally, the Rust compiler instructs LLVM to generate
+pointer conversions to and from \texttt{i128}s; only 64-bit conversions
+are permitted.
+Likewise, intrinsics such as \texttt{memset} are indexed using
+\texttt{i128}s by Rust.
+Extra instructions were inserted to extend or truncate integer types
+around these operations.
+It is unclear if these could be optimised, but resolving the
+pointer-width and index tension (Section~\ref{sec:rust-usize}) should
+resolve this.
 
 
 \subsection{Address spaces}
