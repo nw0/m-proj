@@ -44,16 +44,60 @@ This suggests there may be some room for optimisation.
 \subsection{Object ownership and move semantics}
 \label{sec:rust-borrow}
 
+\clar{So what?}
+
 One of the guarantees Rust offers is that Safe Rust should never lead to
 dangling pointers or memory leaks.
-In contrast to other languages, it achieves this without a garbage
-collector.
-Instead, the compiler uses borrow and move semantics to determine object
-lifetimes and ownership, preventing misuse of references.
+Yet it does not have a garbage collector, or expose memory management.
+Instead, the compiler couples strict ownership analysis with borrow and
+move semantics to determine the lifetime of an object.
+As such, some programs which avoid use-after-free or other memory safety
+bugs may be semantically invalid Rust.
 
-\wip{This isn't strictly true? Knot-tying, Rc, mem::forget}
+\begin{figure}[ht]
+\begin{lstlisting}
+// Lifetime ends; `v` becomes uninitialised in caller.
+fn take_ownership(v: Vec<i32>)
 
-\todo{Provenance}
+// Caller receives a vector, which may be distinct from the original.
+fn take_and_return(v: Vec<i32>) -> Vec<i32>
+
+// `borrow` receives a reference to `v` which it cannot mutate.
+// `v` is defined for the caller afterward; it should be unchanged.
+fn borrow(v: &Vec<i32>)
+
+// `borrow_mutably` receives a mutable reference to `v`.
+// `v` is defined for the caller afterward; it may be changed.
+fn borrow_mutably(v: &mut Vec<i32>)
+\end{lstlisting}
+\caption{\wip{Example could be better} Function signatures for passing a
+\texttt{Vec}, \texttt{v} to a function. To prevent data races, only one
+code block can have a mutable reference to a variable at a time.}
+\label{lst:rust-ownership}
+\end{figure}
+
+Instead of pointers, a function in Safe Rust will either take ownership
+of an object, or borrow it either immutably or mutably.
+Figure~\ref{lst:rust-ownership} shows some function signatures for
+moving ownership or borrowing.
+In contrast to C, the emphasis is not on access, but the nature of the
+access.\footnote{In Rust, references represent possession of an object,
+rather than the ability to access it.}
+As such, pointers cannot be casually duplicated\footnote{In Safe Rust.}
+to cause data races or temporal unsoundness generally \wip{remove?}.
+
+Ownership does not guarantee spatial safety on its own.
+However, it makes ownership explicit and \wip{provenance? clear}.
+\wip{More}
+
+\wip{Unclear?}
+An exception to the memory leak guarantee is the exposure of
+\texttt{mem::forget} in the core library as a safe function.
+This allows an object's lifetime to end without deallocating it,
+avoiding double-frees in circular data structures.
+This can create a leak, as can a knot-tied reference-counted data
+structure, though knot-tying is made difficult in light of the single
+mutable reference rule.
 
 
 \subsection{Optimisation by eliding checks}
