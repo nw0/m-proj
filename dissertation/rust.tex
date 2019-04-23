@@ -101,6 +101,7 @@ mutable reference rule.
 
 
 \subsection{Optimisation by eliding checks}
+\label{sec:rust-elision}
 
 \wip{para too long}
 For spatial safety, Rust also implements runtime bounds checks to
@@ -122,8 +123,6 @@ the standard library.
 \subsection{Unsafe Rust}
 \label{sec:rust-unsafe}
 
-\wip{Unsafety isn't unusual, many langs have escape hatches...}
-
 Another area of optimisation is the use of \emph{Unsafe} Rust, which
 permits several additional actions~\cite{rust-unsafe-powers}:
 
@@ -141,11 +140,13 @@ It's important to note that unsafety need not necessarily come from
 the \texttt{unsafe} code block itself, but from the handling of inputs
 and outputs to the unsafe block.
 
-Many unsafe optimisations in the Rust compiler take the form of
-unchecked accesses: the suppression of unneeded or repeated checks, such
-as slice accesses into objects of known size and layout.
-Another example is arbitrarily indexing into a (Unicode) string, where
-the chosen index is known to be a character boundary.
+As discussed in Section~\ref{sec:rust-elision}, unsafe optimisations in
+the Rust compiler may take the form of unchecked accesses or conversions
+known to be safe.
+Another example would be to override the default allocation strategy
+when initialising a vector with data: there is no need to fill the
+allocated space with zeroes or poison values if it is guaranteed to be
+overwritten before access.
 
 
 \subsection{Definitions of pointers and indices}
