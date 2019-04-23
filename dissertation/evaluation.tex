@@ -110,10 +110,17 @@ making an attack plausible, if not possible.
 
 \wip{The other microbenchmark?}
 
-\subsection{Unsafe semantics}
 
-Sealed capabilities, FFI and capabilities---maybe some FFI code can be
-made safe!
+\subsection{Safety of FFI calls}
+\todo{As explored in CHERI-JNI, but Rust checks structs at runtime.
+Discuss sealed capabilities here.}
+
+
+\subsection{Leaking and circular data structures}
+\todo{\url{https://doc.rust-lang.org/nomicon/leaking.html} See Rc.}
+
+
+\subsection{Unsafe semantics}
 Not everything is unsafe any more? Dereferencing arbitrary pointers now
 guaranteed to crash rather than leak.
 
@@ -121,13 +128,17 @@ guaranteed to crash rather than leak.
 \section{Benefits to CHERI as a Rust target}
 \label{sec:eval-cheri}
 
-\clar{Why Rust is a natural choice for CHERI?}
+\clar{Why Rust is a natural choice for CHERI? Essentially, CHERI is less
+likely to break Rust code than C code? Is this really a problem?
+Provenance issues?}
 
 \subsection{Borrow semantics and object lifetimes}
 Rust's semantics mean that programmers are less inclined to do
 interesting pointer manipulations or storage, so porting might be easy.
 On the other hand, CTSRD previously discovered that most C code isn't
 that bad in this regard?
+
+Ownership: revocation?
 
 Better defined semantics? Less room for miscompilation?
 If Rust is already fast, will CHERI make it even faster -> natural

@@ -24,6 +24,10 @@ current CHERI implementation, with changes to the MIPS backend to
 support CHERI targets, and generic code to handle
 capabilities~\cite{cheri-prog-guide}.
 
+\subsubsection{Bugs in the LLVM backend}
+\todo{Rust advertises this in general; I also found some errors from
+unusual code paths---generally to do with i128s}
+
 
 \section{Strategy}
 \label{sec:impl-what}
@@ -145,3 +149,7 @@ pure-capability ABI, and the CPU.
 \subsubsection{Changes required}
 Modify Rust compiler to pass on target information such as
 \texttt{purecap} ABI and use the \texttt{cheri128} CPU.
+
+
+\section{Other challenges and incompatibilities}
+\clar{Correct section to talk about 64-bit conversion?}
