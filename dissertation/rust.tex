@@ -102,20 +102,21 @@ mutable reference rule.
 
 \subsection{Optimisation by eliding checks}
 
-\clar{Move to evaluation? Need to show that LLVM takes away simple
-bounds checks. Nevertheless, mention iterators? Discussed in next
-section, with unchecked accesses.}
-
-With checks preventing out-of-bounds accesses, for instance, Rust might
-initially appear to harbour large overheads.
-Indeed, for code compiled in \emph{debug mode with assertions}, all
-checks are performed, from checks on bounds to those on integer
-overflows.
-However, with optimisations enabled, many of these checks are elided:
-for instance, array sizes are fixed at compile time, and most accesses
-take the form of iteration, making a check redundant.
-In this way, a number of checks are removed either by the Rust compiler
-or LLVM.
+\wip{para too long}
+For spatial safety, Rust also implements runtime bounds checks to
+prevent out-of-bounds accesses.
+This may appear to harbour large overheads, although with optimisations
+many checks are elided (Section \wip{eval, somewhere}).
+Further, these only apply for random indexing: the built-in iterators
+are written to avoid bounds-checking altogether.\footnote{\wip{rm?}
+Bounds checks are frequently avoided using the (unsafe)
+\texttt{get\_unchecked} method implemented for the \texttt{SliceIndex}
+trait. Other `unchecked' methods exist, for string conversions etc.}
+This avoids redundant checks, whether they are duplicated or simply
+known to be within bounds.
+Naturally, there is scope for programmer error here:
+Section~\wip{microbenchmark capacity} discusses an off-by-one error in
+the standard library.
 
 
 \subsection{Unsafe Rust}
