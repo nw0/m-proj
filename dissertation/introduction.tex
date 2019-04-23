@@ -40,15 +40,19 @@ which are believed to be exploited, including:
 \begin{itemize}
     \item Standard library: buffer overflow when pushing to a
     \texttt{VecDeque}, CVE-2018-1000657~\cite{cve-push,rust-issue-push}.
+    Preventable with CHERI (Section~\wip{x}).
     \item Standard library: buffer overflow in slice \texttt{repeat},
     CVE-2018-1000810~\cite{cve-repeat,rust-advisory-repeat,rust-pr-slice}.
+    Preventable with CHERI (Section~\wip{x}).
     \item The \texttt{rustdoc} CVE. Arbitrary code execution on host?
     \item Standard library: attempt to read uninitialised memory after
     appending to a \texttt{VecDeque}~\cite{rust-issue-deque-append}.
     \item Standard library: unsafe \texttt{Vec} method creates
     multiple mutable references~\cite{rust-issue-vec-mut}.
+    Potentially preventable with CHERI? \wip{section?}.
     \item Compiler bug: uncaught move of an implicitly-borrowed
     immutable value~\cite{rust-issue-match-borrow}.
+    Potentially preventable with CHERI \wip{section?}.
     \item \wip{move} Overflows have caught bugs
     \url{https://huonw.github.io/blog/2016/04/myths-and-legends-about-integer-overflow-in-rust/}
 \end{itemize}
