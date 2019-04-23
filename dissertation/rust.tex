@@ -40,9 +40,27 @@ This suggests there may be some room for optimisation.
 
 \wip{Probably a lot more to say}
 
-\subsection{Optimisation opportunity}
 
-\clar{Move to evaluation?}
+\subsection{Object ownership and move semantics}
+\label{sec:rust-borrow}
+
+One of the guarantees Rust offers is that Safe Rust should never lead to
+dangling pointers or memory leaks.
+In contrast to other languages, it achieves this without a garbage
+collector.
+Instead, the compiler uses borrow and move semantics to determine object
+lifetimes and ownership, preventing misuse of references.
+
+\wip{This isn't strictly true? Knot-tying, Rc, mem::forget}
+
+\todo{Provenance}
+
+
+\subsection{Optimisation by eliding checks}
+
+\clar{Move to evaluation? Need to show that LLVM takes away simple
+bounds checks. Nevertheless, mention iterators? Discussed in next
+section, with unchecked accesses.}
 
 With checks preventing out-of-bounds accesses, for instance, Rust might
 initially appear to harbour large overheads.
@@ -54,6 +72,7 @@ for instance, array sizes are fixed at compile time, and most accesses
 take the form of iteration, making a check redundant.
 In this way, a number of checks are removed either by the Rust compiler
 or LLVM.
+
 
 \subsection{Unsafe Rust}
 \label{sec:rust-unsafe}
@@ -82,19 +101,6 @@ unchecked accesses: the suppression of unneeded or repeated checks, such
 as slice accesses into objects of known size and layout.
 Another example is arbitrarily indexing into a (Unicode) string, where
 the chosen index is known to be a character boundary.
-
-
-\subsection{Move semantics and borrowing}
-\label{sec:rust-borrow}
-
-One of the guarantees Rust offers is that Safe Rust should never lead to
-dangling pointers or memory leaks.
-In contrast to other languages, it achieves this without a garbage
-collector.
-Instead, the compiler uses borrow and move semantics to determine object
-lifetimes and ownership, preventing misuse of references.
-
-\wip{This isn't strictly true? Knot-tying, Rc, mem::forget}
 
 
 \subsection{Definitions of pointers and indices}
