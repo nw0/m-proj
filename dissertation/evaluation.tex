@@ -29,6 +29,8 @@ The key points of this evaluation are:
     Generally, are safe languages easier to port to CHERI? Do they
     derive more benefit from capabilities than unsafe languages?
     (Section~\ref{sec:eval-cheri})
+    \item Lessons on porting a `safe' language to CHERI, or capability
+    platforms in general. \wip{Wrong chapter?}
 \end{itemize}
 
 
@@ -132,16 +134,15 @@ guaranteed to crash rather than leak.
 likely to break Rust code than C code? Is this really a problem?
 Provenance issues?}
 
+\todo{CHERI seems to focus on spatial safety. What about revocation and
+temporal safety? How helpful are Rust lifetimes and ownership?}
+
 \subsection{Borrow semantics and object lifetimes}
 Rust's semantics mean that programmers are less inclined to do
 interesting pointer manipulations or storage, so porting might be easy.
 On the other hand, CTSRD previously discovered that most C code isn't
 that bad in this regard?
 
-Ownership: revocation?
-
 Better defined semantics? Less room for miscompilation?
 If Rust is already fast, will CHERI make it even faster -> natural
 choice? Since CHERI adds smaller overheads than e.g.~C.
-
-Read the CHERI-JNI paper for inspiration.
