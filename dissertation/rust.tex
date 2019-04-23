@@ -40,6 +40,8 @@ This suggests there may be some room for optimisation.
 
 \wip{Probably a lot more to say}
 
+\clar{Helpful to delineate ``differences'' and ``implications''?}
+
 
 \subsection{Object ownership and move semantics}
 \label{sec:rust-borrow}
@@ -152,14 +154,12 @@ overwritten before access.
 \subsection{Definitions of pointers and indices}
 \label{sec:rust-usize}
 
-\wip{post-move rewrite}
-
 \subsubsection{Differences}
 In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
 conventionally equivalent to C's \texttt{uintptr\_t}, which \emph{may
 not be equivalent to \texttt{size\_t}}~\cite{rust-rfc-isize}.
-The width of a \texttt{usize} is derived from the data layout's pointer
-width, which is 128 bits for a CHERI capability.
+The width of a \texttt{usize} derives from the data layout's pointer
+width, 128 bits for a CHERI capability.
 Crucially, \texttt{usize} is used as the index size in Rust, for
 indexing into arrays, structs, and all objects, and is hence passed to
 LLVM instructions such as \texttt{getelementptr}.
@@ -172,7 +172,13 @@ However, not all bit widths for the \texttt{memcpy} intrinsic are
 supported by all targets~\cite{llvm-langref}, and CHERI supports a bit
 width of 64 but not 128.
 
-This is a straightforward change, by truncating the index (\texttt{len})
+I consider this an implementation detail, as we can index these
+intrinsics by sizes other than \texttt{usize}.
+However, changing the Rust compiler to recognise different index sizes
+from the pointer width is a non-trivial change; my attempts to do so
+resulted in a non-functional compiler.
+
+A straightforward workaround is to truncate the index (\texttt{len})
 variable to 64 bits before every such operation.
 This is problematic for two reasons.
 First, such a change is prone to leaving out some intrinsics which may
