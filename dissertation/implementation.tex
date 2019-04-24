@@ -55,7 +55,7 @@ where capabilities are not immediately relevant.
 \wip{So?}
 
 Some modification of these libraries was needed for them to work, as
-Section~\ref{sec:impl-divergences} details. \wip{So?}
+\Cref{sec:impl-divergences} details. \wip{So?}
 
 
 \section{Differences arising from the CHERI target}
@@ -75,12 +75,12 @@ Under pure capability mode in CHERI128, all pointers are 128-bit wide
 capabilities.
 The Rust compiler has built-in support for 16-, 32-, and 64-bit
 pointers, through compile-time macros; these are primarily used to
-determine the \texttt{usize} (Section~\ref{sec:rust-usize}).
+determine the \texttt{usize} (\Cref{sec:rust-usize}).
 
 \subsubsection{Implications and changes}
 This meant defining a \texttt{usize}, and exposing a 128-bit integer
 type from LLVM as suitable for this value.
-As Section~\ref{sec:rust-usize} shows, it was not possible to use a
+As \Cref{sec:rust-usize} shows, it was not possible to use a
 64-bit \texttt{usize}, with its own implications.
 
 Additionally, the Rust compiler instructs LLVM to generate
@@ -91,7 +91,7 @@ Likewise, intrinsics such as \texttt{memset} are indexed using
 Extra instructions were inserted to extend or truncate integer types
 around these operations.
 It is unclear if these could be optimised, but resolving the
-pointer-width and index tension (Section~\ref{sec:rust-usize}) should
+pointer-width and index tension (\Cref{sec:rust-usize}) should
 resolve this.
 
 

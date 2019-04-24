@@ -22,7 +22,7 @@ rather than \texttt{int}, and \texttt{usize} for array indices), and the
 built-in test harness.}
 
 For any future effort in porting Rust to CHERI, attention \emph{must} be
-paid to pointer width and indices (Section~\ref{sec:rust-usize}).
+paid to pointer width and indices (\Cref{sec:rust-usize}).
 \emph{Currently, this effectively prevents Rust code from compiling
 properly for CHERI.}
 
@@ -81,7 +81,7 @@ code block can have a mutable reference to a variable at a time.}
 
 Instead of pointers, a function in Safe Rust will either take ownership
 of an object, or borrow it either immutably or mutably.
-Figure~\ref{lst:rust-ownership} shows some function signatures for
+\Cref{lst:rust-ownership} shows some function signatures for
 moving ownership or borrowing.
 In contrast to C, the emphasis is not on access, but the nature of the
 access.\footnote{In Rust, references represent possession of an object,
@@ -143,7 +143,7 @@ It's important to note that unsafety need not necessarily come from
 the \texttt{unsafe} code block itself, but from the handling of inputs
 and outputs to the unsafe block.
 
-As discussed in Section~\ref{sec:rust-elision}, unsafe optimisations in
+As discussed in \Cref{sec:rust-elision}, unsafe optimisations in
 the Rust compiler may take the form of unchecked accesses or conversions
 known to be safe.
 Another example would be to override the default allocation strategy

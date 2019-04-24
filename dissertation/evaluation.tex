@@ -7,7 +7,7 @@
 \section{Objectives}
 This project evaluates whether Rust is particularly suited to running on
 CHERI.
-Chapter~\ref{ch:impl} defined the scope of this evaluation, and
+\Cref{ch:impl} defined the scope of this evaluation, and
 discussed the compromises that were made to compile Rust's core
 libraries for CHERI.
 
@@ -17,7 +17,7 @@ The key points of this evaluation are:
     \item What benefits does running on a CHERI architecture have for Rust?
     More concretely, how convincing are the safety and performance
     improvements as opposed to other platforms such as x86 and MIPS?
-    (Section~\ref{sec:eval-rust})
+    (\Cref{sec:eval-rust})
     \item Can the safety guarantees and boundaries of unsafe code be
     changed with the use of capabilities, or: do capabilities generate
     different definitions of unsafe code?
@@ -29,7 +29,7 @@ The key points of this evaluation are:
     translate to capabilities?
     Generally, are safe languages easier to port to CHERI? Do they
     derive more benefit from capabilities than unsafe languages?
-    (Section~\ref{sec:eval-cheri})
+    (\Cref{sec:eval-cheri})
     \item Lessons on porting a `safe' language to CHERI, or capability
     platforms in general. \wip{Wrong chapter?}
 \end{itemize}
@@ -50,7 +50,7 @@ Compiler likely/unlikely hints (e.g.~panic) doesn't do anything for optimised co
 \wip{Buffer overflows and microbenchmarks}
 
 One class of attacks that Rust aims to mitigate is buffer overflows.
-In Safe Rust, bounds checks are inserted (Figure~\ref{lst:rust-index})
+In Safe Rust, bounds checks are inserted (\Cref{lst:rust-index})
 to prevent out-of-bounds accesses and writes.
 
 \begin{figure}[ht]
@@ -68,11 +68,11 @@ arrays and vectors.}
 \label{lst:rust-index}
 \end{figure}
 
-However, as Section~\ref{sec:rust-unsafe} discusses, checks are
+However, as \Cref{sec:rust-unsafe} discusses, checks are
 sometimes omitted for performance.
 An example of this is the \texttt{repeat} function on slices, which
 returns a vector containing a slice repeated
-(Figure~\ref{lst:slice-repeat}).
+(\Cref{lst:slice-repeat}).
 Unfortunately, this particular optimisation contained a flaw: a buffer
 overflow occurs if the length of returned vector would exceed the
 target's \texttt{usize} (essentially, \texttt{size\_t}).
