@@ -45,25 +45,34 @@ One contribution of this project is an extension of the Rust compiler to
 target FreeBSD on CHERI128.
 This extension exclusively targets \emph{pure capability mode}, where
 all pointers are capabilities~\cite{cheri-prog-guide}.
+This avoids the hurdle of dealing with multiple LLVM address spaces and
+pointer widths, not anticipated in the Rust compiler
+(\Cref{sec:impl-addrspace}).
 
 In order to evaluate \wip{(evaluate what?)} Rust on CHERI, I identified
-a minimal necessary subset of the standard library:
+a minimal necessary subset of the standard library, listed below.
+Not included is the bulk of the Rust standard library, which provides
+filesystem and network support, general IO, interfaces to operating
+system synchronisation and threading, and others.
+These were deemed not to have critical significance to capabilities in
+standalone Rust programs.
 
 \begin{description}
     \item[\texttt{libcore}] for key definitions of traits and types,
     typechecking, compiler intrinsics, and other fundamental operations.
+    It also includes support for calling to foreign function interfaces
+    (FFI), unicode and number formatting, etc.
+    It could be thought of as a modern version of the standard C
+    headers, apart from the core definitions it provides, which would be
+    built into a compiler.
     \item[\texttt{liballoc}] for heap allocation and built-in data
     structures and operations on them.
     \texttt{liballoc} also included two (patched) vulnerabilities in the
     Rust standard library, used in the evaluation (Section~\wip{x}).
 \end{description}
 
-The rest of the standard library includes \wip{helpful things e.g. IO},
-where capabilities are not immediately relevant.
-\wip{So?}
-
-Some modification of these libraries was needed for them to work, as
-\Cref{sec:impl-divergences} details. \wip{So?}
+\Cref{sec:impl-divergences} details modifications to the compiler and
+these libraries required to compile Rust programs.
 
 
 \section{Differences arising from the CHERI target}
@@ -104,6 +113,7 @@ resolve this.
 
 
 \subsection{Address spaces}
+\label{sec:impl-addrspace}
 
 \subsubsection{Differences}
 There is no support in the Rust compiler to use LLVM address spaces
