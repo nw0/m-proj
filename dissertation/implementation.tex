@@ -124,14 +124,16 @@ pointers to types.
 \label{sec:impl-manipulation}
 
 \subsubsection{Differences}
-\clar{Is this really a problem? Known: using iterators causes
-compilation (with optimisations) to fail due to (pointer manipulation?).
-But I can no longer compile with optimisations anyway---out of scope.
-Worth noting as a current blocker.}
 
 \wip{Consider showing MIPS generated code: prove roundtrip exists}
 
 CHERI does not support round-tripping between pointers and integers.
+Rust's core library does not attempt to do this, but the generated
+(optimised) code for iterators may attempt unsupported pointer
+manipulation.\footnote{This may be partially due to pointer width and
+index size inconsistencies, \Cref{sec:rust-usize}.}
+As this work is only concerns unoptimised compilation, this note is
+primarily intended for future implementers.
 
 \subsubsection{Changes required}
 This is not a current problem for this project, as it does not attempt
