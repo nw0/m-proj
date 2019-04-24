@@ -114,9 +114,24 @@ guaranteed to crash rather than leak.
 
 \todo{Write something here?}
 
+\todo{Structure the microbenchmarks: cause, evidence?, lessons?/how CHERI helps}
+
 
 \subsection{Pushing to a \texttt{VecDeque}: off-by-one error leads to out-of-bounds write}
 \label{sec:eval-micro-push}
+
+Rust's \texttt{VecDeque} is a circular data structure stored on a
+buffer.
+When this buffer is expanded, elements stored at its (former) end must
+be moved to its new end.
+This error was caused by incorrect use of the public capacity, accessed
+by \texttt{self.capacity()}, instead of the private (raw) capacity of
+the buffer, \texttt{self.cap()}.
+Subsequently, the pointer to the deque's \texttt{head} would point to
+the address immediately after the buffer, rather than its start.
+
+\todo{This can be solved by not getting confused, assertion on the
+copying helper (potentially slow), deque indexing instead of pointers.}
 
 
 \subsection{Slice \texttt{repeat}: integer overflow leads to buffer overflow}
