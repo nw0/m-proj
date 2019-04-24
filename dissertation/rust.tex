@@ -1,4 +1,5 @@
-\documentclass[dissertation.tex]{subfile}
+\documentclass[dissertation.tex]{subfiles}
+\begin{document}
 
 \chapter{The Rust Programming Language}
 \label{ch:rust}
@@ -187,3 +188,5 @@ Second, use of 128-bit integers is slow on CHERI, and unnecessary
 casting also generates unnecessary instructions.
 To target CHERI properly, Rust \emph{must} support pointer widths larger
 than the index size.
+
+\end{document}
