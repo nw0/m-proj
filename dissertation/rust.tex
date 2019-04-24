@@ -142,6 +142,9 @@ safe Rust.
 It's important to note that unsafety need not necessarily come from
 the \texttt{unsafe} code block itself, but from the handling of inputs
 and outputs to the unsafe block.
+\Cref{sec:eval-micro-repeat} shows a bug in a built-in data structure
+caused by incorrect computation before an \texttt{unsafe} block, leading
+to a buffer overflow.
 
 As discussed in \Cref{sec:rust-elision}, unsafe optimisations in
 the Rust compiler may take the form of unchecked accesses or conversions

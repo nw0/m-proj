@@ -63,6 +63,32 @@ overheads.}
 \section{Benefits to Rust from CHERI capabilities}
 \label{sec:eval-rust}
 
+\subsection{Traditional vulnerabilities in Rust}
+\label{sec:eval-rust-vulns}
+
+\todo{These are discussed in
+\Cref{sec:eval-micro-repeat,sec:eval-micro-push}.}
+
+One class of attacks that Rust aims to mitigate is buffer overflows.
+In Safe Rust, bounds checks are inserted (\Cref{lst:rust-index})
+to prevent out-of-bounds accesses and writes.
+
+\begin{figure}[ht]
+\begin{lstlisting}
+impl<T> SliceIndex<[T]> for usize {
+    #[inline]
+    fn index(self, slice: &[T]) -> &T {
+        // N.B., use intrinsic indexing
+        &(*slice)[self]
+    }
+}
+\end{lstlisting}
+\caption{\wip{rewrite; asm} Rust's intrinsic indexing, which applies to
+arrays and vectors.}
+\label{lst:rust-index}
+\end{figure}
+
+
 \subsection{Removal of bounds checks}
 Look at optimised MIPS code and performance---not much to be gained?
 But: no unwind? \wip{Unwind by handling hw exception}
@@ -84,32 +110,19 @@ guaranteed to crash rather than leak.
 
 
 \section{Microbenchmarks}
+\label{sec:eval-micro}
 
-\subsection{Traditional vulnerabilities in Rust}
-\label{sec:rust-vulns}
+\todo{Write something here?}
 
-\wip{Buffer overflows and microbenchmarks}
 
-One class of attacks that Rust aims to mitigate is buffer overflows.
-In Safe Rust, bounds checks are inserted (\Cref{lst:rust-index})
-to prevent out-of-bounds accesses and writes.
+\subsection{Pushing to a \texttt{VecDeque}: off-by-one error leads to out-of-bounds write}
+\label{sec:eval-micro-push}
 
-\begin{figure}[ht]
-\begin{lstlisting}
-impl<T> SliceIndex<[T]> for usize {
-    #[inline]
-    fn index(self, slice: &[T]) -> &T {
-        // N.B., use intrinsic indexing
-        &(*slice)[self]
-    }
-}
-\end{lstlisting}
-\caption{\wip{rewrite; asm} Rust's intrinsic indexing, which applies to
-arrays and vectors.}
-\label{lst:rust-index}
-\end{figure}
 
-However, as \Cref{sec:rust-unsafe} discusses, checks are
+\subsection{Slice \texttt{repeat}: integer overflow leads to buffer overflow}
+\label{sec:eval-micro-repeat}
+
+As \Cref{sec:rust-unsafe} discusses, checks are
 sometimes omitted for performance.
 An example of this is the \texttt{repeat} function on slices, which
 returns a vector containing a slice repeated
@@ -150,9 +163,7 @@ segmentation fault.
 Nonetheless, it is certainly not thread-safe, and Rust does target
 platforms with 16-bit \texttt{usize}, i.e.~at most \(65,536\) elements,
 making an attack plausible, if not possible.
-\wip{What values would work?}
-
-\wip{The other microbenchmark?}
+\todo{What values would work?}
 
 
 \section{Porting safe languages to capability architectures}
