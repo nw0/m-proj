@@ -4,9 +4,6 @@
 \chapter{Compiling Rust for CHERI}
 \label{ch:impl}
 
-\wip{Problems, details}
-Optimisations not possible, \texttt{no\_std}.
-
 
 \section{Overview}
 \wip{What is this chapter for?}
@@ -73,6 +70,10 @@ standalone Rust programs.
 
 \Cref{sec:impl-divergences} details modifications to the compiler and
 these libraries required to compile Rust programs.
+
+Finally, optimisations are \emph{not} used.
+\Cref{sec:impl-manipulation} on pointer manipulation discusses the
+reasons for this decision.
 
 
 \section{Differences arising from the CHERI target}
