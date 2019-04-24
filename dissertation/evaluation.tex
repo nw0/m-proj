@@ -38,22 +38,26 @@ The key points of this evaluation are:
 \section{Benefits to CHERI as a Rust target}
 \label{sec:eval-cheri}
 
-\clar{Why Rust is a natural choice for CHERI? Essentially, CHERI is less
-likely to break Rust code than C code? Is this really a problem?
-Provenance issues?}
-
+\subsection{Complementary safety properties}
 \todo{CHERI seems to focus on spatial safety. What about revocation and
 temporal safety? How helpful are Rust lifetimes and ownership?}
 
+
 \subsection{Borrow semantics and object lifetimes}
-Rust's semantics mean that programmers are less inclined to do
+\todo{Discuss provenance analysis and revocation.}
+
+
+\subsection{Stricter semantics and reduced undefined behaviour}
+\todo{Rust's semantics mean that programmers are less inclined to do
 interesting pointer manipulations or storage, so porting might be easy.
 On the other hand, CTSRD previously discovered that most C code isn't
-that bad in this regard?
+that bad in this regard?}
 
-Better defined semantics? Less room for miscompilation?
-If Rust is already fast, will CHERI make it even faster -> natural
-choice? Since CHERI adds smaller overheads than e.g.~C.
+
+\subsection{Comparable performance to C}
+\todo{Faster than other managed languages. See Debian's benchmarks
+comparing various languages, and note that capabilities might reduce
+overheads.}
 
 
 \section{Benefits to Rust from CHERI capabilities}
