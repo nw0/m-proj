@@ -80,14 +80,24 @@ This prevents abuse of pointers and internal addresses.
 Just as using capabilities in C programs can prevent unintended operations on memory, applying capabilities to unsafe Rust code would provide an additional layer of safety, guarding against undiscovered vulnerabilities and potentially shrinking the set of unsafe operations.
 
 
-\section{Intended contributions}
+\section{Contributions}
 \label{sec:intro-contrib}
+
+The main objective of this project was to evaluate the utility of
+porting Rust to CHERI.
+In summary, the contributions of this work are:
 
 \begin{itemize}
     \item Analysis on \wip{interactions and benefits} of Rust and capabilities.
-    \item Patches to the Rust compiler (1.35) with
-    \texttt{cheri-unknown-freebsd} (CHERI128) as a (limited) working
-    target.
+    \item Patches to the Rust compiler (1.35), providing
+    \texttt{cheri-unknown-freebsd} (CHERI128) as a working target.
+    This compiles the Rust core library without optimisations.
+    \item An overview of the relevant concerns for future implementers
+    porting Rust to CHERI. \wip {rephrase}
+    \item An evaluation of the benefits and detriments porting a safe
+    language to CHERI, and capability architectures in general.
+    This covers the benefits for the language, the architecture, and how
+    a language may be enriched by capabilities.
     \item Microbenchmarks demonstrating two potential vulnerabilities in
     the Rust standard library, functional on x86 but prevented by CHERI.
     \item Microbenchmarks of potential exploits prevented by \emph{both}
@@ -97,8 +107,7 @@ Just as using capabilities in C programs can prevent unintended operations on me
 \end{itemize}
 
 This work is \emph{not} intended to port Rust to CHERI.
-Rather, it illustrates and quantifies the benefit of CHERI capabilities
-to a safe language, rather than a full implementation of such.
-See proposal.
+Rather, it illustrates the benefit of CHERI capabilities to a safe
+language, rather than providing a full implementation.
 
 \end{document}
