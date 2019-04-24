@@ -1,22 +1,15 @@
 \documentclass[11pt,a4paper]{report}
+\RequirePackage[l2tabu,orthodox]{nag}
+
+\usepackage{subfiles}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{tgpagella}
-\usepackage{mathpazo}
-\usepackage{inconsolata}
-\usepackage{microtype}
 
-\usepackage{fullpage}
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks,
-    linkcolor={red!50!black},
-    citecolor={red!65!black},
-    urlcolor={blue!75!black}
-}
-\usepackage{afterpage}
+\usepackage{amssymb}
+\usepackage{amsmath}
+% \usepackage{isomath}
+% \usepackage{mathtools}
 
 \usepackage{color}
 \usepackage[dvipsnames]{xcolor}
@@ -33,14 +26,29 @@
                   r12,r12d,r12w,r12b,r13,r13d,r13w,r13b, %
                   r14,r14d,r14w,r14b,r15,r15d,r15w,r15b}} % etc.
 \lstset{language={Rust},frame=single,basicstyle=\ttfamily,numbers=left}
-\usepackage{amssymb}
-\usepackage{amsmath}
+\usepackage{lmodern}
+\usepackage{tgpagella}
+\usepackage{mathpazo}
+\usepackage{inconsolata}
+
+\usepackage[stretch=10]{microtype}
+\usepackage[UKenglish]{babel}
+\frenchspacing
+\usepackage{parskip}
+\usepackage{setspace}
+\setstretch{1.05}
+\usepackage{fullpage}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={red!65!black},
+    urlcolor={blue!75!black}
+}
+\usepackage{afterpage}
+
 \usepackage{mdframed}
 
-\usepackage{subfiles}
-
-
-\linespread{1.1}
 
 \newcommand{\wip}[1]{\fcolorbox{red}{white}{\color{red}\textbf{WIP}\quad#1}}
 \newcommand{\todo}[1]{\begin{mdframed}[linecolor=red]\color{red}\textbf{TODO}\quad#1\end{mdframed}}
@@ -53,7 +61,6 @@
 
     \tableofcontents{}
 
-    \setlength{\parskip}{.5\baselineskip}
     \subfile{introduction}
     \subfile{background}
     \subfile{rust}
