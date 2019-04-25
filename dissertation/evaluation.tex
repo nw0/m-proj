@@ -66,9 +66,6 @@ overheads.}
 \subsection{Traditional vulnerabilities in Rust}
 \label{sec:eval-rust-vulns}
 
-\todo{These are discussed in
-\Cref{sec:eval-micro-repeat,sec:eval-micro-push}.}
-
 One class of attacks that Rust aims to mitigate is buffer overflows.
 In Safe Rust, bounds checks are inserted (\Cref{lst:rust-index})
 to prevent out-of-bounds accesses and writes.
@@ -88,11 +85,38 @@ arrays and vectors.}
 \label{lst:rust-index}
 \end{figure}
 
+Nevertheless, as \Cref{sec:rust-unsafe} highlights, unchecked accesses
+are sometimes used for optimisation, by reading or writing using raw
+pointers.
+These unsafe operations are just as susceptible to programmer errors as
+their C analogues, giving rise to the bugs discussed in
+\Cref{sec:eval-micro-repeat,sec:eval-micro-push}.
+Capabilities can combat this by preventing out-of-bounds accesses.
+
 
 \subsection{Removal of bounds checks}
-Look at optimised MIPS code and performance---not much to be gained?
-But: no unwind? \wip{Unwind by handling hw exception}
-Compiler likely/unlikely hints (e.g.~panic) doesn't do anything for optimised code?
+\label{sec:eval-rust-bounds}
+
+With capabilities, bounds checks can be removed altogether: instead of
+the default panic, a hardware interrupt will occur with each attempted
+out-of-bounds access.
+Most Rust programs do not handle panics, instead crashing the program:
+this is the default behaviour.
+If desired, CHERI length violations can be caught and the panic handler
+invoked, rather than terminating the program directly.
+Therefore the CHERI mechanism is fully compatible with the existing
+panicking framework.
+
+\todo{Evidence (optimised MIPS code)}
+However, most bounds checks are elided with compiler optimisations
+enabled.
+\Cref{sec:rust-elision} gives some situations in which bounds checks are
+optimised out.
+However, they are unavoidable in some situations \wip{evidence}, such as
+heap-allocated linked lists or tree structures, particularly relevant
+for systems programming.
+
+\todo{Compiler likely/unlikely hints (e.g.~panic) doesn't do anything for optimised code?}
 
 
 \subsection{Safety of FFI calls}

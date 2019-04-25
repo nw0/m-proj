@@ -106,11 +106,15 @@ mutable reference rule.
 \subsection{Optimisation by eliding checks}
 \label{sec:rust-elision}
 
+\todo{Itemize?}
+
 \wip{para too long}
 For spatial safety, Rust also implements runtime bounds checks to
 prevent out-of-bounds accesses.
 This may appear to harbour large overheads, although with optimisations
-many checks are elided (Section \wip{eval, somewhere}).
+many checks are elided.
+\Cref{sec:eval-rust-bounds} shows \wip{(soon)} an example of bounds
+check elision in generated code.
 Further, these only apply for random indexing: the built-in iterators
 are written to avoid bounds-checking altogether.\footnote{\wip{rm?}
 Bounds checks are frequently avoided using the (unsafe)
