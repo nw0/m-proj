@@ -116,7 +116,7 @@ However, they are unavoidable in some situations \wip{evidence}, such as
 heap-allocated linked lists or tree structures, particularly relevant
 for systems programming.
 
-\todo{Compiler likely/unlikely hints (e.g.~panic) doesn't do anything for optimised code?}
+\todo{Compiler likely/unlikely hints (e.g.\ panic) doesn't do anything for optimised code?}
 
 
 \subsection{Safety of FFI calls}
@@ -205,7 +205,7 @@ This is difficult to exploit, as it would require a long slice or a
 large number \(n\) of repetitions, increasing the change of a
 segmentation fault.
 Nonetheless, it is certainly not thread-safe, and Rust does target
-platforms with 16-bit \texttt{usize}, i.e.~at most \(65,536\) elements,
+platforms with 16-bit \texttt{usize}, i.e.\ at most \(65,536\) elements,
 making an attack plausible, if not possible.
 
 
