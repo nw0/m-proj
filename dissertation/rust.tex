@@ -146,6 +146,15 @@ Naturally, there is scope for programmer error here:
 Section~\wip{microbenchmark capacity} discusses an off-by-one error in
 the standard library.
 
+Finally, there is an experimental effort~\cite{rust-crate-indexing} to
+remove array bounds checks using dependent types, using the principles
+described by Xi and Pfenning~\cite{xi-pfenning-dependent} and applied to
+Rust by Beingessner~\cite{beingessner}.
+It should be noted that this could add a significant compile-time
+overhead, as it necessarily utilises type-, lifetime, and ownership
+checkers, which Rust runs before optimisations: this results in
+heavy computation to remove checks that are usually avoided anyway.
+
 
 \subsection{Unsafe Rust}
 \label{sec:rust-unsafe}
