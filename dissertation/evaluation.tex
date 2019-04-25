@@ -73,11 +73,22 @@ be used to make Rust's FFI or cross-process calls safer.
 \todo{Discuss provenance analysis and revocation.}
 
 
-\subsection{Stricter semantics and reduced undefined behaviour}
-\todo{Rust's semantics mean that programmers are less inclined to do
-interesting pointer manipulations or storage, so porting might be easy.
-On the other hand, CTSRD previously discovered that most C code isn't
-that bad in this regard?}
+\subsection{Safer code patterns yields easier porting to CHERI}
+\label{sec:eval-cheri-port}
+
+Rust has been designed to guide programmers toward writing safe code,
+and to highlight potentially dangerous operations.
+Programmers have less cause to perform unusual or \emph{clever} pointer
+manipulation, writing code that does not immediately compile for CHERI.
+\wip{sec:impl-??} documented the limited incompatibilities in the core
+library; most changes affect the compiler.
+With a fully-functional Rust compiler for CHERI, porting Rust programs
+and crates should be relatively straightforward.
+
+Nevertheless, one should recognise that the difficulty of porting C
+programs to capability architectures and CHERI in particular is not
+thought to be too onerous~\cite{capsicum-usability}.
+This must be weighed against the prospect of updating the Rust compiler.
 
 
 \subsection{Comparable performance to C}
