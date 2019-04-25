@@ -118,24 +118,25 @@ code block can have a mutable reference to a variable at a time.}
 \end{figure}
 
 Instead of pointers, a function in Safe Rust will either take ownership
-of an object, or borrow it either immutably or mutably.
+of an object, or borrow it mutably or immutably.
 \Cref{lst:rust-ownership} shows some function signatures for
 moving ownership or borrowing.
 In contrast to C, the emphasis is not on access, but the nature of the
 access.\footnote{In Rust, references represent possession of an object,
 rather than the ability to access it.}
 As such, pointers cannot be casually duplicated\footnote{In Safe Rust.}
-to cause data races or temporal unsoundness generally \wip{remove?}.
+to cause data races or temporal unsoundness generally.
 
-Ownership does not guarantee spatial safety on its own.
-However, it makes ownership explicit and \wip{provenance? clear}.
-\wip{More}
+Ownership does not guarantee temporal safety on its own.
+However, it makes ownership explicit and provenance clear, preventing
+bugs such as use-after-free.
+\wip{unclear}
 
-\wip{Unclear?}
+\paragraph{Caveat on memory leaks}
 An exception to the memory leak guarantee is the exposure of
 \texttt{mem::forget} in the core library as a safe function.
-This allows an object's lifetime to end without deallocating it,
-avoiding double-frees in circular data structures.
+This allows a programmer to end an object's lifetime to end without
+deallocating it, used to avoid double-frees in circular data structures.
 This can create a leak, as can a knot-tied reference-counted data
 structure, though knot-tying is made difficult in light of the single
 mutable reference rule.
@@ -144,12 +145,11 @@ mutable reference rule.
 \subsection{Optimisation by eliding checks}
 \label{sec:rust-elision}
 
-\wip{para too long}
 For spatial safety, Rust also implements runtime bounds checks to
 prevent out-of-bounds accesses.
 This may appear to harbour large overheads, although with optimisations
 many checks are elided.
-\Cref{sec:eval-rust-bounds} shows \wip{(soon)} an example of bounds
+\Cref{sec:eval-rust-bounds} \wip{(soon)} shows an example of bounds
 check elision in generated code.
 
 Some common situations in which bounds checks are avoided \wip{more}:
@@ -168,6 +168,7 @@ Some common situations in which bounds checks are avoided \wip{more}:
     conversions.} implemented for the \texttt{SliceIndex} trait.
     In theory, this \emph{might} be susceptible to an off-by-one error,
     but is easily tested.
+    \Cref{sec:rust-unsafe} covers how unsafe code is used for optimisation.
     \item[Image processing] Dr\"oge demonstrates different strategies to
     optimise Rust code without unsafe code, avoiding bounds checks and
     other unnecessary operations~\cite{droge-opt}.
@@ -195,6 +196,8 @@ heavy computation to remove checks that are usually avoided anyway.
 
 \subsection{Definitions of pointers and indices}
 \label{sec:rust-usize}
+
+\todo{This section feels a little out-of-place. We need to change the flow of this chapter.}
 
 \subsubsection{Differences}
 In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
