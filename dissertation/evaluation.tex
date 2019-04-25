@@ -38,7 +38,7 @@ The key points of this evaluation are:
 \section{Benefits to CHERI as a Rust target}
 \label{sec:eval-cheri}
 
-\subsection{Complementary safety properties}
+\subsection{Ownership gives complementary temporal safety}
 \label{sec:eval-cheri-spatial-temporal}
 
 \todo{CHERI seems to focus on spatial safety. What about revocation and
@@ -52,7 +52,21 @@ By contrast, CHERI's initial focus was on spatial integrity, only later
 moving to consider temporal safety through the means of tagging.
 Temporal safety is provided by marking capabilities as \emph{local} or
 \emph{global}, which restricts the flow of capabilities and thereby
-preventing their leakage~\cite{cheri2015}. \wip{why not good enough}
+preventing their leakage~\cite{cheri2015}.
+
+However, this provision only yields atomic pointer updates and
+identifiability of pointers;
+it is not precise enough to use across thread or process boundaries,
+such as FFI and system calls~\cite{cheri-2019-abstract}.
+While Rust does not provide temporal protection against other processes
+misusing its resources, its ownership model guarantees that a thread
+which has yielded some resources does not attempt to modify them while
+they are lent out.
+Likewise, the ownership model prevents similar conflicts within a
+concurrent Rust program, complementing CHERI's spatial integrity.
+
+Note: \Cref{sec:eval-rust-xprocess} discusses how CHERI capabilities can
+be used to make Rust's FFI or cross-process calls safer.
 
 
 \subsection{Borrow semantics and object lifetimes}
@@ -132,6 +146,8 @@ for systems programming.
 
 
 \subsection{Safety of FFI calls}
+\label{sec:eval-rust-xprocess}
+
 \todo{As explored in CHERI-JNI, but Rust checks structs at runtime.
 Discuss sealed capabilities here.}
 
