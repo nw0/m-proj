@@ -95,4 +95,15 @@ Chisnall et al.~proposes safe direct access to buffers owned by the JVM,
 rather than copying, and without exposing the rest of the JVM's memory.
 This preserves Java safety guarantees.
 
+
+\subsection{Efforts to reduce undefined behaviour in Rust}
+Alone, general adherence to safety principles cannot guarantee a lack of
+undefined behaviour or vulnerabilities.
+Other efforts are under way to check for and reduce undefined behaviour,
+especially in the compiler and standard library:
+
+Lamowski: Sandcrust.
+Ralf Jung: RustBelt.
+
+
 \end{document}

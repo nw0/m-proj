@@ -17,6 +17,8 @@ Consequently, crucial checks can be optimised away and invariants violated by co
 Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appears to function correctly, and gloss over the subtleties of the C standard~\cite{memarian2016cdepths};
 these represent future opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
 
+\todo{Talk about spatial and temporal safety +new points from evaluation}
+
 
 \subsection{The Rust programming language}
 
@@ -68,19 +70,6 @@ Others are not mitigated by capabilities:
     execution by a different user while running the
     compiler~\cite{cve-rustdoc,rust-advisory-rustdoc}.
 \end{itemize}
-
-\subsubsection{Efforts to reduce undefined behaviour}
-Alone, general adherence to safety principles cannot guarantee a lack of
-undefined behaviour or vulnerabilities.
-Other efforts are under way to check for and reduce undefined behaviour,
-especially in the compiler and standard library:
-
-Lamowski: Sandcrust.
-Ralf Jung: RustBelt.
-
-\wip{Listing from proposal?}
-
-\wip{List Rust guarantees? Mention the unsafe conditions?}
 
 
 \subsection{Capabilities and the CHERI architecture}
