@@ -120,6 +120,9 @@ Some common situations in which bounds checks are avoided \wip{more}:
     \item[Built-in binary search] Checks avoided without unsafe code by
     providing more information to compiler: uses slices instead of
     indices~\cite{rust-pr-binarysearch}.
+    \item[Built-in slice equality] Similar to \textbf{binary search},
+    providing more information to the compiler makes a different
+    iteration strategy faster without unsafe dereferencing~\cite{rust-pr-slice-partialeq}.
     \item[Built-in iterators] The default iterator, applying to arrays,
     uses the unsafe \texttt{get\_unchecked} method\footnote{This adds an
     offset to the array's base pointer and dereferences it directly.
@@ -143,7 +146,7 @@ Further, these only apply for random indexing.
 This avoids redundant checks, whether they are duplicated or simply
 known to be within bounds.
 Naturally, there is scope for programmer error here:
-Section~\wip{microbenchmark capacity} discusses an off-by-one error in
+\Cref{sec:eval-micro-push} discusses an off-by-one error in
 the standard library.
 
 Finally, there is an experimental effort~\cite{rust-crate-indexing} to
