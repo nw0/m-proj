@@ -11,28 +11,38 @@ libraries for CHERI.
 
 This chapter contains the main evaluation on the benefits and detriments
 of porting Rust to CHERI.
-The key points of this evaluation are:
+The key questions this evaluation seeks to address are:
 
-\begin{itemize}
-    \item What benefits does running on a CHERI architecture have for Rust?
-    More concretely, how convincing are the safety and performance
-    improvements as opposed to other platforms such as x86 and MIPS?
-    (\Cref{sec:eval-rust})
-    \item Can the safety guarantees and boundaries of unsafe code be
-    changed with the use of capabilities, or: do capabilities generate
-    different definitions of unsafe code?
-    For example, we can guarantee that an FFI call does not change the
-    contents of a buffer.
-    \item What benefits do Rust programs and a compilation toolchain
-    have for CHERI?
-    Specifically, do borrow semantics and object lifetimes naturally
-    translate to capabilities?
+\begin{description}
+    \item[\Cref{sec:eval-cheri}] What implications do Rust programs and a
+    compilation toolchain have for CHERI?
+    Specifically, how do Rust's unique characteristics---its borrow
+    checker and lifetime model, temporal safety guarantees, small
+    runtime---translate to a capability architecture?
+    Do they complement or overlap the functionality provided by CHERI?
+    \item[\Cref{sec:eval-rust}] What implications does running on a
+    CHERI architecture have for Rust?
+    More concretely, what are the safety and performance differences
+    from running on other platforms such as x86 or MIPS?
+    \item[\Cref{sec:eval-micro}] Can CHERI capabilities mitigate or prevent
+    vulnerabilities in Rust, and what is the nature of these flaws?
+    Do they manifest differently in Rust, and can they be mitigated by
+    other means?
+    If C equivalents for these flaws exist, what nature do they take and
+    does CHERI behave similarly? \wip{rework}
+    If equivalents in other safe languages exist\ldots
+    \item[\Cref{sec:eval-othersafe}] What are the general concerns when
+    porting a safe language to CHERI or other capability architectures?
     Generally, are safe languages easier to port to CHERI? Do they
     derive more benefit from capabilities than unsafe languages?
-    (\Cref{sec:eval-cheri})
-    \item Lessons on porting a `safe' language to CHERI, or capability
-    platforms in general. \wip{Wrong chapter?}
-\end{itemize}
+    \wip{Why hasn't anyone written about doing this?}
+    \item[\Cref{sec:eval-betterunsafe}] How can the safety guarantees
+    and boundaries of unsafe code be changed with the use of CHERI
+    capabilities, or: do capabilities give rise to a different natural
+    definition of unsafe code?
+    What insight does this provide for language design and
+    non-capability platforms?
+\end{description}
 
 
 \section{Benefits to CHERI as a Rust target}
@@ -268,6 +278,11 @@ making an attack plausible, if not possible.
 
 
 \section{Porting safe languages to capability architectures}
+\label{sec:eval-othersafe}
+
+
+\section{Strengthening unsafety}
+\label{sec:eval-betterunsafe}
 
 
 \end{document}
