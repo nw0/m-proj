@@ -5,12 +5,12 @@
 \label{ch:eval}
 
 \section{Objectives}
-This project evaluates whether Rust is particularly suited to running on
-CHERI.
 \Cref{ch:impl} defined the scope of this evaluation, and
 discussed the compromises that were made to compile Rust's core
 libraries for CHERI.
 
+This chapter contains the main evaluation on the benefits and detriments
+of porting Rust to CHERI.
 The key points of this evaluation are:
 
 \begin{itemize}
@@ -49,19 +49,19 @@ One of Rust's main objectives and early selling points was
 It uses its ownership model and type system to manage temporal memory
 safety~\cite{rust-trpl-book}.
 By contrast, CHERI's initial focus was on spatial integrity, only later
-moving to consider temporal safety through the means of tagging.
+moving to consider temporal safety by means of tagging.
 Temporal safety is provided by marking capabilities as \emph{local} or
 \emph{global}, which restricts the flow of capabilities and thereby
 preventing their leakage~\cite{cheri2015}.
 
 However, this provision only yields atomic pointer updates and
 identifiability of pointers;
-it is not precise enough to use across thread or process boundaries,
-such as FFI and system calls~\cite{cheri-2019-abstract}.
+it is not precise enough to guarantee safety across thread or process
+boundaries, such as FFI and system calls~\cite{cheri-2019-abstract}.
 While Rust does not provide temporal protection against other processes
 misusing its resources, its ownership model guarantees that a thread
-which has yielded some resources does not attempt to modify them while
-they are lent out.
+which has yielded a resource does not attempt to modify it while it has
+been lent out.
 Likewise, the ownership model prevents similar conflicts within a
 concurrent Rust program, complementing CHERI's spatial integrity.
 
@@ -94,7 +94,7 @@ This must be weighed against the prospect of updating the Rust compiler.
 \subsection{Comparable performance to C}
 \label{eval:cheri-perf}
 
-While Rust provides strong safety features, it also provides good
+While Rust possesses strong safety features, it also provides good
 performance.
 For this reason, it has garnered attention in applications as diverse as
 astrophysics (favourable comparison to Fortran~\cite{blanco-astro}), GPU
@@ -110,7 +110,7 @@ All three come well ahead of the next `safe' languages, Java and Go.
 These suggest that Rust is capable of matching C under some
 circumstances while being safer, making it a good choice in general.
 If CHERI implementers are keen on augmenting hardware safety features
-with a speedy, low-runtime language, then Rust makes a sensible choice
+with a speedy, low-runtime language, then Rust makes a sensible choice,
 especially for embedded platforms.
 
 
@@ -171,6 +171,8 @@ heap-allocated linked lists or tree structures, particularly relevant
 for systems programming.
 
 \todo{Compiler likely/unlikely hints (e.g.\ panic) doesn't do anything for optimised code?}
+
+\todo{Caveat: might not work for arenas}
 
 
 \subsection{Safety of FFI calls}
