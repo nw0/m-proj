@@ -39,8 +39,20 @@ The key points of this evaluation are:
 \label{sec:eval-cheri}
 
 \subsection{Complementary safety properties}
+\label{sec:eval-cheri-spatial-temporal}
+
 \todo{CHERI seems to focus on spatial safety. What about revocation and
 temporal safety? How helpful are Rust lifetimes and ownership?}
+
+One of Rust's main objectives and early selling points was
+\emph{fearless concurrency}.
+It uses its ownership model and type system to manage temporal memory
+safety~\cite{rust-trpl-book}.
+By contrast, CHERI's initial focus was on spatial integrity, only later
+moving to consider temporal safety through the means of tagging.
+Temporal safety is provided by marking capabilities as \emph{local} or
+\emph{global}, which restricts the flow of capabilities and thereby
+preventing their leakage~\cite{cheri2015}. \wip{why not good enough}
 
 
 \subsection{Borrow semantics and object lifetimes}
