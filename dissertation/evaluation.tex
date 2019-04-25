@@ -92,9 +92,26 @@ This must be weighed against the prospect of updating the Rust compiler.
 
 
 \subsection{Comparable performance to C}
-\todo{Faster than other managed languages. See Debian's benchmarks
-comparing various languages, and note that capabilities might reduce
-overheads.}
+\label{eval:cheri-perf}
+
+While Rust provides strong safety features, it also provides good
+performance.
+For this reason, it has garnered attention in applications as diverse as
+astrophysics (favourable comparison to Fortran~\cite{blanco-astro}), GPU
+programming (comparable to handwritten and domain-specific language
+generated OpenCL~\cite{holk-gpu}), and garbage collection (comparable to
+C~\cite{lin-gc}).
+The Debian project maintains a set of toy benchmarks run against
+user-submitted programs in diverse
+languages~\cite{debian-benchmarksgame}, showing that Rust performs as
+well as C and C++ under their testing problems and environment.
+All three come well ahead of the next `safe' languages, Java and Go.
+
+These suggest that Rust is capable of matching C under some
+circumstances while being safer, making it a good choice in general.
+If CHERI implementers are keen on augmenting hardware safety features
+with a speedy, low-runtime language, then Rust makes a sensible choice
+especially for embedded platforms.
 
 
 \section{Benefits to Rust from CHERI capabilities}
