@@ -106,8 +106,6 @@ mutable reference rule.
 \subsection{Optimisation by eliding checks}
 \label{sec:rust-elision}
 
-\todo{Itemize?}
-
 \wip{para too long}
 For spatial safety, Rust also implements runtime bounds checks to
 prevent out-of-bounds accesses.
@@ -115,11 +113,33 @@ This may appear to harbour large overheads, although with optimisations
 many checks are elided.
 \Cref{sec:eval-rust-bounds} shows \wip{(soon)} an example of bounds
 check elision in generated code.
-Further, these only apply for random indexing: the built-in iterators
-are written to avoid bounds-checking altogether.\footnote{\wip{rm?}
-Bounds checks are frequently avoided using the (unsafe)
-\texttt{get\_unchecked} method implemented for the \texttt{SliceIndex}
-trait. Other `unchecked' methods exist, for string conversions etc.}
+
+Some common situations in which bounds checks are avoided \wip{more}:
+
+\begin{description}
+    \item[Built-in binary search] Checks avoided without unsafe code by
+    providing more information to compiler: uses slices instead of
+    indices~\cite{rust-pr-binarysearch}.
+    \item[Built-in iterators] The default iterator, applying to arrays,
+    uses the unsafe \texttt{get\_unchecked} method\footnote{This adds an
+    offset to the array's base pointer and dereferences it directly.
+    Other \texttt{unchecked} methods exist, e.g.\ in string
+    conversions.} implemented for the \texttt{SliceIndex} trait.
+    In theory, this \emph{might} be susceptible to an off-by-one error,
+    but is easily tested.
+    \item[Image processing] Dr\"oge demonstrates different strategies to
+    optimise Rust code without unsafe code, avoiding bounds checks and
+    other unnecessary operations~\cite{droge-opt}.
+    This is achieved through strategic assertions and optimal use of
+    iterators and other built-ins.
+    Note that similar optimisation through assertions may be fragile or
+    made obsolete through updated code generation, and that optimal use
+    of built-ins may require knowledge of the underlying (unsafe)
+    implementations.
+\end{description}
+
+\wip{rewrite}
+Further, these only apply for random indexing.
 This avoids redundant checks, whether they are duplicated or simply
 known to be within bounds.
 Naturally, there is scope for programmer error here:
