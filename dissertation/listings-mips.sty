@@ -1,0 +1,54 @@
+% Nicholas Sim <nsim@posteo.net>
+% From the MIPS64 manual Vol II 2.50
+
+\lstdefinelanguage[mips64]{Assembler}%
+{
+  morestring=[b]",
+  morekeywords=[1]{
+    % cpu arithmetic
+    add,addi,addiu,addu,dadd,daddi,daddiu,daddu,
+    sub,subu,dsub,dsubu,
+    mul,mult,dmult,dmultu,
+    div,divu,ddiv,ddivu,
+    madd,maddu,
+    msub,msubu,
+    clo,clz,dclo,dclz,
+    seb,seh,
+    slt,slti,sltiu,sltu,
+    % cpu branch and jump
+    b,bal,beq,bgez,bgezal,bgtz,blez,bltz,bltzal,bne,
+    j,jal,jalr,jalr.hb,jr,jr.hb,ehb,
+    nop,ssnop,
+    % cpu load, store, memory control
+    lb,lbu,ld,ldl,ldr,lh,lhu,ll,lld,lw,lwl,lwr,lwu,
+    sb,sc,scd,sd,sdl,sdr,sh,sw,swl,swr,
+    sync,synci,
+    pref,
+    % cpu logical
+    and,andi,lui,nor,or,ori,xor,xori,
+    % cpu insert/extract
+    dext,dextm,dextu,dins,dinsm,dinsu,dsbh,dshd,ext,ins,wsbh,
+    % cpu move
+    mfhi,mflo,movf,movn,movt,movz,mthi,mtlo,rdhwr,
+    % cpu shift
+    drotr,drotr32,drotrv,rotr,rotrv,
+    dsll,dsll32,dsllv,dsra,dsra32,dsrav,dsrl,dsrl32,dsrlv,
+    sll,sllv,sra,srav,srl,srlv,
+    % cpu trap
+    break,syscall,teq,teqi,tge,tgei,tgeiu,tgeu,tlt,tlti,tltiu,tltu,tne,tnei,
+    % obselete cpu branch OMITTED
+    % fpu, coprocessor OMITTED
+    % privileged instructions
+    cache,di,dmfc0,dmtc0,ei,eret,mfc0,mtc0,wait,
+    rdpgpr,tlbp,tlbr,tlbwi,tlbwr,wrpgpr
+    % EJTAG instructions
+    deret,sdbbp,
+    beqz,bnez,move,% mysteriously missing from manual
+  },
+  morekeywords=[2]{.alias,.align,.ascii,.asciiz,.asm0,.bgnb,.byte,.comm,.data,.double,.end,.endb,%
+  .endr,.ent,.err,.extern,.file,.float,.fmask,.frame,.globl,.half,.kdata,.ktext,.lab,.lcomm,%
+  .livereg,.loc,.mask,.noalias,.option,.rdata,.repeat,.sdata,.set,.space,.struct,.text,%
+  .verstamp,.vreg,.word},
+  morecomment=[l]\#,
+  morecomment=[l]{;},
+}[keywords,comments,strings]
