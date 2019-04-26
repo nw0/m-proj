@@ -135,15 +135,7 @@ In Safe Rust, bounds checks are inserted (\Cref{lst:rust-index})
 to prevent out-of-bounds accesses and writes.
 
 \begin{figure}[ht]
-\begin{lstlisting}
-impl<T> SliceIndex<[T]> for usize {
-    #[inline]
-    fn index(self, slice: &[T]) -> &T {
-        // N.B., use intrinsic indexing
-        &(*slice)[self]
-    }
-}
-\end{lstlisting}
+\lstinputlisting[language={[mips]Assembler}]{listings/array-deref.s}
 \caption{\wip{rewrite; asm} Rust's intrinsic indexing, which applies to
 arrays and vectors.}
 \label{lst:rust-index}
