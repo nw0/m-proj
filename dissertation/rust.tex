@@ -149,8 +149,9 @@ For spatial safety, Rust also implements runtime bounds checks to
 prevent out-of-bounds accesses.
 This may appear to harbour large overheads, although with optimisations
 many checks are elided.
-\Cref{sec:eval-rust-bounds} \wip{(soon)} shows an example of bounds
-check elision in generated code.
+\Cref{lst:rust-iter-unchecked} shows examples of bounds check elision in
+generated code, based on iterators and detecting when the length is
+checked.
 
 Some common situations in which bounds checks are avoided \wip{more}:
 
@@ -168,6 +169,7 @@ Some common situations in which bounds checks are avoided \wip{more}:
     conversions.} implemented for the \texttt{SliceIndex} trait.
     In theory, this \emph{might} be susceptible to an off-by-one error,
     but is easily tested.
+    (\Cref{lst:rust-iter-unchecked})
     \Cref{sec:rust-unsafe} covers how unsafe code is used for optimisation.
     \item[Image processing] Dr\"oge demonstrates different strategies to
     optimise Rust code without unsafe code, avoiding bounds checks and
@@ -182,6 +184,22 @@ Some common situations in which bounds checks are avoided \wip{more}:
 
 Therefore when writing idiomatic Rust, bounds checks mainly apply to
 random indexing, as seen in \Cref{lst:bg-rust-index}.
+
+\begin{figure}[ht]
+    \lstinputlisting{listings/sums-iter.rs}
+    \lstinputlisting[language={[mips]Assembler}]{listings/array-itersum.s}
+    \caption{
+        Four ways to sum an array in Rust: the first three identically
+        generate the shown MIPS assembler, and could be considered
+        idiomatic Rust.
+        The fourth generates nearly the same code: it uses an index of 1
+        instead of 8, allowing the omission of lines~3--4!
+        It also omits lines~12--13, which appear to be redundant.
+        Note that no bounds checks are present.
+        Optimised code generated; comments added for ease of reading.
+    }
+    \label{lst:rust-iter-unchecked}
+\end{figure}
 
 \paragraph{Another approach to removing bounds checks}
 Finally, there is an experimental effort~\cite{rust-crate-indexing} to
