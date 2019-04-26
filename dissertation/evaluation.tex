@@ -131,18 +131,8 @@ especially for embedded platforms.
 \label{sec:eval-rust-vulns}
 
 One class of attacks that Rust aims to mitigate is buffer overflows.
-In Safe Rust, bounds checks are inserted (\Cref{lst:rust-index})
+In Safe Rust, bounds checks are inserted (\Cref{lst:bg-rust-index} \wip{sectionref?})
 to prevent out-of-bounds accesses and writes.
-
-\begin{figure}[ht]
-\lstinputlisting[language={[mips]Assembler}]{listings/array-deref.s}
-\caption{Generated MIPS64 assembler for Rust's intrinsic indexing on
-arrays and vectors, with bounds checks.
-The relevant \emph{unchecked} access is only lines 7--9.
-Comments added for ease of reading; \texttt{panic\_bounds\_check} string
-substituted in place of mangled version.}
-\label{lst:rust-index}
-\end{figure}
 
 Nevertheless, as \Cref{sec:rust-unsafe} highlights, unchecked accesses
 are sometimes used for optimisation, by reading or writing using raw

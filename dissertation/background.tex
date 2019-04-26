@@ -50,6 +50,21 @@ than Java? Commitment to security? Probably because it's `similar' to
 C---this aids comparisons. Also, it has no GC, and lifetimes are
 interesting and helpful, related to revocation.}
 
+\subsection{Bounds checks in Rust}
+
+\begin{figure}[ht]
+    \lstinputlisting[language={[mips]Assembler}]{listings/array-deref.s}
+    \caption{
+        Generated MIPS64 assembler for Rust's intrinsic indexing on
+        arrays and vectors, with bounds checks.
+        The relevant \emph{unchecked} access is only lines~7--9.
+        Comments added for ease of reading;
+        \texttt{panic\_bounds\_check} string substituted in place of
+        mangled version.
+    }
+    \label{lst:bg-rust-index}
+\end{figure}
+
 
 \section{Survey of related work}
 \label{sec:bg-related}
