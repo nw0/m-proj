@@ -152,6 +152,8 @@ many checks are elided.
 \Cref{lst:rust-iter-unchecked} shows examples of bounds check elision in
 generated code, based on iterators and detecting when the length is
 checked.
+This detection is basic, as we see in \Cref{lst:rust-iter-checked}: it
+is more effective to use built-in iterators in general.
 
 Some common situations in which bounds checks are avoided \wip{more}:
 
@@ -199,6 +201,24 @@ random indexing, as seen in \Cref{lst:bg-rust-index}.
         Optimised code generated; comments added for ease of reading.
     }
     \label{lst:rust-iter-unchecked}
+\end{figure}
+
+\begin{figure}[htp]
+    \lstinputlisting{listings/sum-checked.rs}
+    \lstinputlisting[language={[mips]Assembler}]{listings/array-checkedsum.s}
+    \caption{
+        How not to sum an array in Rust.
+        Observe that \texttt{sum\_checked} is nearly identical to
+        \texttt{sum\_loop} in \Cref{lst:rust-iter-unchecked}, save for
+        the comparison on line~5.
+        The compiler fails to detect that our accesses are safe due to
+        the small manipulation of the variable storing the length.
+        Thus an additional branch instruction appears on line~14.
+        Optimised code generated;
+        \texttt{panic\_bounds\_check} string substituted in place of
+        mangled version.
+    }
+    \label{lst:rust-iter-checked}
 \end{figure}
 
 \paragraph{Another approach to removing bounds checks}
