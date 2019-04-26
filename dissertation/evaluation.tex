@@ -131,7 +131,7 @@ especially for embedded platforms.
 \label{sec:eval-rust-vulns}
 
 One class of attacks that Rust aims to mitigate is buffer overflows.
-In Safe Rust, bounds checks are inserted (\Cref{lst:bg-rust-index} \wip{sectionref?})
+In Safe Rust, bounds checks are inserted (\Cref{sec:bg-rust-bounds})
 to prevent out-of-bounds accesses and writes.
 
 Nevertheless, as \Cref{sec:rust-unsafe} highlights, unchecked accesses
@@ -156,18 +156,13 @@ invoked, rather than terminating the program directly.
 Therefore the CHERI mechanism is fully compatible with the existing
 panicking framework.
 
-\todo{Evidence (optimised MIPS code)}
 However, most bounds checks are elided with compiler optimisations
 enabled.
 \Cref{sec:rust-elision} gives some situations in which bounds checks are
-optimised out.
+optimised out (\Cref{lst:rust-iter-unchecked}).
 However, they are unavoidable in some situations \wip{evidence}, such as
 heap-allocated linked lists or tree structures, particularly relevant
 for systems programming.
-
-\todo{Compiler likely/unlikely hints (e.g.\ panic) doesn't do anything for optimised code?}
-
-\todo{Caveat: might not work for arenas}
 
 
 \subsection{Safety of FFI calls}
