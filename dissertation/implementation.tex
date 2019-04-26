@@ -6,12 +6,13 @@
 
 
 \section{Overview}
-\wip{What is this chapter for?}
 
+\todo{Rewrite, sectional overview?}
 This chapter discusses key details in compiling Rust for CHERI, as
 opposed to other architectures.
-
-\wip{Sectional overview might be useful}
+It details the strategy taken, defining the scope of the project, and
+the differences of Rust to other languages which influence any effort to
+port Rust to CHERI.
 
 \todo{Distinguish compiler changes and libcore changes. Mention libcore
 changes explicitly: e.g. memchr---there are only about 5 of these.}
@@ -68,7 +69,8 @@ standalone Rust programs.
     \item[\texttt{liballoc}] for heap allocation and built-in data
     structures and operations on them.
     \texttt{liballoc} also included two (patched) vulnerabilities in the
-    Rust standard library, used in the evaluation (Section~\wip{x}).
+    Rust standard library, demonstrated in the evaluation
+    (\Cref{sec:eval-micro}).
 \end{description}
 
 \Cref{sec:impl-divergences} details modifications to the compiler and
