@@ -136,8 +136,11 @@ to prevent out-of-bounds accesses and writes.
 
 \begin{figure}[ht]
 \lstinputlisting[language={[mips]Assembler}]{listings/array-deref.s}
-\caption{\wip{rewrite; asm} Rust's intrinsic indexing, which applies to
-arrays and vectors.}
+\caption{Generated MIPS64 assembler for Rust's intrinsic indexing on
+arrays and vectors, with bounds checks.
+The relevant \emph{unchecked} access is only lines 7--9.
+Comments added for ease of reading; \texttt{panic\_bounds\_check} string
+substituted in place of mangled version.}
 \label{lst:rust-index}
 \end{figure}
 
