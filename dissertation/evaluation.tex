@@ -168,7 +168,31 @@ for systems programming.
 \subsection{Safety of FFI calls}
 \label{sec:eval-rust-xprocess}
 
-\todo{As explored in CHERI-JNI, but Rust checks structs at runtime.
+A source of undefined behaviour in Rust in the modification of an
+immutable object.
+This is ordinarily prevented by type-checking in Rust.
+However, this is much harder to prevent when calling across a foreign
+function interface, particularly since Rust has been designed as a safe
+language, as opposed to any language it might call into.
+
+A quick survey of Rust crates that use FFI bindings shows that most of
+them deal with some form of low-level behaviour, including encryption,
+memory allocation, USB interfaces, and filesystem mounts.\footnote{
+    Rust crates are published libraries.
+    The reader may be interested to peruse a selection of crates at
+    \url{https://crates.io/search?q=-sys};
+    a \texttt{-sys} suffix conventionally denotes an FFI crate.
+    \texttt{crates.io} is advertised as the ``Rust Package Registry''.
+}
+With performance or low-level access as the primary goal of most Rust
+FFI calls, safety may not be a major concern, even if it could allow
+arbitrary code execution in the Rust
+program~\cite{szekeres-eternal-war}.
+
+\todo{a buffer-overflowing FFI program? Will this work?}
+
+\todo{As explored in CHERI-JNI, but focus on object boundaries and
+mutability. Can we add Rust guarantees across FFI boundaries?
 Discuss sealed capabilities here.}
 
 
