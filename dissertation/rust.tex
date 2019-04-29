@@ -235,9 +235,6 @@ heavy computation to remove checks that are usually avoided anyway.
 \subsection{Definitions of pointers and indices}
 \label{sec:rust-usize}
 
-\todo{This section feels a little out-of-place. We need to change the flow of this chapter.}
-
-\subsubsection{Differences}
 In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
 conventionally equivalent to C's \texttt{uintptr\_t}, which \emph{may
 not be equivalent to \texttt{size\_t}}~\cite{rust-rfc-isize}.
@@ -247,28 +244,19 @@ Crucially, \texttt{usize} is used as the index size in Rust, for
 indexing into arrays, structs, and all objects, and is hence passed to
 LLVM instructions such as \texttt{getelementptr}.
 
-\subsubsection{Implications and changes}
-Having a 128-bit \texttt{usize} meant that the Rust compiler would
-instruct LLVM to generate 128-bit indexed versions of intrinsics such as
+\subsubsection{Implications}
+Having a 128-bit \texttt{usize} means that the Rust compiler instructs
+LLVM to generate 128-bit indexed versions of intrinsics such as
 \texttt{memcpy}, in addition to indexing.
 However, not all bit widths for the \texttt{memcpy} intrinsic are
 supported by all targets~\cite{llvm-langref}, and CHERI supports a bit
 width of 64 but not 128.
 
-I consider this an implementation detail, as we can index these
-intrinsics by sizes other than \texttt{usize}.
-However, changing the Rust compiler to recognise different index sizes
-from the pointer width is a non-trivial change; my attempts to do so
-resulted in a non-functional compiler.
-
-A straightforward workaround is to truncate the index (\texttt{len})
-variable to 64 bits before every such operation.
-This is problematic for two reasons.
-First, such a change is prone to leaving out some intrinsics which may
-silently fail, leaving the process open to functional errors.
-Second, use of 128-bit integers is slow on CHERI, and unnecessary
-casting also generates unnecessary instructions.
-To target CHERI properly, Rust \emph{must} support pointer widths larger
-than the index size.
+As it stands, this is an implementation detail which is the consequence
+of the language semantics.
+Nevertheless, to target CHERI properly, Rust must either support pointer
+widths larger than the index size, or use pointer widths differently in
+code generation.
+\Cref{sec:impl-width} explores the implementation in more detail.
 
 \end{document}
