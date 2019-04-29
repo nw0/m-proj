@@ -144,6 +144,9 @@ within or across compilation units.
 As only one address space is recognised, I decided to use pure
 capability mode, in which all pointers are capabilities, rather than
 hybrid mode, which accepts untagged pointers as well.
+This allows all pointers to refer to LLVM address space 200, rather than
+having to mix two address spaces for capability and non-capability
+pointers.
 Minor changes were made to refer to Rust's
 \texttt{instruction\_address\_space} for all pointers, instead of only
 pointers to types.

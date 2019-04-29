@@ -363,9 +363,29 @@ making an attack plausible, if not possible.
 \section{Porting safe languages to capability architectures}
 \label{sec:eval-othersafe}
 
+\todo{Think about (categorise?) these:}
+\begin{itemize}
+    \item What are the major existing problems with the language?
+    \item Existing vulnerabilities?
+    \item What guarantees does the language provide?
+    \item Where does it derive its safety from? Some type systems may
+    have overheads that cannot be easily reduced.
+    \item Is Cython still Python?
+    \item Do you make code invalid? e.g.\ can no longer get change a
+    const ptr to a mut ptr? memchr strikes again
+    \item Assumptions about address spaces and pointers---do they
+    already use fat/smart pointers?
+    \item Are there multiple runtime implementations?
+\end{itemize}
+
 
 \section{Strengthening unsafety}
 \label{sec:eval-betterunsafe}
+
+\todo{Rename: strengthening Rust?
+least privilege and immutability---unable to override with unsafe? (UB
+anyway! do anything including protect it. non-issue, this is resolved by
+borrowck at compile time)}
 
 
 \end{document}
