@@ -165,8 +165,46 @@ heap-allocated linked lists or tree structures, particularly relevant
 for systems programming.
 
 
+\subsection{Preventing use-after-free in Safe Rust}
+\label{sec:eval-rust-use-after-free}
+
+As we have discovered, spatial integrity is not an absolute guarantee in
+Rust.
+Unsurprisingly, neither is temporal safety, even in \emph{Safe} Rust!
+
+Consider the following example from the documentation, a simplified
+version of the reference-counted container type, \texttt{Rc}, and its
+simplified \texttt{Drop} implementation (\Cref{lst:eval-rust-rc-drop}).
+By overflowing the reference count (using \texttt{mem::forget} if memory
+usage is an issue), one can cause the pointed-to object to be
+deallocated, even with outstanding references, defeating the reference
+counter.
+This creates a use-after-free bug.~\cite{rust-nomicon-rc-leak}.
+
+\begin{figure}[ht]
+    \lstinputlisting{listings/rc-drop.rs}
+    \caption{
+        A potential use-after-free bug, if \texttt{ref\_count}
+        overflows.
+        This may occur in Safe Rust, as \texttt{drop} methods are always
+        safe: the unsafety is encapsulated here, and so is
+        \texttt{mem::forget}, which would be used to help overflow the count.
+        Example from the Rust documentation~\cite{rust-nomicon-rc-leak}.
+    }
+    \label{lst:eval-rust-rc-drop}
+\end{figure}
+
+This can be resolved by revocation, which CHERI does not inherently
+implement, but operating systems might implement on top of CHERI.
+As there are limitations to this approach, both to the granularity of
+revocations and the performance implications~\cite{cheri-v6}, this
+should be considered a mitigation rather than a solution.
+
+
 \subsection{Safety of FFI calls}
 \label{sec:eval-rust-xprocess}
+
+\todo{``Some of this is seen-similar''}
 
 A quick survey of Rust crates that use FFI bindings shows that most of
 them deal with some form of low-level behaviour, including encryption,
@@ -239,42 +277,6 @@ an overflow.
 
 Object capabilities easily protect against this by storing object
 bounds.
-
-
-\subsection{Preventing use-after-free in Safe Rust}
-\label{sec:eval-rust-use-after-free}
-
-As we have discovered, spatial integrity is not an absolute guarantee in
-Rust.
-Unsurprisingly, neither is temporal safety, even in \emph{Safe} Rust!
-
-Consider the following example from the documentation, a simplified
-version of the reference-counted container type, \texttt{Rc}, and its
-simplified \texttt{Drop} implementation (\Cref{lst:eval-rust-rc-drop}).
-By overflowing the reference count (using \texttt{mem::forget} if memory
-usage is an issue), one can cause the pointed-to object to be
-deallocated, even with outstanding references, defeating the reference
-counter.
-This creates a use-after-free bug.~\cite{rust-nomicon-rc-leak}.
-
-\begin{figure}[ht]
-    \lstinputlisting{listings/rc-drop.rs}
-    \caption{
-        A potential use-after-free bug, if \texttt{ref\_count}
-        overflows.
-        This may occur in Safe Rust, as \texttt{drop} methods are always
-        safe: the unsafety is encapsulated here, and so is
-        \texttt{mem::forget}, which would be used to help overflow the count.
-        Example from the Rust documentation~\cite{rust-nomicon-rc-leak}.
-    }
-    \label{lst:eval-rust-rc-drop}
-\end{figure}
-
-This can be resolved by revocation, which CHERI does not inherently
-implement, but operating systems might implement on top of CHERI.
-As there are limitations to this approach, both to the granularity of
-revocations and the performance implications~\cite{cheri-v6}, this
-should be considered a mitigation rather than a solution.
 
 
 \subsection{Unsafe semantics}
