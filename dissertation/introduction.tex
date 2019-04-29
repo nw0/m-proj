@@ -68,8 +68,14 @@ Others are not mitigated by capabilities:
     appending to a \texttt{VecDeque}~\cite{rust-issue-deque-append}.
     \item Compiler plugin: documentation plugin allowed arbitrary code
     execution by a different user while running the
-    compiler~\cite{cve-rustdoc,rust-advisory-rustdoc}.
+    compiler, CVE-2018-1000622~\cite{cve-rustdoc,rust-advisory-rustdoc}.
 \end{itemize}
+
+Collectively, these show that even with a language designed for safety,
+and in a safety-conscious developer community, it is still difficult to
+avoid bugs that lead to unsoundness and possible vulnerabilities.
+Therefore, more tools are needed to build and operate reliable and
+secure software.
 
 
 \subsection{Capabilities and the CHERI architecture}
