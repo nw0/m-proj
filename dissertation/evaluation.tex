@@ -201,6 +201,11 @@ This creates a use-after-free bug.~\cite{rust-nomicon-rc-leak}.
     \label{lst:eval-rust-rc-drop}
 \end{figure}
 
+This can be resolved by revocation, which CHERI does not inherently
+implement, but operating systems might implement on top of CHERI.
+As there are limitations to this approach, both to the granularity of
+revocations and the performance implications~\cite{cheri-v6}, this
+should be considered a mitigation rather than a solution.
 
 
 \subsection{Unsafe semantics}
