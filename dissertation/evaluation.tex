@@ -198,11 +198,47 @@ boundaries.
 \todo{Least privilege for match arm/move bug?}
 
 \subsubsection{Sealed capabilities and callbacks}
+Another situation that benefits from least privilege are callbacks from
+FFI code.
+In this scenario, an FFI function might ordinarily receive a pointer to
+data which it might pass on via a callback, but have no need to inspect
+or mutate.
+
+This can be enforced through \emph{capability sealing}, which CHERI
+provides for.
+The C function would be unable to dereference the object, but the
+callback function could, through some static method, unseal the
+capability to regain access to the original data~\cite{cheri-v6}.
+This could also allow less trusted code to handle Rust objects while
+still guaranteeing integrity and confidentiality.
 
 \subsubsection{Use-after-free through FFI}
-Lifetimes across an FFI?
+The use of FFI functions can bypass Rust's object lifetime model, as
+there is no way to ensure that an FFI function has not stored or leaked
+references to borrowed Rust objects.
+This can lead to later temporal unsoundness in the Rust program.
+
+While this cannot be completely prevented with capabilities as-is,
+\Cref{sec:eval-betterunsafe} discusses the potential to use revocations
+to manage this risk.
 
 \subsubsection{Overflowing object boundaries}
+\clar{Demonstration microbenchmark?}
+
+Objects can only be passed to C as raw pointers.
+As such, a buffer overflow through an FFI function is no more difficult
+than in C natively, and no less serious.
+
+A simple example of an overflow opportunity uses the well-known source
+of overflows which is a C string with a missing NUL terminating byte.
+To overcome this, Rust strings instead store a length value and a byte
+array, making them non-interchangeable with C strings.
+This means, however, if that a programmer neglects to convert between
+the formats, passing a Rust string to a C function will quickly lead to
+an overflow.
+
+Object capabilities easily protect against this by storing object
+bounds.
 
 
 \subsection{Preventing use-after-free in Safe Rust}
