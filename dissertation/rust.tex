@@ -96,25 +96,14 @@ As such, some programs which avoid use-after-free or other memory safety
 bugs may be semantically invalid Rust.
 
 \begin{figure}[ht]
-\begin{lstlisting}
-// Lifetime ends; `v` becomes uninitialised in caller.
-fn take_ownership(v: Vec<i32>)
-
-// Caller receives a vector, which may be distinct from the original.
-fn take_and_return(v: Vec<i32>) -> Vec<i32>
-
-// `borrow` receives a reference to `v` which it cannot mutate.
-// `v` is defined for the caller afterward; it should be unchanged.
-fn borrow(v: &Vec<i32>)
-
-// `borrow_mutably` receives a mutable reference to `v`.
-// `v` is defined for the caller afterward; it may be changed.
-fn borrow_mutably(v: &mut Vec<i32>)
-\end{lstlisting}
-\caption{\wip{Example could be better} Function signatures for passing a
-\texttt{Vec}, \texttt{v} to a function. To prevent data races, only one
-code block can have a mutable reference to a variable at a time.}
-\label{lst:rust-ownership}
+    \lstinputlisting{listings/ownership-sigs.rs}
+    \caption{
+        \wip{improve example?}
+        Function signatures for passing a \texttt{Vec} to a function.
+        To prevent data races, only one code block can contain a mutable
+        reference to a variable at a time.
+    }
+    \label{lst:rust-ownership}
 \end{figure}
 
 Instead of pointers, a function in Safe Rust will either take ownership
