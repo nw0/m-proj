@@ -168,13 +168,6 @@ for systems programming.
 \subsection{Safety of FFI calls}
 \label{sec:eval-rust-xprocess}
 
-A source of undefined behaviour in Rust in the modification of an
-immutable object.
-This is ordinarily prevented by type-checking in Rust.
-However, this is much harder to prevent when calling across a foreign
-function interface, particularly since Rust has been designed as a safe
-language, as opposed to any language it might call into.
-
 A quick survey of Rust crates that use FFI bindings shows that most of
 them deal with some form of low-level behaviour, including encryption,
 memory allocation, USB interfaces, and filesystem mounts.\footnote{
@@ -189,11 +182,27 @@ FFI calls, safety may not be a major concern, even if it could allow
 arbitrary code execution in the Rust
 program~\cite{szekeres-eternal-war}.
 
-\todo{a buffer-overflowing FFI program? Will this work?}
+\subsubsection{Enforcing immutability across FFI boundaries}
+The modification of an immutable object is a source of undefined
+behaviour in Rust.
+This is normally enforced by type-checking, but this is impossible
+across a foreign function interface, since objects can only be passed
+using raw pointers, and the function signatures are not known to the
+Rust program.
 
-\todo{As explored in CHERI-JNI, but focus on object boundaries and
-mutability. Can we add Rust guarantees across FFI boundaries?
-Discuss sealed capabilities here.}
+By passing a capability without write permissions to a function, this
+particular cause of undefined behaviour can be eliminated.
+This supports the use of \emph{least privilege} even across FFI
+boundaries.
+\wip{ref to changing unsafety}
+\todo{Least privilege for match arm/move bug?}
+
+\subsubsection{Sealed capabilities and callbacks}
+
+\subsubsection{Use-after-free through FFI}
+Lifetimes across an FFI?
+
+\subsubsection{Overflowing object boundaries}
 
 
 \subsection{Preventing use-after-free in Safe Rust}
