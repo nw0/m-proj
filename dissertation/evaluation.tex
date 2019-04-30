@@ -165,6 +165,48 @@ heap-allocated linked lists or tree structures, particularly relevant
 for systems programming.
 
 
+\subsection{Enforcing immutability with capabilities}
+\label{sec:eval-rust-enforce-immut}
+
+Modifying an immutable object is undefined behaviour in Rust, and should
+be prevented by the compiler in Safe Rust.
+The only exception to this pattern seems to be the \texttt{UnsafeCell},
+which is excluded from being UB.
+There, the programmer is expected to implement an object safely without
+causing concurrency bugs.
+
+\clar{Expound on these bugs?}
+
+There have been bugs in the compiler~\cite{rust-issue-match-borrow} and
+standard library~\cite{rust-issue-vec-mut} resulting in mutable
+references to supposedly immutable objects.
+Since mutating them is undefined, it would be reasonable to protect them
+from being written to, which can be accomplished with capabilities.
+This enforces the principle of least privilege on shared references.
+
+This can be done by deriving a non-writeable capability for every shared
+reference.
+I propose that the borrow checker continue to be used to prevent the
+holder of the original reference from mutating the object: this is the
+current behaviour, would avoid uncertainty over when an object could be
+written to again, and is not known to be a source of past errors.
+
+\subsubsection{Note on differences from C}
+Enforcing C's \texttt{const} in hardware proved problematic for CHERI in
+the past, due to functions like~\texttt{strchr} (C), which derive a
+non-\texttt{const} (mutable) pointer from an immutable one.
+
+\begin{lstlisting}[language=C]
+char *strchr(const char *s, int c);
+\end{lstlisting}
+
+The proposal of deriving a read-only capability for each immutable
+reference in Rust does not suffer this problem, as it is not possible to
+derive a mutable reference from an immutable one.
+Indeed, this idiom does not occur in Rust as immutability is conveyed by
+the function signature.
+
+
 \subsection{Preventing use-after-free in Safe Rust}
 \label{sec:eval-rust-use-after-free}
 
@@ -232,8 +274,7 @@ By passing a capability without write permissions to a function, this
 particular cause of undefined behaviour can be eliminated.
 This supports the use of \emph{least privilege} even across FFI
 boundaries.
-\wip{ref to changing unsafety}
-\todo{Least privilege for match arm/move bug?}
+This is an FFI-analogue of \Cref{sec:eval-rust-enforce-immut}.
 
 \subsubsection{Sealed capabilities and callbacks}
 Another situation that benefits from least privilege are callbacks from
@@ -381,11 +422,6 @@ making an attack plausible, if not possible.
 
 \section{Strengthening unsafety}
 \label{sec:eval-betterunsafe}
-
-\todo{Rename: strengthening Rust?
-least privilege and immutability---unable to override with unsafe? (UB
-anyway! do anything including protect it. non-issue, this is resolved by
-borrowck at compile time)}
 
 
 \end{document}
