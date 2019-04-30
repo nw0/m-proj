@@ -121,7 +121,7 @@ However, it makes ownership explicit and provenance clear, preventing
 bugs such as use-after-free.
 \wip{unclear}
 
-\paragraph{Caveat on memory leaks}
+\subsubsection{Caveat on memory leaks}
 An exception to the memory leak guarantee is the exposure of
 \texttt{mem::forget} in the core library as a safe function.
 This allows a programmer to end an object's lifetime to end without
@@ -225,7 +225,7 @@ this intrinsic, and therefore has bounds checks.
     \label{lst:rust-iter-checked}
 \end{figure}
 
-\paragraph{Another approach to removing bounds checks}
+\subsubsection{Another approach to removing bounds checks}
 Finally, there is an experimental effort~\cite{rust-crate-indexing} to
 remove array bounds checks using dependent types, using the principles
 described by Xi and Pfenning~\cite{xi-pfenning-dependent} and applied to

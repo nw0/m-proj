@@ -227,7 +227,7 @@ By overflowing the reference count (using \texttt{mem::forget} if memory
 usage is an issue), one can cause the pointed-to object to be
 deallocated, even with outstanding references, defeating the reference
 counter.
-This creates a use-after-free bug.~\cite{rust-nomicon-rc-leak}.
+This creates a use-after-free bug~\cite{rust-nomicon-rc-leak}.
 
 \begin{figure}[ht]
     \lstinputlisting{listings/rc-drop.rs}
