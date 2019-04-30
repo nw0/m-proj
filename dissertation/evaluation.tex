@@ -160,9 +160,8 @@ However, most bounds checks are elided with compiler optimisations
 enabled.
 \Cref{sec:rust-elision} gives some situations in which bounds checks are
 optimised out (\Cref{lst:rust-iter-unchecked}).
-However, they are unavoidable in some situations \wip{evidence}, such as
-heap-allocated linked lists or tree structures, particularly relevant
-for systems programming.
+However, they are unavoidable in some situations, such as random array
+accesses.
 
 
 \subsection{Enforcing immutability with capabilities}

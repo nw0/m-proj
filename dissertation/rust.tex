@@ -175,6 +175,21 @@ Some common situations in which bounds checks are avoided \wip{more}:
 
 Therefore when writing idiomatic Rust, bounds checks mainly apply to
 random indexing, as seen in \Cref{lst:bg-rust-index}.
+They also apply when Rust's intrinsic indexing is used, through the
+\texttt{Index} and \texttt{IndexMut} traits.
+For example, \Cref{lst:rust-vec-index} shows that \texttt{Vec} uses
+this intrinsic, and therefore has bounds checks.
+
+\begin{figure}[ht]
+    \lstinputlisting{listings/vec-index-trait.rs}
+    \caption{
+        Like built-in arrays, Rust's \texttt{Vec} uses intrinsic
+        indexing.
+        The same bounds checks therefore apply to random indexing into a
+        \texttt{Vec}, or any structure built on one.
+    }
+    \label{lst:rust-vec-index}
+\end{figure}
 
 \begin{figure}[ht]
     \lstinputlisting{listings/sums-iter.rs}
