@@ -190,6 +190,13 @@ holder of the original reference from mutating the object: this is the
 current behaviour, would avoid uncertainty over when an object could be
 written to again, and is not known to be a source of past errors.
 
+\subsubsection{Caveat}
+However, manipulating capabilities is not free and the overheads of this
+approach should be weighed against the existing type system.
+Additionally, this does not solve the inherent potential for programmer
+error in the compiler, as seen in the match arm bug where the value is
+only implicitly immutable.
+
 \subsubsection{Note on differences from C}
 Enforcing C's \texttt{const} in hardware proved problematic for CHERI in
 the past, due to functions like~\texttt{strchr} (C), which derive a
