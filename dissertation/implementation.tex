@@ -77,8 +77,10 @@ standalone Rust programs.
 these libraries required to compile Rust programs.
 
 Finally, optimisations are \emph{not} used.
-\Cref{sec:impl-manipulation} on pointer manipulation discusses the
-reasons for this decision.
+Optimisations are not supported at this point as they cause the Rust
+compiler to invoke LLVM APIs with invalid values, such including
+offsets of 128 bits.
+\Cref{sec:impl-width} discusses this briefly.
 
 
 \section{Differences arising from the CHERI target}
@@ -150,36 +152,6 @@ pointers.
 Minor changes were made to refer to Rust's
 \texttt{instruction\_address\_space} for all pointers, instead of only
 pointers to types.
-
-
-\subsection{Manipulation of pointers}
-\label{sec:impl-manipulation}
-
-\subsubsection{Differences}
-
-\wip{Consider showing MIPS generated code: prove roundtrip exists}
-
-CHERI does not support round-tripping between pointers and integers.
-Rust's core library does not attempt to do this, but the generated
-(optimised) code for iterators may attempt unsupported pointer
-manipulation.\footnote{This may be partially due to pointer width and
-index size inconsistencies, \Cref{sec:rust-usize}.}
-As this work is only concerns unoptimised compilation, this note is
-primarily intended for future implementers.
-
-\subsubsection{Changes required}
-This is not a current problem for this project, as it does not attempt
-to compile the core libraries with optimisations.
-While the core libraries do not attempt to dereference pointers cast
-from integers, built-in slice iterators attempt this \wip{evidence?}.
-
-Note that Rust is considering implementing the integer-pointer cast
-model proposed by Kang et
-al.~\cite{kang-intptrcast,rust-miri-intptrcast}
-\footnote{To be clear, this does \emph{not} suggest that pointers and
-integers will be freely cast and used. However, it highlights that
-Rust's memory model is very much under debate and that future
-optimisations in the Rust compiler may invalidate this section.}
 
 
 \subsection{Targeting CHERI}
