@@ -114,13 +114,42 @@ rather than copying, and without exposing the rest of the JVM's memory.
 This preserves Java safety guarantees.
 
 
+\subsection{Sandcrust: Sandboxing Rust's FFI}
+\label{sec:rel-sandcrust}
+
+Sandcrust is a set of macros and Rust compiler transformations which aim
+to sandbox and transform C functions called from
+Rust~\cite{lamowski-sandcrust}.
+Its primary means of achieving isolation is to execute library code in a
+separate process from Rust caller, communicating via remote procedure
+calls (RPC) and pipes.
+This avoids giving libraries access to memory which should not be
+shared, and frustrates attacks such as control-flow hijacking.
+
+This approach comes with considerable overhead, with Lamowski et al.\
+reporting slowdown factors between 1.3 and 44, albeit generally at the
+low end (1.5--\(8\times\)).
+Considerable overhead is likely due to data transfer.
+
+CHERI avoids this overhead, and would call foreign functions in the same
+address space as the Rust program.
+Interestingly, such a sandboxing scheme could protect data which is only
+required for callback functions, similarly to capability sealing in
+\Cref{sec:eval-rust-xprocess}.\footnote{
+    However, a pointer passed to an external library could be modified
+    to point to a different object, which is not possible with a sealed
+    capability.
+}
+I do not discuss Sandcrust's ancillary functionality of wrapping C
+functions to fit Rust idioms which has value of its own.
+
+
 \subsection{Efforts to reduce undefined behaviour in Rust}
 Alone, general adherence to safety principles cannot guarantee a lack of
 undefined behaviour or vulnerabilities.
 Other efforts are under way to check for and reduce undefined behaviour,
 especially in the compiler and standard library:
 
-Lamowski: Sandcrust.
 Ralf Jung: RustBelt.
 
 
