@@ -98,8 +98,6 @@ work.}
 geared for library use which may not include JNI.
 \url{http://www.thewhitespace.de/projects/peaks/}}
 
-\todo{ASAN/HWASAN: CHERI does detect overflows, but not uninitialised
-accesses.}
 
 \subsection{Hardbound}
 \label{sec:rel-hardbound}
@@ -114,6 +112,27 @@ theoretically adaptable to many different compilers, including compilers
 to safe languages such as Rust.
 
 \todo{Precisely why this is different to CHERI (wrt Rust)}
+
+
+\subsection{AddressSanitizer}
+\label{sec:rel-asan}
+
+AddressSanitizer maintains shadow state to find memory errors, including
+bounds checks but also use-after-free errors, with a limited possibility
+of detecting data races~\cite{serebryany-asan}.
+As it does not implement object boundaries on pointers, a correctly
+chosen offset could result in an out-of-bounds dereference into another
+object.
+\todo{Why do we care about asan}
+
+It is implemented using LLVM infrastructure, and the primary use target
+is C code via Clang.
+There is experimental support for compiling Rust with AddressSanitizer
+support, as well as the related LeakSanitizer, MemorySanitizer, and
+ThreadSanitizer~\cite{rust-san}.
+While it is not expected to be useful for Safe Rust code, the main
+incentives for the Rust project appear to be supporting fuzz testing,
+finding compiler bugs, and checking unsafe code~\cite{rust-asan-track}.
 
 
 \subsection{CHERI and the Java Native Interface}
