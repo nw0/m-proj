@@ -64,8 +64,6 @@ be moved to its new end.
 This error was caused by incorrectly using the public capacity, accessed
 by \texttt{self.capacity()}, instead of the private (raw) capacity of
 the buffer, \texttt{self.cap()} (\Cref{lst:deque-capacity}).
-Subsequently, the pointer to the deque's \texttt{head} would point to
-the address immediately after the buffer, rather than its start.
 
 \begin{figure}[ht]
     \lstinputlisting{listings/deque-capacity.rs}
@@ -79,8 +77,37 @@ the address immediately after the buffer, rather than its start.
     \label{lst:deque-capacity}
 \end{figure}
 
+Subsequently, the pointer to the deque's \texttt{head} would point to
+the address immediately after the buffer, rather than its start.
+Pushing to the back of the deque then attempts to write to the address
+after the buffer, rather than within it.
+
 \subsubsection{Demonstration microbenchmark}
-\todo{Have a minimal example that demonstrates this.}
+I checked that this spatial violation is caught by CHERI capabilities,
+but is not detected on x86 FreeBSD.
+Sample code is shown in \Cref{lst:micro-capacity}.
+
+\begin{figure}[ht]
+    \lstinputlisting{listings/micro-capacity.rs}
+    \caption{
+        A program which writes beyond the end of an allocated
+        \texttt{VecDeque} buffer.
+        An off-by-one error in \texttt{reserve} results in an unsound
+        call another function, updating \texttt{head} to 32.
+        Under x86 without capabilities, the program terminates normally,
+        printing output as shown in the comments.
+        With CHERI capabilities, execution continues until line~18, which
+        traps due to a length violation.
+    }
+    \label{lst:micro-capacity}
+\end{figure}
+
+Had another data structure been allocated after the deque, its start
+would have been overwritten by the pushed element.
+However, I was unable to force this situation without modifying the
+allocator for the purpose.
+
+\todo{This is also detected by...}
 
 \subsubsection{Observations}
 \todo{This can be solved by not getting confused, assertion on the
