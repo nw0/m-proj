@@ -24,12 +24,6 @@ fn start(_main: *const u8, _argc: isize, _argv: *const *const u8) -> isize {
 #[global_allocator]
 static HEAP: HeapAlloc = HeapAlloc;
 
-fn print_sp(i: i64) {
-    unsafe {
-        printf(b"%d.\0" as *const u8, i);
-    }
-}
-
 fn main() {
     let s = [1, 2, 3 as i64];
     // rep * 3 == 2 ** 64 + 5
@@ -39,19 +33,18 @@ fn main() {
     use alloc::vec;
     use core::ptr::{copy_nonoverlapping, swap};
 
-    unsafe { printf(b"create v capacity: %d\n\0" as *const u8, (s.len() * rep) as u64 as usize as u32); }
     let mut v: Vec<i64> = Vec::with_capacity((s.len() * rep) as u64 as usize);
-    unsafe { printf(b"capacity of v: %d\n\0" as *const u8, v.capacity() as u32); }
+    prntf!("capacity of v: %d\n", v.capacity() as u64);
     v.extend(&s);
     for x in &v {
-        print_sp(*x);
+        prntf!("%d.", *x);
     }
-    unsafe { printf(b"\n\0" as *const u8); }
+    prntf!("\n");
     let mut u: Vec<i64> = Vec::new();
     u.extend(&s);
     u[0] = 7;
     u.push(0);
-    unsafe { printf(b"%p %p\n\0" as *const u8, &(v[0]), &(u[0])); }
+    prntf!("%p %p\n", &(v[0]), &(u[0]));
 
     unsafe {
         let m = 512;
@@ -62,13 +55,13 @@ fn main() {
         copy_nonoverlapping(v.as_ptr(), (v.as_mut_ptr() as *mut i64).add(12), 12);
         v.set_len(24);
     }
-    print_sp(v.len() as i64);
+    prntf!("%d", v.len() as i64);
     for x in &v {
-        print_sp(*x);
+        prntf!("%d.", *x);
     }
-    unsafe { printf(b"\n\0" as *const u8); }
+    prntf!("\n");
     for x in &u {
-        print_sp(*x);
+        prntf!("%d.", *x);
     }
-    unsafe { printf(b"\n\0" as *const u8); }
+    prntf!("\n");
 }
