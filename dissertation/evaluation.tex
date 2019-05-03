@@ -48,9 +48,19 @@ The key questions this evaluation seeks to address are:
 \section{Errors leading to memory violations in Rust}
 \label{sec:eval-bugs}
 
-\todo{Write something here?}
+Despite Rust's attention to safe language design, programmer error is
+still a rich source of potential vulnerabilities.
+While the Rust community is generally conscious about memory safety and
+security, nowhere is this more true than with the language and compiler
+developers.
 
-\todo{Structure the microbenchmarks: cause, evidence?, lessons?/how CHERI helps}
+This section covers five memory safety flaws discovered in the Rust
+compiler and standard library, all preventable with CHERI capabilities.
+Where relevant, demonstrative microbenchmarks were performed on either
+CheriBSD on Qemu-CHERI with 128-bit capabilities, or FreeBSD~11.2
+(amd64) for the non-capability comparison.
+In all cases, the Rust compiler was as described in
+\Cref{ch:rust,ch:impl}, specifying the target as appropriate.
 
 
 \subsection{Pushing to a \texttt{VecDeque}: off-by-one error leads to out-of-bounds write}
