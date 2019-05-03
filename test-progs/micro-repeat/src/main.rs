@@ -25,43 +25,37 @@ fn start(_main: *const u8, _argc: isize, _argv: *const *const u8) -> isize {
 static HEAP: HeapAlloc = HeapAlloc;
 
 fn main() {
-    let s = [1, 2, 3 as i64];
-    // rep * 3 == 2 ** 64 + 5
-    let rep = 6148914691236517207;
+    use core::ptr::copy_nonoverlapping;
 
-    use alloc::boxed::Box;
-    use alloc::vec;
-    use core::ptr::{copy_nonoverlapping, swap};
+    let s: [i64; 3] = [1, 2 ,3];
+    let reps = 6148914691236517207;             // (2 ** 64 + 5) / 3
 
-    let mut v: Vec<i64> = Vec::with_capacity((s.len() * rep) as u64 as usize);
-    prntf!("capacity of v: %d\n", v.capacity() as u64);
-    v.extend(&s);
-    for x in &v {
-        prntf!("%d.", *x);
-    }
-    prntf!("\n");
-    let mut u: Vec<i64> = Vec::new();
-    u.extend(&s);
-    u[0] = 7;
-    u.push(0);
-    prntf!("%p %p\n", &(v[0]), &(u[0]));
+    let mut buf: Vec<i64> = Vec::with_capacity((s.len() * reps) as u64 as usize);
+    prntf!("capacity: %d\n", buf.capacity() as u64);
+    buf.extend(&s);
 
-    unsafe {
-        let m = 512;
-        copy_nonoverlapping(v.as_ptr(), (v.as_mut_ptr() as *mut i64).add(3), 3);
-        v.set_len(6);
-        copy_nonoverlapping(v.as_ptr(), (v.as_mut_ptr() as *mut i64).add(6), 6);
-        v.set_len(12);
-        copy_nonoverlapping(v.as_ptr(), (v.as_mut_ptr() as *mut i64).add(12), 12);
-        v.set_len(24);
+    let mut overwritten: Vec<i64> = Vec::new();
+    overwritten.extend(&s);
+    overwritten[0] = -1;
+    overwritten.push(-4);
+    for x in &overwritten { prntf!("%d.", *x); } prntf!("\n");
+    // prntf!("%p %p\n", &(buf[0]), &(u[0]));
+
+    {
+        let mut m = 8;  // 8 <= n >> 1
+        while m > 0 {
+            unsafe {
+                copy_nonoverlapping(
+                    buf.as_ptr(),
+                    (buf.as_mut_ptr() as *mut i64).add(buf.len()),
+                    buf.len()
+                );
+                let buf_len = buf.len();
+                buf.set_len(buf_len * 2);
+            }
+            m >>= 1;
+        }
     }
-    prntf!("%d", v.len() as i64);
-    for x in &v {
-        prntf!("%d.", *x);
-    }
-    prntf!("\n");
-    for x in &u {
-        prntf!("%d.", *x);
-    }
-    prntf!("\n");
+    // prntf!("%d", buf.len() as i64);
+    for x in &overwritten { prntf!("%d.", *x); } prntf!("\n");
 }
