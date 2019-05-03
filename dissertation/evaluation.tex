@@ -84,31 +84,16 @@ Here, a buffer overflow occurs when the length of returned vector would
 exceed the target's \texttt{usize}.
 
 \begin{figure}[ht]
-\begin{lstlisting}
-impl<T> [T] {
-    pub fn repeat(&self, n: usize) -> Vec<T> where T: Copy {
-        // omitted: trivial n = 0 case
-        let mut buf = Vec::with_capacity(self.len() * n);
-
-        buf.extend(self);
-        {
-            let mut m = n >> 1;
-            while m > 0 {
-                unsafe {
-                    // memcpy existing elements to double the length
-                }
-            }
-        }
-        // omitted: copy into the remainder of the vector
+    \lstinputlisting{listings/slice-repeat.rs}
+    \caption{
+        \wip{rewrite}
+        Rust's slice \texttt{repeat}, from \texttt{alloc::slice}.
+        Parts omitted for brevity.
+        This code attempts to write beyond the end of a buffer.
+        The error is in line~4; it was fixed by checking the
+        multiplication against integer overflow.
     }
-}
-\end{lstlisting}
-\caption{\wip{rewrite} Rust's slice \texttt{repeat}, from
-\texttt{alloc::slice}. Parts omitted for brevity. This code will attempt
-to write beyond the end of a buffer.
-The error is in line~4; it was fixed by using a multiplication checked
-against overflowing.}
-\label{lst:slice-repeat}
+    \label{lst:slice-repeat}
 \end{figure}
 
 \todo{Think about this seriously. Is it at all practical? The obvious
