@@ -40,15 +40,13 @@ mistakes in writing Unsafe Rust give rise to potential vulnerabilities.
 There have been a number of bugs and potential vulnerabilities in Rust,
 none of which are believed to be exploited.
 Some of these were exposed but potentially preventable with CHERI
-capabilities:
+capabilities (discussed in \Cref{sec:eval-bugs}):
 
 \begin{itemize}
     \item Standard library: buffer overflow when pushing to a
     \texttt{VecDeque}, CVE-2018-1000657~\cite{cve-push,rust-issue-push}.
-    See \Cref{sec:eval-micro-push}.
     \item Standard library: buffer overflow in slice \texttt{repeat},
     CVE-2018-1000810~\cite{cve-repeat,rust-advisory-repeat,rust-pr-slice}.
-    See \Cref{sec:eval-micro-repeat}.
     \item Standard library: out-of-bounds access indexing into a
     reversed slice~\cite{rust-pr-reverse,rust-commit-reverse}.
     \wip{section?}

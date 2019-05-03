@@ -24,7 +24,7 @@ The key questions this evaluation seeks to address are:
     CHERI architecture have for Rust?
     More concretely, what are the safety and performance differences
     from running on other platforms such as x86 or MIPS?
-    \item[\Cref{sec:eval-micro}] Can CHERI capabilities mitigate or prevent
+    \item[\Cref{sec:eval-bugs}] Can CHERI capabilities mitigate or prevent
     vulnerabilities in Rust, and what is the nature of these flaws?
     Do they manifest differently in Rust, and can they be mitigated by
     other means?
@@ -43,6 +43,94 @@ The key questions this evaluation seeks to address are:
     What insight does this provide for language design and
     non-capability platforms?
 \end{description}
+
+
+\section{Errors leading to memory violations in Rust}
+\label{sec:eval-bugs}
+
+\todo{Write something here?}
+
+\todo{Structure the microbenchmarks: cause, evidence?, lessons?/how CHERI helps}
+
+
+\subsection{Pushing to a \texttt{VecDeque}: off-by-one error leads to out-of-bounds write}
+\label{sec:eval-micro-push}
+
+Rust's \texttt{VecDeque} is a circular data structure stored on a
+buffer.
+When this buffer is expanded, elements stored at its (former) end must
+be moved to its new end.
+This error was caused by incorrect use of the public capacity, accessed
+by \texttt{self.capacity()}, instead of the private (raw) capacity of
+the buffer, \texttt{self.cap()}.
+Subsequently, the pointer to the deque's \texttt{head} would point to
+the address immediately after the buffer, rather than its start.
+
+\todo{This can be solved by not getting confused, assertion on the
+copying helper (potentially slow), deque indexing instead of pointers.}
+
+\todo{demonstration microbenchmark details}
+
+
+\subsection{Slice \texttt{repeat}: integer overflow leads to buffer overflow}
+\label{sec:eval-micro-repeat}
+
+This flaw arose from an unchecked write, one pattern of optimisation
+using Unsafe Rust covered in \Cref{sec:rust-unsafe}.
+It occurs in the \texttt{repeat} function on slices
+(\Cref{lst:slice-repeat}), which returns a vector containing a slice
+repeated as specified by the parameter.
+Here, a buffer overflow occurs when the length of returned vector would
+exceed the target's \texttt{usize}.
+
+\begin{figure}[ht]
+\begin{lstlisting}
+impl<T> [T] {
+    pub fn repeat(&self, n: usize) -> Vec<T> where T: Copy {
+        // omitted: trivial n = 0 case
+        let mut buf = Vec::with_capacity(self.len() * n);
+
+        buf.extend(self);
+        {
+            let mut m = n >> 1;
+            while m > 0 {
+                unsafe {
+                    // memcpy existing elements to double the length
+                }
+            }
+        }
+        // omitted: copy into the remainder of the vector
+    }
+}
+\end{lstlisting}
+\caption{\wip{rewrite} Rust's slice \texttt{repeat}, from
+\texttt{alloc::slice}. Parts omitted for brevity. This code will attempt
+to write beyond the end of a buffer.
+The error is in line~4; it was fixed by using a multiplication checked
+against overflowing.}
+\label{lst:slice-repeat}
+\end{figure}
+
+\todo{Think about this seriously. Is it at all practical? The obvious
+case is the write is interrupted before the address falls of the maximum
+value. Are there specific values that work for any platform?}
+
+This is difficult to exploit, as it would require a long slice or a
+large number \(n\) of repetitions, increasing the change of a
+segmentation fault.
+Nonetheless, it is certainly not thread-safe, and Rust does target
+platforms with 16-bit \texttt{usize}, i.e.\ at most \(65,536\) elements,
+making an attack plausible, if not possible.
+
+\todo{demonstration microbenchmark details}
+
+
+\subsection{Out-of-bounds indexing into a reversed slice}
+
+\subsection{\texttt{Vec} method violates Rust's uniqueness of shared references}
+
+\subsection{Uncaught move of implicitly-immutable value}
+\todo{Rephrase title}
 
 
 \section{Benefits to CHERI as a Rust target}
@@ -329,82 +417,6 @@ bounds.
 \subsection{Unsafe semantics}
 Not everything is unsafe any more? Dereferencing arbitrary pointers now
 guaranteed to crash rather than leak.
-
-
-\section{Microbenchmarks}
-\label{sec:eval-micro}
-
-\todo{Write something here?}
-
-\todo{Structure the microbenchmarks: cause, evidence?, lessons?/how CHERI helps}
-
-
-\subsection{Pushing to a \texttt{VecDeque}: off-by-one error leads to out-of-bounds write}
-\label{sec:eval-micro-push}
-
-Rust's \texttt{VecDeque} is a circular data structure stored on a
-buffer.
-When this buffer is expanded, elements stored at its (former) end must
-be moved to its new end.
-This error was caused by incorrect use of the public capacity, accessed
-by \texttt{self.capacity()}, instead of the private (raw) capacity of
-the buffer, \texttt{self.cap()}.
-Subsequently, the pointer to the deque's \texttt{head} would point to
-the address immediately after the buffer, rather than its start.
-
-\todo{This can be solved by not getting confused, assertion on the
-copying helper (potentially slow), deque indexing instead of pointers.}
-
-
-\subsection{Slice \texttt{repeat}: integer overflow leads to buffer overflow}
-\label{sec:eval-micro-repeat}
-
-This flaw arose from an unchecked write, one pattern of optimisation
-using Unsafe Rust covered in \Cref{sec:rust-unsafe}.
-It occurs in the \texttt{repeat} function on slices
-(\Cref{lst:slice-repeat}), which returns a vector containing a slice
-repeated as specified by the parameter.
-Here, a buffer overflow occurs when the length of returned vector would
-exceed the target's \texttt{usize}.
-
-\begin{figure}[ht]
-\begin{lstlisting}
-impl<T> [T] {
-    pub fn repeat(&self, n: usize) -> Vec<T> where T: Copy {
-        // omitted: trivial n = 0 case
-        let mut buf = Vec::with_capacity(self.len() * n);
-
-        buf.extend(self);
-        {
-            let mut m = n >> 1;
-            while m > 0 {
-                unsafe {
-                    // memcpy existing elements to double the length
-                }
-            }
-        }
-        // omitted: copy into the remainder of the vector
-    }
-}
-\end{lstlisting}
-\caption{\wip{rewrite} Rust's slice \texttt{repeat}, from
-\texttt{alloc::slice}. Parts omitted for brevity. This code will attempt
-to write beyond the end of a buffer.
-The error is in line~4; it was fixed by using a multiplication checked
-against overflowing.}
-\label{lst:slice-repeat}
-\end{figure}
-
-\todo{Think about this seriously. Is it at all practical? The obvious
-case is the write is interrupted before the address falls of the maximum
-value. Are there specific values that work for any platform?}
-
-This is difficult to exploit, as it would require a long slice or a
-large number \(n\) of repetitions, increasing the change of a
-segmentation fault.
-Nonetheless, it is certainly not thread-safe, and Rust does target
-platforms with 16-bit \texttt{usize}, i.e.\ at most \(65,536\) elements,
-making an attack plausible, if not possible.
 
 
 \section{Porting safe languages to capability architectures}
