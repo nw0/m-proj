@@ -8,8 +8,10 @@
 
 extern crate alloc;
 
+#[macro_use]
 mod support;
 
+use alloc::borrow::ToOwned;
 use alloc::vec::Vec;
 use support::{printf,HeapAlloc};
 

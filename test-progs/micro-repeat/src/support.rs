@@ -11,6 +11,15 @@ extern {
     pub fn free(ptr: *mut u8);
 }
 
+macro_rules! prntf {
+    ( $fmt:expr ) => {
+        unsafe { printf(($fmt.to_owned() + "\0").as_bytes().as_ptr()); }
+    };
+    ( $fmt:expr, $($var:expr),* ) => {
+        unsafe { printf(($fmt.to_owned() + "\0").as_bytes().as_ptr(), $( $var , )*); }
+    }
+}
+
 pub struct HeapAlloc;
 
 unsafe impl GlobalAlloc for HeapAlloc {
