@@ -56,20 +56,35 @@ The key questions this evaluation seeks to address are:
 \subsection{Pushing to a \texttt{VecDeque}: off-by-one error leads to out-of-bounds write}
 \label{sec:eval-micro-push}
 
+\subsubsection{Cause}
 Rust's \texttt{VecDeque} is a circular data structure stored on a
 buffer.
 When this buffer is expanded, elements stored at its (former) end must
 be moved to its new end.
-This error was caused by incorrect use of the public capacity, accessed
+This error was caused by incorrectly using the public capacity, accessed
 by \texttt{self.capacity()}, instead of the private (raw) capacity of
-the buffer, \texttt{self.cap()}.
+the buffer, \texttt{self.cap()} (\Cref{lst:deque-capacity}).
 Subsequently, the pointer to the deque's \texttt{head} would point to
 the address immediately after the buffer, rather than its start.
 
+\begin{figure}[ht]
+    \lstinputlisting{listings/deque-capacity.rs}
+    \caption{
+        The public-facing definition of a \texttt{VecDeque}'s capacity.
+        It will not escape the reader's attention that the
+        \texttt{capacity} might be mistaken for the \texttt{cap}, which
+        is a likely cause of this error.
+        This definition is still current in Rust's built-in data structures.
+    }
+    \label{lst:deque-capacity}
+\end{figure}
+
+\subsubsection{Demonstration microbenchmark}
+\todo{Have a minimal example that demonstrates this.}
+
+\subsubsection{Observations}
 \todo{This can be solved by not getting confused, assertion on the
 copying helper (potentially slow), deque indexing instead of pointers.}
-
-\todo{demonstration microbenchmark details}
 
 
 \subsection{Slice \texttt{repeat}: integer overflow leads to buffer overflow}
