@@ -73,18 +73,22 @@ When this buffer is expanded, elements stored at its (former) end must
 be moved to its new end.
 This error was caused by incorrectly using the public capacity, accessed
 by \texttt{self.capacity()}, instead of the private (raw) capacity of
-the buffer, \texttt{self.cap()} (\Cref{lst:deque-capacity}).
+the buffer, \texttt{self.cap()}
+(\Cref{lst:deque-defs})~\cite{rust-pr-reserve,rust-issue-deque-append}.
 
 \begin{figure}[ht]
-    \lstinputlisting{listings/deque-capacity.rs}
+    \lstinputlisting{listings/deque-defs.rs}
     \caption{
-        The public-facing definition of a \texttt{VecDeque}'s capacity.
+        The public-facing definitions for a \texttt{VecDeque}'s
+        capacity, and pushing to the end.
         It will not escape the reader's attention that the
-        \texttt{capacity} might be mistaken for the \texttt{cap}, which
-        is a likely cause of this error.
-        This definition is still current in Rust's built-in data structures.
+        \texttt{capacity} might be mistaken for the \texttt{cap}, a
+        likely cause of this error.
+        These definitions are still current in Rust's built-in data
+        structures.
+        \texttt{push\_back} annotated with implicit precondition.
     }
-    \label{lst:deque-capacity}
+    \label{lst:deque-defs}
 \end{figure}
 
 Subsequently, the pointer to the deque's \texttt{head} would point to
@@ -117,11 +121,25 @@ would have been overwritten by the pushed element.
 However, I was unable to force this situation without modifying the
 allocator for the purpose.
 
-\todo{This is also detected by...}
-
 \subsubsection{Observations}
-\todo{This can be solved by not getting confused, assertion on the
-copying helper (potentially slow), deque indexing instead of pointers.}
+This scenario is a plain example of a bounds violation that can be
+prevented using capabilities.
+Had the underlying implementation not used an unchecked write (line 12
+of \Cref{lst:deque-defs}), this would also have been prevented by Rust's
+bounds checks, as the \texttt{VecDeque} is backed by a vector.
+This is an interesting lesson: bounds checks are useful not only for the
+end-programmer, but also (presumably meticulous) language developers.
+
+\todo{This is also detected by ASAN (bother writing?)}
+
+Note that whether this exceeds the bounds is implementation specific!
+The existing implementation will reserve space for 32 elements here, but
+if more space had been reserved by \texttt{with\_capacity} or its
+underlying code (e.g.\ 64 elements), the object bounds would have been
+correspondingly wider.
+In that case, it would only be detected if the value was written using
+the built-in bounds-checking indexing, although the pushed value would
+still disappear.
 
 
 \subsection{Slice \texttt{repeat}: integer overflow leads to buffer overflow}
