@@ -201,6 +201,41 @@ making an attack plausible, if not possible.
 
 \subsection{Out-of-bounds indexing into a reversed slice}
 
+\subsubsection{Cause}
+An unhandled unsigned integer wrap-around could lead to out-of-bounds
+slice indexing through its reverse iterator~\cite{rust-pr-reverse}.
+\Cref{lst:bug-reverse} shows the relevant implementation, defined in the
+core library.
+
+\begin{figure}[ht]
+    \lstinputlisting{listings/bug-reverse.rs}
+    \caption{
+        Previous implementation of indexing into a reversed slice.
+        If \texttt{amt - index - 1 < 0}, the index wraps, attempting to
+        access an index larger than the indexable region.
+        This may be unsafe depending on the underlying implementation.
+        This was fixed by checking that \texttt{amt > index} before
+        indexing, returning \texttt{None}
+        otherwise~\cite{rust-commit-reverse}.
+    }
+    \label{lst:bug-reverse}
+\end{figure}
+
+\subsubsection{Observations}
+A very large index (i.e.\ close to \texttt{usize::MAX}) could be passed
+to the reverse indexing function to get values slightly beyond the end
+of the slice.
+As `slice' suggests, they frequently represent a view into a larger
+slice, so this could reasonably be expected to be defined.
+
+Whether this is possible is implementation-dependent; arguably if the
+reverse \texttt{idx} is expected to handle bad values, then the
+underlying \texttt{idx} should arguably also handle them.
+If anything, this example illustrates the safety awareness of Rust
+developers, rather than a fundamental bug.
+
+
+
 \subsection{\texttt{Vec} method violates Rust's uniqueness of shared references}
 
 \subsection{Uncaught move of implicitly-immutable value}
