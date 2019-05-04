@@ -55,7 +55,7 @@ security, nowhere is this more true than with the language and compiler
 developers.
 
 This section covers five memory safety flaws discovered in the Rust
-compiler and standard library, all preventable with CHERI capabilities.
+standard library, all preventable with CHERI capabilities.
 Where relevant, demonstrative microbenchmarks were performed on either
 CheriBSD on Qemu-CHERI with 128-bit capabilities, or FreeBSD~11.2
 (amd64) for the non-capability comparison.
@@ -269,10 +269,6 @@ syntax, the language does not help in this low-level operation.
 Though this error leads to temporal unsafety, this could be prevented by
 passing a read-only capability for an immutable borrow.
 \Cref{sec:eval-rust-enforce-immut} discusses this is more detail.
-
-
-\subsection{Uncaught move of implicitly-immutable value}
-\todo{Rephrase title}
 
 
 \section{Benefits to CHERI as a Rust target}

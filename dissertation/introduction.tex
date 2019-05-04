@@ -52,9 +52,6 @@ capabilities (discussed in \Cref{sec:eval-bugs}):
     \item Standard library: unsafe Iterator method creates
     multiple mutable references, violating temporal
     safety~\cite{rust-issue-vec-mut}.
-    \item Compiler bug: uncaught move of an implicitly-borrowed
-    immutable value *sealing~\cite{rust-issue-match-borrow}.
-    \wip{section?}
 \end{itemize}
 
 Others are not mitigated by capabilities:
