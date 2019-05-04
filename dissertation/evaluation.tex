@@ -235,8 +235,41 @@ If anything, this example illustrates the safety awareness of Rust
 developers, rather than a fundamental bug.
 
 
+\subsection{Iterator method violates Rust's uniqueness of shared references}
 
-\subsection{\texttt{Vec} method violates Rust's uniqueness of shared references}
+\subsubsection{Cause}
+An iterator method in the core library should return a mutable slice
+from a mutable iterator.
+Instead, it returns a mutable slice for any iterator.
+\Cref{lst:bug-mutslice} shows that it does this by calling an unsafe
+method which operates on raw pointers~\cite{rust-issue-vec-mut}.
+
+\begin{figure}[ht]
+    \lstinputlisting{listings/bug-as_mut_slice.rs}
+    \caption{
+        Built-in method returning a mutable slice for a (mutable)
+        iterator: except it accepts immutable iterators also.
+        This violates Rust's temporal guarantee that mutable references
+        are never shared.
+    }
+    \label{lst:bug-mutslice}
+\end{figure}
+
+\subsubsection{Observations}
+This is a clear violation of one of Rust's temporal safety guarantees,
+that mutable references must not be shared.
+While this is not strictly undefined behaviour, attempting to mutate the
+returned object is, defeating the point of getting a mutable slice.
+
+This appears to be bug caused by copying and pasting the Iterator
+\texttt{as\_slice} method when writing \texttt{as\_mut\_slice}.
+Again demonstrating the fallibility of programmers and motivating safe
+syntax, the language does not help in this low-level operation.
+
+Though this error leads to temporal unsafety, this could be prevented by
+passing a read-only capability for an immutable borrow.
+\Cref{sec:eval-rust-enforce-immut} discusses this is more detail.
+
 
 \subsection{Uncaught move of implicitly-immutable value}
 \todo{Rephrase title}

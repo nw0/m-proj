@@ -49,10 +49,9 @@ capabilities (discussed in \Cref{sec:eval-bugs}):
     CVE-2018-1000810~\cite{cve-repeat,rust-advisory-repeat,rust-pr-slice}.
     \item Standard library: out-of-bounds access indexing into a
     reversed slice~\cite{rust-pr-reverse,rust-commit-reverse}.
-    \item Standard library: unsafe \texttt{Vec} method creates
+    \item Standard library: unsafe Iterator method creates
     multiple mutable references, violating temporal
-    safety *catchable with sealing~\cite{rust-issue-vec-mut}.
-    \wip{section?}
+    safety~\cite{rust-issue-vec-mut}.
     \item Compiler bug: uncaught move of an implicitly-borrowed
     immutable value *sealing~\cite{rust-issue-match-borrow}.
     \wip{section?}
