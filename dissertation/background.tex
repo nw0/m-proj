@@ -14,13 +14,11 @@ Rust is discussed in \Cref{ch:rust}.
 
 
 \section{Capabilities}
-A \emph{capability} is the address of an entity combined with the
-permitted actions using that reference~\cite{Dennis:1966:PSM}.
-An entity may traditionally be a memory segment, and actions could be to
-write or execute that segment.
-Throughout this work, a recurring theme will be the arbitrary
-dereferencing of pointers, an action permitted in Unsafe Rust, but not
-Safe Rust.
+\label{sec:bg-caps}
+Capabilities are traditionally known as unforgeable tokens of authority.
+CHERI provides \emph{memory capabilities}: unforgeable pointers to
+continuous regions in memory~\cite{cheri-risc-2014}.
+\wip{``more on this in the next sections''}
 
 Capabilities have a long history: while the concept had been established
 beforehand, they were implemented and expounded in
@@ -31,6 +29,13 @@ eternal buffer overflow (1,613 published CVEs in 2018
 alone~\cite{nist-nvd-overflow-2018}), and obviate other mitigations,
 such as address-space layout randomisation and W\^{}X protection
 against execution of writeable data.
+
+A recurring theme in this work is the definition and usage of pointers.
+For instance, the proper usage of a capability renders object bounds
+checks redundant: can this optimise bounds checks in Rust?
+We will also see that CHERI's implementation of capability pointers
+stretches a key language definition in Rust due to its usage in the
+compiler.
 
 
 \section{CHERI: Capability Hardware Enhanced RISC Instructions}
