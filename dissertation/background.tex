@@ -39,13 +39,31 @@ compiler.
 
 
 \section{CHERI: Capability Hardware Enhanced RISC Instructions}
-CHERI extends a 64-bit RISC ISA to support capabilities.
+
+\todo{``cheri128, purecap''}
+
+\subsection{Memory capability model}
+\todo{rewrite}
+
+CHERI extends the 64-bit MIPS ISA to support capabilities.
 Its design emphasises incremental adoption, and the principles of least
 privilege and intentional use, to mitigate unintended vulnerabilities.
 Its hybrid approach enables capability code to be used alongside
 non-capability code, allowing a concentration on higher-risk code and
 libraries~\cite{cheri-v6}.
 
+\subsection{Implementation overview}
+
+\subsubsection{Capability coprocessor and registers}
+A capability coprocessor is used to implement the CHERI extensions.
+The coprocessor implements its own register file, creating a clear
+distinction between integers and capabilities.
+Instructions are added for manipulating these capability registers, such
+as loads and stores, decreasing the bounds on capabilities, and
+branching based on capability tags~\cite{cheri-risc-2014}.
+
+\subsubsection{Capability manipulation}
+\subsubsection{Memory tagging}
 
 \section{Why Rust?}
 \label{sec:bg-why-rust}
