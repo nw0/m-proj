@@ -226,7 +226,6 @@ of detecting data races~\cite{serebryany-asan}.
 As it does not implement object boundaries on pointers, a correctly
 chosen offset could result in an out-of-bounds dereference into another
 object.
-\todo{Why do we care about asan}
 
 It is implemented using LLVM infrastructure, and the primary use target
 is C code via Clang.
@@ -237,13 +236,10 @@ While it is not expected to be useful for Safe Rust code, the main
 incentives for the Rust project appear to be supporting fuzz testing,
 finding compiler bugs, and checking unsafe code~\cite{rust-asan-track}.
 
-
-\subsection{Peaks}
-\label{sec:rel-peaks}
-
-\todo{Peaks: capability model for Java. Primarily JNI, but ostensibly
-geared for library use which may not include JNI.
-\url{http://www.thewhitespace.de/projects/peaks/}}
+As such, it targets a subset of problems in Rust as CHERI capabilities
+do, albeit in software.
+While the authors suggest that AddressSanitizer could be run in
+production code, it suffers a considerable \(2\times\) slowdown.
 
 
 \subsection{CHERI and the Java Native Interface}
