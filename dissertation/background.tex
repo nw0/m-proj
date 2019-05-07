@@ -105,7 +105,6 @@ as a kind of lowest common denominator in computer systems.
 Further, its stereotypical memory unsafety precedes a reasonable
 assumption that C programs would benefit from capabilities, perhaps more
 so than a safe language would.
-\wip{ref jni-cheri,peaks}
 
 Rust is such an example of a safe language.
 The following sections briefly motivate the choice of Rust as a language
@@ -135,12 +134,39 @@ adoption and utility of capabilities.
     \label{lst:bg-rust-index}
 \end{figure}
 
+One of Rust's safety features is runtime bounds checks on array
+accesses: \Cref{lst:bg-rust-index} shows an example.
+As arrays have clear bounds, these checks also occur when dereferencing
+a CHERI capability.
+If object bounds are set correctly, the runtime checks are redundant and
+could be removed as an optimisation.
 
-\subsection{Clean FFI abstraction}
 
 \subsection{Broad similarity to C}
+While Rust espouses very different design principles to C, it targets
+similar applications, such as systems programming.
+It emphasises a small runtime, and its compilation and linking process
+is similar, as opposed to interpreted or JIT compiled languages.
+An evaluation using Rust is more immediately relevant and readily
+comprehensible in the context of existing literature, and applicable in
+re-interpreting it.
+
+Additionally, it is trivial to link against C libraries, so a smaller
+proportion of the Rust standard libraries need be considered for a
+meaningful evaluation (\Cref{sec:impl-what}).
+
 
 \subsection{Object lifetimes and temporal safety}
+Rust uses \emph{object lifetimes} instead of placing the burden on users
+to manage memory, or using a garbage collector.
+Like manual memory management, this design enforces intentionality, but
+is enforced by the compiler to prevent dangling pointers and
+use-after-free unsafety.
+This is a major feature preventing temporal unsafety, an area for which
+capabilities have no universal remedy, unlike the spatial integrity they
+frequently provide.
+As such, Rust has a built-in mechanism complementary to that provided by
+capabilities, and the interaction between these is worth examination.
 
 
 \section{Survey of related work}
@@ -167,10 +193,6 @@ No discussion of optimisation, but relevant to the Rust angle.}
 \todo{J-Kernel: 1999, isolation of web applications (server-side).
 Little discussion of overheads (``small''), or hardware; left to future
 work.}
-
-\todo{Peaks: capability model for Java. Primarily JNI, but ostensibly
-geared for library use which may not include JNI.
-\url{http://www.thewhitespace.de/projects/peaks/}}
 
 
 \subsection{Hardbound}
@@ -209,8 +231,16 @@ incentives for the Rust project appear to be supporting fuzz testing,
 finding compiler bugs, and checking unsafe code~\cite{rust-asan-track}.
 
 
+\subsection{Peaks}
+\label{sec:rel-peaks}
+
+\todo{Peaks: capability model for Java. Primarily JNI, but ostensibly
+geared for library use which may not include JNI.
+\url{http://www.thewhitespace.de/projects/peaks/}}
+
+
 \subsection{CHERI and the Java Native Interface}
-\label{sec:bg-cheri-jni}
+\label{sec:rel-cheri-jni}
 
 Capabilities are a viable alternative to sandboxing JNI
 functions~\cite{cheri-jni}.
