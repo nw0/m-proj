@@ -259,7 +259,7 @@ reporting slowdown factors between 1.3 and 44, albeit generally at the
 low end (1.5--\(8\times\)).
 Considerable overhead is likely due to data transfer.
 
-CHERI avoids this overhead, and would call foreign functions in the same
+CHERI avoids this overhead, and can call foreign functions in the same
 address space as the Rust program.
 Interestingly, such a sandboxing scheme could protect data which is only
 required for callback functions, similarly to capability sealing in
@@ -290,23 +290,34 @@ tasks~\cite{yee-nacl}; Siefers et al.\ give similar figures for
 computational tasks on Robusta.
 Conceivably, such a small overhead could also apply to sandboxing in
 Rust, on the same tasks and with some optimisation.
+However, with less computational tasks, copying objects in and out of
+the sandbox can lead to over \(15\times\) slowdown.
 
-Watson et al.\ suggest that compartmentalisation with CHERI capabilities
-vastly outperforms process-based approaches, as the data flow overhead
-is non-existent~\cite{cheri2015}.
 Note again that Robusta does more than improve memory safety: it also
-intercepts system calls to ensure they conform to the Java security
-model.
+intercepts system calls to ensure they are permitted by the Java
+security manager.
 
 
-\subsection{CHERI and the Java Native Interface}
+\subsection{CHERI compartmentalisation and the JNI}
 \label{sec:rel-cheri-jni}
 
-Capabilities are a viable alternative to sandboxing JNI
-functions~\cite{cheri-jni}.
-Chisnall et al.\ propose safe direct access to buffers owned by the JVM,
-rather than copying, and without exposing the rest of the JVM's memory.
-This preserves Java safety guarantees.
+As an alternative to process-based sandboxing, CheriBSD provides
+compartmentalisation for cross-domain calls (cross-process and system
+calls).
+Watson et al.\ show that compartmentalisation with CHERI capabilities
+vastly outperforms process-based approaches, as the data flow overhead
+is non-existent.
+Compartmentalisation can also be used to restrict and protect system
+calls, such as only allowing certain system calls or preventing
+tampering with file descriptors~\cite{cheri2015}.
+
+Chisnall et al.\ use compartmentalisation to sandbox JNI code, eliminating
+data flow and domain crossing overheads, and enabling sealing
+(\Cref{sec:eval-rust-xprocess} discusses this in a Rust context), among
+other benefits~\cite{cheri-jni}.
+Like Robusta, this includes Java security manager checks on native code.
+They include a detailed comparison of compartmentalisation to
+process-based sandboxing.
 
 
 \subsection{Efforts to reduce undefined behaviour in Rust}
