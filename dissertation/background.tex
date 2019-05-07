@@ -40,8 +40,6 @@ compiler.
 
 \section{CHERI: Capability Hardware Enhanced RISC Instructions}
 
-\todo{``cheri128, purecap''}
-
 \subsection{Memory capability model}
 \todo{rewrite}
 
@@ -78,6 +76,26 @@ only decrease privilege, so to preserve
 unforgeability~\cite{cheri-risc-2014}.
 Thus capability bounds (length) cannot be increased, nor can a read-only
 capability derive a read-write one.
+
+
+\subsection{Using non-capability code}
+Code that is not capability-aware is interoperable with capability code,
+through instructions that translate between capabilities and integer
+pointers.
+The latter are protected by the \emph{implicit capability register},
+\textbf{C0}.
+This allows protection of non-capability code from capability-aware code
+and vice versa~\cite{cheri-risc-2014}.
+The contemporaneous usage of regular pointers and capabilities is known
+as \emph{hybrid mode}, whereas a program that exclusively used
+capabilities is deemed to run in \emph{pure capability
+mode}~\cite{cheri-prog-guide}.
+
+This project evaluates Rust under pure capability mode only.
+The choice has proven to be a practical one: in keeping consistent with
+LLVM's memory model, the Rust compiler avoids pitfalls that lead to
+capability incompatibility.
+
 
 \section{Why Rust?}
 \label{sec:bg-why-rust}
