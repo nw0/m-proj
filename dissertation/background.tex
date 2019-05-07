@@ -100,10 +100,22 @@ capability incompatibility.
 \section{Why Rust?}
 \label{sec:bg-why-rust}
 
-\clar{Its reputation as a safe systems language? Bounds checks? Easier
-than Java? Commitment to security? Probably because it's `similar' to
-C---this aids comparisons. Also, it has no GC, and lifetimes are
-interesting and helpful, related to revocation.}
+Most evaluations of capability implementations focus on the C language,
+as a kind of lowest common denominator in computer systems.
+Further, its stereotypical memory unsafety precedes a reasonable
+assumption that C programs would benefit from capabilities, perhaps more
+so than a safe language would.
+\wip{ref jni-cheri,peaks}
+
+Rust is such an example of a safe language.
+The following sections briefly motivate the choice of Rust as a language
+on which to evaluate a capability platform;
+see \Cref{ch:rust} for an overview of language features and semantics
+relevant to the use of capabilities.
+
+Finally, it provides a foil to C evaluations of capabilities, in both
+adoption and utility of capabilities.
+
 
 \subsection{Bounds checks in Rust}
 \label{sec:bg-rust-bounds}
@@ -122,6 +134,13 @@ interesting and helpful, related to revocation.}
     }
     \label{lst:bg-rust-index}
 \end{figure}
+
+
+\subsection{Clean FFI abstraction}
+
+\subsection{Broad similarity to C}
+
+\subsection{Object lifetimes and temporal safety}
 
 
 \section{Survey of related work}
