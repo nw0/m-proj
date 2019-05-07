@@ -320,13 +320,27 @@ They include a detailed comparison of compartmentalisation to
 process-based sandboxing.
 
 
-\subsection{Efforts to reduce undefined behaviour in Rust}
-Alone, general adherence to safety principles cannot guarantee a lack of
-undefined behaviour or vulnerabilities.
-Other efforts are under way to check for and reduce undefined behaviour,
-especially in the compiler and standard library:
+\subsection{RustBelt: Verification of Rust's safety properties}
 
-Ralf Jung: RustBelt.
+One of Rust's goals is to provide a good combination of low-level
+control and performance with the high-level abstractions and safety.
+While the language and runtime have been designed with this in mind,
+the claimed safety properties are not clear in light of the frequent
+unsafe implementations of functions and data structures in the standard
+library~\cite{rustbelt-web}.
+
+Noting that the Rust language does not have formal semantics, Jung et
+al.\ define \(\lambda_\textrm{Rust}\), which they use to illustrate a
+formalisation of the Rust language, emphasising lifetimes and
+borrowing~\cite{jung-rustbelt}.
+These notions are crucial to Rust's temporal safety which underpins
+Rust's claims to be a safe language.
+Further, they give a framework for proving the soundness of unsafe code,
+applying it to Rust primitives, including those that provide shared
+references and reference-counted memory.
+They also include a more detailed view of Rust's semantics than this
+work contains, as I focus on the implementation rather than the
+formalisation.
 
 
 \end{document}
