@@ -207,7 +207,14 @@ It emphasises minimal compiler and memory layout changes, making it
 theoretically adaptable to many different compilers, including compilers
 to safe languages such as Rust.
 
-\todo{Precisely why this is different to CHERI (wrt Rust)}
+Woodruff et al.~\cite{cheri-risc-2014} detail differences between
+Hardbound and CHERI; for the purposes of this work, much of the
+evaluation applies equally or similarly to Hardbound.
+Notable exceptions would include pointer width compatibility,\footnote{
+Hardbound is capable of compressing (less) pointer information, avoiding
+changing the pointer width.
+} the comments on enforcing immutability, and protecting against abuse
+through FFI functions.
 
 
 \subsection{AddressSanitizer}
