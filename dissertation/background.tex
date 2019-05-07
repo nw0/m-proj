@@ -242,16 +242,6 @@ While the authors suggest that AddressSanitizer could be run in
 production code, it suffers a considerable \(2\times\) slowdown.
 
 
-\subsection{CHERI and the Java Native Interface}
-\label{sec:rel-cheri-jni}
-
-Capabilities are a viable alternative to sandboxing JNI
-functions~\cite{cheri-jni}.
-Chisnall et al.\ propose safe direct access to buffers owned by the JVM,
-rather than copying, and without exposing the rest of the JVM's memory.
-This preserves Java safety guarantees.
-
-
 \subsection{Sandcrust: Sandboxing Rust's FFI}
 \label{sec:rel-sandcrust}
 
@@ -280,6 +270,43 @@ required for callback functions, similarly to capability sealing in
 }
 I do not discuss Sandcrust's ancillary functionality of wrapping C
 functions to fit Rust idioms which has value of its own.
+
+
+\subsection{Robusta: Sandboxing JNI code}
+The Java Native Interface (JNI) provides full access to the address
+space of a Java program, and JNI code is completely trusted by Java's
+security model.
+Robusta sandboxes native calls by intercepting calls to native
+functions, building on Google's Native Client.
+It also executes native code in a separate process, again copying data
+as necessary.
+System calls pass through JVM permissions checks, extending the Java
+security manager to native code~\cite{siefers-robusta}: in essence, a
+reference monitor in the JVM.
+
+Native Client provides separation for the primary purpose of
+computation, reporting around 5\% overhead for computational
+tasks~\cite{yee-nacl}; Siefers et al.\ give similar figures for
+computational tasks on Robusta.
+Conceivably, such a small overhead could also apply to sandboxing in
+Rust, on the same tasks and with some optimisation.
+
+Watson et al.\ suggest that compartmentalisation with CHERI capabilities
+vastly outperforms process-based approaches, as the data flow overhead
+is non-existent~\cite{cheri2015}.
+Note again that Robusta does more than improve memory safety: it also
+intercepts system calls to ensure they conform to the Java security
+model.
+
+
+\subsection{CHERI and the Java Native Interface}
+\label{sec:rel-cheri-jni}
+
+Capabilities are a viable alternative to sandboxing JNI
+functions~\cite{cheri-jni}.
+Chisnall et al.\ propose safe direct access to buffers owned by the JVM,
+rather than copying, and without exposing the rest of the JVM's memory.
+This preserves Java safety guarantees.
 
 
 \subsection{Efforts to reduce undefined behaviour in Rust}
