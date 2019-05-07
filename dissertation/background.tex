@@ -62,8 +62,22 @@ Instructions are added for manipulating these capability registers, such
 as loads and stores, decreasing the bounds on capabilities, and
 branching based on capability tags~\cite{cheri-risc-2014}.
 
+\subsubsection{Memory tagging}
+To support pointers to be stored anywhere in memory, an out-of-band tag
+bit is associated with each (aligned) pointer-sized location in memory.
+If a location storing a capability is written to be a non-capability
+instruction, this bit is cleared to preserve the unforgeability of
+pointers~\cite{cheri-risc-2014}.
+
 \subsubsection{Capability manipulation}
-\todo{Capability instructions, monotonicity, memory tagging (can store anywhere)}
+CHERI provides capability instructions for using capabilities, from
+those defining the bounds of a capability, to loading from and jumping
+to a capability register.
+Instructions conform to the property of \emph{monotonicity}: they can
+only decrease privilege, so to preserve
+unforgeability~\cite{cheri-risc-2014}.
+Thus capability bounds (length) cannot be increased, nor can a read-only
+capability derive a read-write one.
 
 \section{Why Rust?}
 \label{sec:bg-why-rust}
