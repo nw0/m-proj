@@ -73,6 +73,7 @@ be within bounds.
 Unsafe code in the core library is also used for unchecked conversions,
 or other unchecked indexing, like into a Unicode string at a known
 character boundary.
+
 Another example is to override the default allocation strategy
 when initialising a vector with data: there is no need to fill the
 allocated space with zeroes or poison values if it is guaranteed to be
@@ -82,7 +83,7 @@ Naturally, there is scope for programmer error here:
 the standard library.
 
 
-\subsection{Object ownership and move semantics}
+\subsection{Object ownership and borrow semantics}
 \label{sec:rust-borrow}
 
 \clar{So what?}
@@ -129,6 +130,8 @@ deallocating it, used to avoid double-frees in circular data structures.
 This can create a leak, as can a knot-tied reference-counted data
 structure, though knot-tying is made difficult in light of the single
 mutable reference rule.
+\Cref{sec:eval-rust-use-after-free} gives an example of a memory leak in
+Safe Rust.
 
 
 \subsection{Optimisation by eliding checks}
@@ -144,7 +147,7 @@ checked.
 This detection is basic, as we see in \Cref{lst:rust-iter-checked}: it
 is more effective to use built-in iterators in general.
 
-Some common situations in which bounds checks are avoided \wip{more}:
+Some common situations in which bounds checks are avoided:
 
 \begin{description}
     \item[Built-in binary search] Checks avoided without unsafe code by
@@ -230,7 +233,7 @@ Finally, there is an experimental effort~\cite{rust-crate-indexing} to
 remove array bounds checks using dependent types, using the principles
 described by Xi and Pfenning~\cite{xi-pfenning-dependent} and applied to
 Rust by Beingessner~\cite{beingessner}.
-It should be noted that this could add a significant compile-time
+Note that this could add a significant compile-time
 overhead, as it necessarily utilises type-, lifetime, and ownership
 checkers, which Rust runs before optimisations: this results in
 heavy computation to remove checks that are usually avoided anyway.

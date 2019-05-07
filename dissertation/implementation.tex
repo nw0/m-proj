@@ -21,8 +21,8 @@ changes explicitly: e.g. memchr---there are only about 5 of these.}
 \label{sec:impl-rustllvm}
 
 Rust uses LLVM as a backend for compilation.
-The CTSRD project also develop a fork of LLVM with support for the
-current CHERI implementation, with changes to the MIPS backend to
+The CTSRD project maintains a fork of LLVM with support for the
+current CHERI implementation, which extends the MIPS backend to
 support CHERI targets, and generic code to handle
 capabilities~\cite{cheri-prog-guide}.
 
@@ -47,15 +47,15 @@ target FreeBSD on CHERI128.
 This extension exclusively targets \emph{pure capability mode}, where
 all pointers are capabilities~\cite{cheri-prog-guide}.
 This avoids the hurdle of dealing with multiple LLVM address spaces and
-pointer widths, not anticipated in the Rust compiler
+pointer widths, not supported in the Rust compiler
 (\Cref{sec:impl-addrspace}).
 
-In order to evaluate \wip{(evaluate what?)} Rust on CHERI, I identified
+In order to evaluate Rust on CHERI, I identified
 a minimal necessary subset of the standard library, listed below.
 Not included is the bulk of the Rust standard library, which provides
 filesystem and network support, general IO, interfaces to operating
 system synchronisation and threading, and others.
-These were deemed not to have critical significance to capabilities in
+I consider these not to have critical significance to capabilities in
 standalone Rust programs.
 
 \begin{description}
@@ -78,8 +78,8 @@ these libraries required to compile Rust programs.
 
 Finally, optimisations are \emph{not} used.
 Optimisations are not supported at this point as they cause the Rust
-compiler to invoke LLVM APIs with invalid values, such including
-offsets of 128 bits.
+compiler to invoke LLVM APIs with values not supported by the CHERI
+backend, such as offsets of 128 bits.
 \Cref{sec:impl-width} discusses this briefly.
 
 
