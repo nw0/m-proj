@@ -168,21 +168,36 @@ and 128-bit integer operations.
 \label{sec:impl-addrspace}
 
 \subsubsection{Differences}
-There is no support in the Rust compiler to use LLVM address spaces
-other than 0, the default.
-By implication, there is also no support for multiple address spaces
-within or across compilation units.
+CHERI uses LLVM address space 200 for capabilities, and 0 for
+non-capability pointers.
+Supporting pure capability mode only requires use of address space 200.
 
-\subsubsection{Changes required}
-As only one address space is recognised, I decided to use pure
-capability mode, in which all pointers are capabilities, rather than
-hybrid mode, which accepts untagged pointers as well.
-This allows all pointers to refer to LLVM address space 200, rather than
-having to mix two address spaces for capability and non-capability
-pointers.
-Minor changes were made to refer to Rust's
-\texttt{instruction\_address\_space} for all pointers, instead of only
-pointers to types.
+By contrast, Rust currently only generates code that uses address space
+0, the default address space in LLVM.
+There is also no support to use multiple address spaces within or across
+compilation units.
+
+\subsubsection{Choices and implications}
+With pure capability mode, only one address space is required, thus the
+latter problem is avoided.
+In any case, there is no requirement to support legacy code and pointer
+manipulation idioms in the scope of this work, thus little reason to
+support hybrid mode, which allows the use of untagged pointers.
+
+\subsubsection{Changes and limitations}
+The main change was to make Rust aware of LLVM address spaces other than
+0; it already specified this as the default.
+Previous work to support the AVR platform on Rust already (in principle)
+supported address space 1 for functions, so the changes required were to
+determine the pointer width correctly from the LLVM data layout string,
+and to ensure allocations were made to the correct address space, again
+using the data layout string.
+
+Based on the Rust codebase, it could be difficult but far from
+impossible to support multiple address spaces in Rust.
+A far bigger challenge, however, is to support code generation for
+multiple pointer widths: it will therefore be impractical to consider
+compiling Rust programs in hybrid mode unless this changes.
 
 
 \subsection{Targeting CHERI}
