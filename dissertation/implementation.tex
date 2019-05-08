@@ -42,8 +42,13 @@ These have been fixed in the current version.
 \section{Strategy}
 \label{sec:impl-what}
 
+\subsection{Host platform}
 One contribution of this project is an extension of the Rust compiler to
 target FreeBSD on CHERI128.
+This is achieved by cross-compilation from an amd64 FreeBSD host; other
+host platforms should work if they are able to compile the CHERI SDK.
+
+\subsection{Rust functionality on CHERI}
 This extension exclusively targets \emph{pure capability mode}, where
 all pointers are capabilities~\cite{cheri-prog-guide}.
 This avoids the hurdle of dealing with multiple LLVM address spaces and
@@ -73,9 +78,15 @@ standalone Rust programs.
     (\Cref{sec:eval-micro-push,sec:eval-micro-repeat}).
 \end{description}
 
+Other parts of the standard library will compile for CHERI, but they are
+not as central to running Rust programs.
+I have not included them here in order to focus on evaluating the Rust
+compiler and a core set of features.
+
 \Cref{sec:impl-divergences} details modifications to the compiler and
 these libraries required to compile Rust programs.
 
+\subsection{Compiler optimisations}
 Finally, optimisations are \emph{not} used.
 Optimisations are not supported at this point as they cause the Rust
 compiler to invoke LLVM APIs with values not supported by the CHERI
