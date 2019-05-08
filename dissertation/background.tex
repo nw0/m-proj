@@ -5,9 +5,6 @@
 \label{ch:bg}
 
 
-\clar{What is relevant? Most capability/fat pointer literature discusses
-C, where I'm very much focussed on a `safe' language.}
-
 \wip{rephrase} This chapter provides an overview of capabilities, CHERI,
 and safe languages with capabilities.
 Rust is discussed in \Cref{ch:rust}.
@@ -18,7 +15,6 @@ Rust is discussed in \Cref{ch:rust}.
 Capabilities are traditionally known as unforgeable tokens of authority.
 CHERI provides \emph{memory capabilities}: unforgeable pointers to
 continuous regions in memory~\cite{cheri-risc-2014}.
-\wip{``more on this in the next sections''}
 
 Capabilities have a long history: while the concept had been established
 beforehand, they were implemented and expounded in
@@ -41,7 +37,6 @@ compiler.
 \section{CHERI: Capability Hardware Enhanced RISC Instructions}
 
 \subsection{Memory capability model}
-\todo{rewrite}
 
 CHERI extends the 64-bit MIPS ISA to support capabilities.
 Its design emphasises incremental adoption, and the principles of least
@@ -172,27 +167,16 @@ capabilities, and the interaction between these is worth examination.
 \section{Survey of related work}
 \label{sec:bg-related}
 
-\wip{Overview}
-Primarily examining safe languages and capabilities: there has been a
-lot of work on C and capabilities.
+Most work examining capability implementations involves C, whereas there
+has been work examining the object-capability model in other languages,
+which I do not discuss.
 
-\clar{Seems everybody stops short of actually implementing Java on a
-capability platform.}
-
-CHERI in C.
-Fat pointers/capabilities in C.
-Capabilities on any other safe language?
-
-\clar{How much subtlety is required in the following sections? At
-present, none is attempted.}
-
-\todo{Caja: capabilities for a subset of javascript. `Object
-Capabilities and Isolation of Untrusted Web Applications', 2010.
-No discussion of optimisation, but relevant to the Rust angle.}
-
-\todo{J-Kernel: 1999, isolation of web applications (server-side).
-Little discussion of overheads (``small''), or hardware; left to future
-work.}
+The following sections provide an overview of memory safety techniques
+and their applicability to safe languages, with special focus on FFI in
+Rust and the Java Native Interface.
+They give an overview of the main objectives and costs involved in
+improving memory safety in safe languages, and demonstrate that this is
+very much an ongoing area of research, with no obvious ``best'' solution.
 
 
 \subsection{Hardbound}
