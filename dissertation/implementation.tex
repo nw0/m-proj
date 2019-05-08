@@ -110,38 +110,58 @@ modifications required to compile Rust for CHERI.
 Under pure capability mode in CHERI128, all pointers are 128-bit wide
 capabilities.
 The Rust compiler has built-in support for 16-, 32-, and 64-bit
-pointers, through compile-time macros; these are primarily used to
-determine the \texttt{usize} (\Cref{sec:rust-usize}).
+pointers, through compile-time macros.
+The pointer width is used to determine the \texttt{usize}\footnote{The
+maximum index size.} (\Cref{sec:rust-usize}), offsets, and sizes used
+for pointer operations.
 
-The immediately obvious solution, attempting to support a 64-bit index
-size alongside a 128-bit pointer width was met with a non-functional
-compiler; the target's pointer width is also used in more than 50
-locations in the compiler.
-If the intent behind each usage can be distinguished, a more functional
-fix might be forthcoming.
+\subsubsection{Choices and implications}
+The 128-bit pointer width cannot be changed.
 
-\subsubsection{Implications and changes}
+The Rust compiler has two definitions of the target's pointer width: the
+\texttt{target\_pointer\_width value} in the target specification
+(\Cref{sec:impl-cheritarget}), and the LLVM data layout string.
+These values \emph{must} agree to avoid alignment issues.
+
+In any case, the value derived from data layout string is used in more
+than 50 locations in the compiler, to determine the index size and
+pointer alignment, and for code generation among others.
+This includes which index size to use when calling LLVM intrinsics, such
+as \texttt{memset}, and what size integer to provide for an
+\texttt{inttoptr} call; CHERI only supports 64-bit integers for all
+these cases.
+
+The immediately obvious solution is to support a 64-bit index size, but
+this is met with a non-functional compiler.
+As \Cref{sec:rust-usize} noted, the Rust language defines the
+\texttt{usize} to be equal to the pointer width, and this assumption is
+sufficiently widespread in the compiler to make it impractical to change
+within the scope of this project.
+However, if this definition is changed, or the definitions of
+\texttt{usize} can be distinguished from the usage of index sizes for
+code generation, then the changes in the next section may not be
+necessary.
+
+
+\subsubsection{Changes and limitations}
 This meant defining a \texttt{usize}, and exposing a 128-bit integer
 type from LLVM as suitable for this value.
-As \Cref{sec:rust-usize} shows, it was not possible to use a
-64-bit \texttt{usize}, with its own implications.
+This is not a functional problem: while 128-bit integer usage is not
+natively supported on CHERI, it is merely slower and LLVM will generate
+the correct instructions.
 
-Additionally, the Rust compiler instructs LLVM to generate
-pointer conversions to and from \texttt{i128}s; only 64-bit conversions
-are permitted.
-Likewise, intrinsics such as \texttt{memset} are indexed using
-\texttt{i128}s by Rust.
-
-Extra instructions were inserted to truncate the index (\texttt{len})
-variable to 64 bits before every such operation.
-This is problematic for two reasons.
-First, such a change is prone to leaving out some intrinsics which may
-silently fail, leaving the process open to functional errors.
-Second, use of 128-bit integers is slow on CHERI, and unnecessary
-casting also generates unnecessary instructions.
-It is unclear if these could be optimised, but resolving the
-pointer-width and index tension (\Cref{sec:rust-usize}) should
-resolve this.
+The other change is to truncate or extend integer types before calls to
+LLVM intrinsics and pointer operations.
+An example of the former is \texttt{memcpy}: if indexed by a 128-bit
+length, LLVM silently omits the copy, as it is not defined in the
+CHERI backend.
+This change is problematic, as it is possible to miss out the truncation
+or extension for some intrinsics, then be unaware that the compiler has
+omitted them.
+Pointer operations are more limited: we need only concern ourselves with
+\texttt{inttoptr} and \texttt{ptrtoint}.
+Here, we take performance penalties from generating excess instructions
+and 128-bit integer operations.
 
 
 \subsection{Address spaces}
@@ -166,6 +186,7 @@ pointers to types.
 
 
 \subsection{Targeting CHERI}
+\label{sec:impl-cheritarget}
 
 \subsubsection{Differences}
 CHERI is an extension to the big-endian 64-bit MIPS architecture.
