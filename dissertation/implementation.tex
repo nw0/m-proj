@@ -94,7 +94,7 @@ backend, such as offsets of 128 bits.
 \Cref{sec:impl-width} discusses this briefly.
 
 
-\section{Differences arising from the CHERI target}
+\section{Changes to the compiler}
 \label{sec:impl-divergences}
 
 The \cuf target has several differences to most existing targets in the
@@ -204,13 +204,38 @@ compiling Rust programs in hybrid mode unless this changes.
 \label{sec:impl-cheritarget}
 
 \subsubsection{Differences}
-CHERI is an extension to the big-endian 64-bit MIPS architecture.
-A target specification was added to the Rust compiler, specifying the
-pure-capability ABI, and the CPU.
+The CHERI backend in LLVM is an extension of the big-endian 64-bit MIPS
+architecture.
+To target FreeBSD, it has the triple \cuf.
 
-\subsubsection{Changes required}
-Modify Rust compiler to pass on target information such as
-\texttt{purecap} ABI and use the \texttt{cheri128} CPU.
+\subsubsection{Choices and implications}
+In this case, the question is not so much what to change, but where to
+change it.
+For some changes, such as specifying the \texttt{cheri128} CPU (the
+default being CHERI256), the Rust target specification files had
+relevant fields.
+
+In other cases, such as specifying the \texttt{purecap} ABI (as opposed
+to the MIPS N64 ABI), no such mechanism was present in the compiler.
+Here, either fields could be added to the target specification, or made
+locally to their usage.
+
+
+\subsubsection{Changes and limitations}
+A target specification was added to the Rust compiler, specifying the
+pure capability ABI, and the CHERI128 CPU.
+
+Instead of adding more fields to the target specification structure and
+code to parse these fields, I decided to make changes closest to where
+the data would be used.
+This minimised code changes.
+However, this means that when targeting CHERI, pure capability mode
+would always be used: I do not consider this an issue because the
+CheriBSD can also run programs compiled with the MIPS N64 ABI, which can
+also be compiled by the Rust compiler.
+This choice should be revisited by if CHERI is to be made an official
+target in the Rust compiler, as it is slightly unergonomic, even if the
+ABI is not typically configured, and is not specified for other targets.
 
 
 \section{Other challenges and incompatibilities}
