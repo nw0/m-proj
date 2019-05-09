@@ -236,6 +236,7 @@ developers, rather than a fundamental bug.
 
 
 \subsection{Iterator method violates Rust's uniqueness of shared references}
+\label{sec:eval-bug-vec-mut}
 
 \subsubsection{Cause}
 An iterator method in the core library should return a mutable slice
@@ -304,9 +305,14 @@ concurrent Rust program, complementing CHERI's spatial integrity.
 Note: \Cref{sec:eval-rust-xprocess} discusses how CHERI capabilities can
 be used to make Rust's FFI or cross-process calls safer.
 
+\subsubsection{Temporal safety under CHERI}
+\todo{How much can I write about sweeping revocation in CHERI? + provenance analysis. Some of this might be moved to Rust benefits. Note this is a runtime overhead, but one that is (possibly?) reduced by lifetimes.}
+
 
 \subsection{Borrow semantics and object lifetimes}
-\todo{Discuss provenance analysis and revocation.}
+Rust's borrowing and lifetime models (\Cref{sec:rust-borrow}) makes
+intentionality of use clear without placing the burden of memory
+management on the programmer. \wip{write}
 
 
 \subsection{Safer code patterns yields easier porting to CHERI}
@@ -395,17 +401,15 @@ accesses.
 
 Modifying an immutable object is undefined behaviour in Rust, and should
 be prevented by the compiler in Safe Rust.
-The only exception to this pattern seems to be the \texttt{UnsafeCell},
-which is excluded from being UB.
+The only exception to this pattern is the \texttt{UnsafeCell}, which is
+excluded from being UB.
 There, the programmer is expected to implement an object safely without
 causing concurrency bugs.
 
-\clar{Expound on these bugs?}
-
-There have been bugs in the compiler~\cite{rust-issue-match-borrow} and
-standard library~\cite{rust-issue-vec-mut} resulting in mutable
-references to supposedly immutable objects.
-Since mutating them is undefined, it would be reasonable to protect them
+There have been bugs in the standard library~\cite{rust-issue-vec-mut}
+(\Cref{sec:eval-bug-vec-mut}) resulting in mutable references to
+supposedly immutable objects.
+Since mutating these is undefined, it is reasonable to protect them
 from being written to, which can be accomplished with capabilities.
 This enforces the principle of least privilege on shared references.
 
@@ -415,18 +419,21 @@ I propose that the borrow checker continue to be used to prevent the
 holder of the original reference from mutating the object: this is the
 current behaviour, would avoid uncertainty over when an object could be
 written to again, and is not known to be a source of past errors.
+In any case, monotonicity means that the original permissions need to be
+`remembered', as they cannot later be derived from the read-only
+borrowed permission.
 
 \subsubsection{Caveat}
 However, manipulating capabilities is not free and the overheads of this
 approach should be weighed against the existing type system.
 Additionally, this does not solve the inherent potential for programmer
-error in the compiler, as seen in the match arm bug where the value is
-only implicitly immutable.
+error in the compiler.
 
 \subsubsection{Note on differences from C}
 Enforcing C's \texttt{const} in hardware proved problematic for CHERI in
 the past, due to functions like~\texttt{strchr} (C), which derive a
-non-\texttt{const} (mutable) pointer from an immutable one.
+non-\texttt{const} (mutable) pointer from an immutable
+one~\cite{cheri-prog-guide}.
 
 \begin{lstlisting}[language=C]
 char *strchr(const char *s, int c);
@@ -461,8 +468,8 @@ This creates a use-after-free bug~\cite{rust-nomicon-rc-leak}.
         A potential use-after-free bug, if \texttt{ref\_count}
         overflows.
         This may occur in Safe Rust, as \texttt{drop} methods are always
-        safe: the unsafety is encapsulated here, and so is
-        \texttt{mem::forget}, which would be used to help overflow the count.
+        safe: the unsafety is encapsulated here, and also in
+        \texttt{mem::forget}, which would be used to overflow the count.
         Example from the Rust documentation~\cite{rust-nomicon-rc-leak}.
     }
     \label{lst:eval-rust-rc-drop}
@@ -516,7 +523,7 @@ data which it might pass on via a callback, but have no need to inspect
 or mutate.
 
 This can be enforced through \emph{capability sealing}, which CHERI
-provides for.
+provides.
 The C function would be unable to dereference the object, but the
 callback function could, through some static method, unseal the
 capability to regain access to the original data~\cite{cheri-v6}.
@@ -530,7 +537,7 @@ references to borrowed Rust objects.
 This can lead to later temporal unsoundness in the Rust program.
 
 While this cannot be completely prevented with capabilities as-is,
-\Cref{sec:eval-betterunsafe} discusses the potential to use revocations
+\wip{ref} discusses the potential to use revocations
 to manage this risk.
 
 \subsubsection{Overflowing object boundaries}
@@ -550,6 +557,9 @@ an overflow.
 
 Object capabilities easily protect against this by storing object
 bounds.
+
+\subsubsection{CHERI compartmentalisation}
+\todo{write}
 
 
 \subsection{Unsafe semantics}

@@ -39,6 +39,11 @@ These have been fixed in the current version.
     This is not possible in the pure capability ABI.\footnote{Fix at \url{https://github.com/CTSRD-CHERI/llvm-project/commit/d8e6acf3d4094270cd55b70341a6f9c4d032db81}.}
 \end{itemize}
 
+
+\subsection{Compiler configuration}
+\todo{Compiler flags, rel, cargo config. How to choose the commit?}
+
+
 \section{Strategy}
 \label{sec:impl-what}
 
@@ -237,8 +242,5 @@ This choice should be revisited by if CHERI is to be made an official
 target in the Rust compiler, as it is slightly unergonomic, even if the
 ABI is not typically configured, and is not specified for other targets.
 
-
-\section{Other challenges and incompatibilities}
-\clar{Correct section to talk about 64-bit conversion?}
 
 \end{document}
