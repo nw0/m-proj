@@ -49,14 +49,14 @@ libraries~\cite{cheri-v6}.
 
 \subsubsection{Capability coprocessor and registers}
 A capability coprocessor is used to implement the CHERI extensions.
-The coprocessor implements its own register file, creating a clear
+The coprocessor holds its own register file, creating a clear
 distinction between integers and capabilities.
 Instructions are added for manipulating these capability registers, such
 as loads and stores, decreasing the bounds on capabilities, and
 branching based on capability tags~\cite{cheri-risc-2014}.
 
 \subsubsection{Memory tagging}
-To support pointers to be stored anywhere in memory, an out-of-band tag
+To allow pointers to be stored anywhere in memory, an out-of-band tag
 bit is associated with each (aligned) pointer-sized location in memory.
 If a location storing a capability is written to be a non-capability
 instruction, this bit is cleared to preserve the unforgeability of
@@ -82,14 +82,15 @@ in the \emph{implicit capability register}.
 This allows protection of non-capability code from capability-aware code
 and vice versa~\cite{cheri-risc-2014}.
 The contemporaneous usage of regular pointers and capabilities is known
-as \emph{hybrid mode}, whereas a program that exclusively used
+as \emph{hybrid mode}, whereas a program that exclusively uses
 capabilities is deemed to run in \emph{pure capability
 mode}~\cite{cheri-prog-guide}.
 
 This project evaluates Rust under pure capability mode only.
 The choice has proven to be a practical one: in keeping consistent with
-LLVM's memory model, the Rust compiler avoids pitfalls that lead to
-capability incompatibility.
+LLVM's memory model, the Rust compiler avoids manipulations that
+commonly cause incompatibility with capabilities.
+\Cref{sec:eval-cheri-port} explains the reasons behind this claim.
 
 
 \section{Why Rust?}
@@ -131,8 +132,8 @@ adoption and utility of capabilities.
 
 One of Rust's safety features is runtime bounds checks on array
 accesses: \Cref{lst:bg-rust-index} shows an example.
-As arrays have clear bounds, these checks also occur when dereferencing
-a CHERI capability.
+As arrays have clear bounds, similar hardware checks also occur when
+dereferencing a CHERI capability.
 If object bounds are set correctly, the runtime checks are redundant and
 could be removed as an optimisation.
 
@@ -161,14 +162,14 @@ This is a major feature preventing temporal unsafety, an area for which
 capabilities have no universal remedy, unlike the spatial integrity they
 frequently provide.
 As such, Rust has a built-in mechanism complementary to that provided by
-capabilities, and the interaction between these is worth examination.
+capabilities, and the interaction between these is worth examining.
 
 
 \section{Survey of related work}
 \label{sec:bg-related}
 
 Most work examining capability implementations involves C, whereas there
-has been work examining the object-capability model in other languages,
+has been work examining the object-capability pattern in other languages,
 which I do not discuss.
 
 The following sections provide an overview of memory safety techniques

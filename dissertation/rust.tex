@@ -37,11 +37,7 @@ structures~\cite{blandy-orendorff}.
 For example, the built-in Vector (\texttt{Vec}) stores data on its
 allocated capacity and actual length; a CHERI capability pointer to the
 same vector would also track the allocated capacity as a boundary.
-This suggests there may be some room for optimisation.
-
-\wip{Probably a lot more to say}
-
-\clar{Helpful to delineate ``differences'' and ``implications''?}
+This redundancy suggests some room for optimisation.
 
 
 \subsection{Unsafe Rust}
@@ -59,7 +55,7 @@ additional actions~\cite{rust-trpl-book}:
 
 While these seem fairly innocuous (considering the large body of
 existing C code), this is significant in the restrictions imposed on
-safe Rust.
+Safe Rust.
 It's important to note that unsafety need not necessarily come from
 the \texttt{unsafe} code block itself, but from the handling of inputs
 and outputs to the unsafe block.
@@ -156,18 +152,20 @@ Some common situations in which bounds checks are avoided:
     \item[Built-in slice equality] Similar to \textbf{binary search},
     providing more information to the compiler makes a different
     iteration strategy faster without unsafe dereferencing~\cite{rust-pr-slice-partialeq}.
-    \item[Built-in iterators] The default iterator, applying to arrays,
-    uses the unsafe \texttt{get\_unchecked} method\footnote{This adds an
-    offset to the array's base pointer and dereferences it directly.
+    \item[Built-in iterators] The default iterator applying to arrays
+    (\Cref{lst:rust-iter-unchecked}) uses the unsafe
+    \texttt{get\_unchecked} method\footnote{
+    This adds an offset to the array's base pointer and dereferences it
+    directly.
     Other \texttt{unchecked} methods exist, e.g.\ in string
-    conversions.} implemented for the \texttt{SliceIndex} trait.
+    conversions.
+    } implemented for the \texttt{SliceIndex} trait.
     In theory, this \emph{might} be susceptible to an off-by-one error,
-    but is easily tested.
-    (\Cref{lst:rust-iter-unchecked})
+    but such a mistake is easily discovered in unit tests.
     \Cref{sec:rust-unsafe} covers how unsafe code is used for optimisation.
-    \item[Image processing] Dr\"oge demonstrates different strategies to
-    optimise Rust code without unsafe code, avoiding bounds checks and
-    other unnecessary operations~\cite{droge-opt}.
+    \item[Image processing] Dr\"oge demonstrates different optimisation
+    strategies without resorting to Unsafe Rust, while still avoiding
+    bounds checks and other unnecessary operations~\cite{droge-opt}.
     This is achieved through strategic assertions and optimal use of
     iterators and other built-ins.
     Note that similar optimisation through assertions may be fragile or
@@ -182,6 +180,7 @@ They also apply when Rust's intrinsic indexing is used, through the
 \texttt{Index} and \texttt{IndexMut} traits.
 For example, \Cref{lst:rust-vec-index} shows that \texttt{Vec} uses
 this intrinsic, and therefore has bounds checks.
+Consequently, the overall performance impact of bounds checks is small.
 
 \begin{figure}[ht]
     \lstinputlisting{listings/vec-index-trait.rs}
