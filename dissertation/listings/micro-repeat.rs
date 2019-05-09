@@ -4,14 +4,15 @@ fn main() {
     let s: [i64; 3] = [1, 2 ,3];
     let reps = 6148914691236517207;             // (2 ** 64 + 5) / 3
 
+    // Simulate usize == u64 on CHERI, where usize == u128
     let mut buf = Vec::with_capacity((s.len() * reps) as u64 as usize);
     prntf!("capacity: %d\n", buf.capacity() as u64);    // 5
     buf.extend(&s);
 
     let mut v: Vec<i64> = Vec::new();
-    v.extend(&s);
-    v[0] = -1;
-    v.push(-4);
+    v.extend(&s);                               // Manipulate allocation to
+    v[0] = -1;                                  //  ensure the buffers are
+    v.push(-4);                                 //  allocated nearby
     for x in &v { prntf!("%d ", *x); } prntf!("\n");    // -1 2 3 -4
 
     {

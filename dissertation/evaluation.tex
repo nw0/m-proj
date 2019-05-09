@@ -175,7 +175,11 @@ effects of this bug.
 \begin{figure}[ht]
     \lstinputlisting{listings/micro-repeat.rs}
     \caption{
-        \wip{this whole fig}
+        Demonstration of how an integer overflow can lead to a buffer
+        overflow when repeating a slice.
+        Three iterations of the copy are performed (lines 20--31) to
+        ensure \texttt{v} is overwritten on the non-capability machine;
+        with capabilities this traps on the first iteration.
     }
     \label{lst:micro-repeat}
 \end{figure}
