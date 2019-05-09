@@ -137,7 +137,7 @@ Safe Rust.
 \subsection{Optimisation by eliding checks}
 \label{sec:rust-elision}
 
-For spatial safety, Rust also implements runtime bounds checks to
+For spatial safety, Rust implements runtime bounds checks to
 prevent out-of-bounds accesses.
 This may appear to harbour large overheads, although with optimisations
 many checks are elided.
@@ -265,5 +265,9 @@ Nevertheless, to target CHERI properly, Rust must either support pointer
 widths larger than the index size, or use pointer widths differently in
 code generation.
 \Cref{sec:impl-width} explores the implementation in more detail.
+
+
+\section{Summary}
+\todo{summarise\ldots}
 
 \end{document}

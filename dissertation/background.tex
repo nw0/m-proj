@@ -77,8 +77,8 @@ capability derive a read-write one.
 Code that is not capability-aware is interoperable with capability code,
 through instructions that translate between capabilities and integer
 pointers.
-The latter are protected by the \emph{implicit capability register},
-\textbf{C0}.
+The latter are protected by the \emph{default data capability}, stored
+in the \emph{implicit capability register}.
 This allows protection of non-capability code from capability-aware code
 and vice versa~\cite{cheri-risc-2014}.
 The contemporaneous usage of regular pointers and capabilities is known
