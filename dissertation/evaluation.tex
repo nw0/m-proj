@@ -324,8 +324,16 @@ Programmers have less cause to perform unusual or \emph{clever} pointer
 manipulation, writing code that does not immediately compile for CHERI.
 \wip{sec:impl-??} documented the limited incompatibilities in the core
 library; most changes affect the compiler.
+
 With a fully-functional Rust compiler for CHERI, porting Rust programs
 and crates should be relatively straightforward.
+For example, common compatibility issues in CHERI due to pointer
+provenance~\cite{cheri-2019-abstract} do not apply in Safe Rust,
+apart from pointer shape (solely a compiler issue; see
+\Cref{sec:impl-width}).
+This is relevant because pointer manipulation requires the use of Unsafe
+Rust for raw pointers, which gives up much of the safety guarantees
+motivating the use of Rust in the first instance.
 
 Nevertheless, one should recognise that the difficulty of porting C
 programs to capability architectures and CHERI in particular is not
