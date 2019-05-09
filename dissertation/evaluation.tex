@@ -130,8 +130,6 @@ bounds checks, as the \texttt{VecDeque} is backed by a vector.
 This is an interesting lesson: bounds checks are useful not only for the
 end-programmer, but also (presumably meticulous) language developers.
 
-\todo{This is also detected by ASAN (bother writing?)}
-
 Note that whether this exceeds the bounds is implementation specific!
 The existing implementation will reserve space for 32 elements here, but
 if more space had been reserved by \texttt{with\_capacity} or its
@@ -192,11 +190,11 @@ case is the write is interrupted before the address falls of the maximum
 value. Are there specific values that work for any platform?}
 
 This is difficult to exploit, as it would require a long slice or a
-large number \(n\) of repetitions, increasing the change of a
+large number \(n\) of repetitions, increasing the chance of a
 segmentation fault.
-Nonetheless, it is certainly not thread-safe, and Rust does target
-platforms with 16-bit \texttt{usize}, i.e.\ at most \(65,536\) elements,
-making an attack plausible, if not possible.
+An exploit would probably have to interrupt the write before too many
+iterations of the loop, and either spawn a new process or stop the
+thread executing this loop before the operating system stopped it.
 
 
 \subsection{Out-of-bounds indexing into a reversed slice}
