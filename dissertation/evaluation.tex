@@ -287,6 +287,10 @@ One of Rust's main objectives and early selling points was
 \emph{fearless concurrency}.
 It uses its ownership model and type system to manage temporal memory
 safety~\cite{rust-trpl-book}.
+These mechanisms prevent dangling pointers or use-after-free in Safe
+Rust (\Cref{sec:rust-borrow}), although the use of raw pointers in
+Unsafe Rust can bypass these checks.
+
 By contrast, CHERI's initial focus was on spatial integrity, only later
 moving to consider temporal safety by means of tagging.
 Temporal safety is provided by marking capabilities as \emph{local} or
@@ -309,12 +313,6 @@ be used to make Rust's FFI or cross-process calls safer.
 
 \subsubsection{Temporal safety under CHERI}
 \todo{How much can I write about sweeping revocation in CHERI? + provenance analysis. Some of this might be moved to Rust benefits. Note this is a runtime overhead, but one that is (possibly?) reduced by lifetimes.}
-
-
-\subsection{Borrow semantics and object lifetimes}
-Rust's borrowing and lifetime models (\Cref{sec:rust-borrow}) makes
-intentionality of use clear without placing the burden of memory
-management on the programmer. \wip{write}
 
 
 \subsection{Safer code patterns yields easier porting to CHERI}
