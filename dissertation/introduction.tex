@@ -49,8 +49,8 @@ capabilities (discussed in \Cref{sec:eval-bugs}):
     CVE-2018-1000810~\cite{cve-repeat,rust-advisory-repeat,rust-pr-slice}.
     \item Standard library: out-of-bounds access indexing into a
     reversed slice~\cite{rust-pr-reverse,rust-commit-reverse}.
-    \item Standard library: unsafe Iterator method creates
-    multiple mutable references, violating temporal
+    \item Standard library: unsafe Iterator method duplicates
+    exclusive mutable references, violating temporal
     safety~\cite{rust-issue-vec-mut}.
 \end{itemize}
 
@@ -72,9 +72,13 @@ secure software.
 
 
 \subsection{Capabilities and the CHERI architecture}
-The CHERI project provides \emph{capabilities}, which stops unauthorised access or modification of data by erroneous and malicious code~\cite{cheri-v6}.
-In the CHERI architecture, capabilities restrict usage by associating bounds and access permissions with address data while making these unforgeable, as they can only be manipulated by the hardware.
-This prevents abuse of pointers and internal addresses.
+The CHERI instruction set architecture replaces pointers with
+\emph{capabilities}, which stop unauthorised access of memory as they are
+unforgeable in software~\cite{cheri-v6}.
+Capabilities protect data by associating bounds information and access
+permissions, giving programs fine-grained mechanisms to enforce the
+security principles of \emph{least privilege} and \emph{intentional
+use}~\cite{neumann-principles}.
 
 Just as using capabilities in C programs can prevent unintended operations on memory, applying capabilities to unsafe Rust code would provide an additional layer of safety, guarding against undiscovered vulnerabilities and potentially shrinking the set of unsafe operations.
 

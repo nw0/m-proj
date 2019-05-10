@@ -277,6 +277,7 @@ Conceivably, such a small overhead could also apply to sandboxing in
 Rust, on the same tasks and with some optimisation.
 However, with less computational tasks, copying objects in and out of
 the sandbox can lead to over \(15\times\) slowdown.
+These broadly correlate with Sandcrust's results.
 
 Note again that Robusta does more than improve memory safety: it also
 intercepts system calls to ensure they are permitted by the Java
@@ -290,11 +291,11 @@ As an alternative to process-based sandboxing, CheriBSD provides
 compartmentalisation for cross-domain calls (cross-process and system
 calls).
 Watson et al.\ show that compartmentalisation with CHERI capabilities
-vastly outperforms process-based approaches, as the data flow overhead
-is non-existent.
-Compartmentalisation can also be used to restrict and protect system
-calls, such as only allowing certain system calls or preventing
-tampering with file descriptors~\cite{cheri2015}.
+vastly outperforms process-based approaches, as there is no data flow
+overhead.
+Compartmentalisation can also be used to restrict access to system
+calls and other dangerous operations, including tampering with file
+descriptors~\cite{cheri2015}.
 
 Chisnall et al.\ use compartmentalisation to sandbox JNI code, eliminating
 data flow and domain crossing overheads, and enabling sealing
@@ -315,16 +316,17 @@ unsafe implementations of functions and data structures in the standard
 library~\cite{rustbelt-web}.
 
 Noting that the Rust language does not have formal semantics, Jung et
-al.\ define \(\lambda_\textrm{Rust}\), which they use to illustrate a
-formalisation of the Rust language, emphasising lifetimes and
-borrowing~\cite{jung-rustbelt}.
+al.\ define \(\lambda_\textrm{Rust}\), a language modelled on a core
+subset of Rust.
+They proceed with a formalisation of this language, placing emphasis on
+lifetimes and borrowing~\cite{jung-rustbelt}.
 These notions are crucial to Rust's temporal safety which underpins
-Rust's claims to be a safe language.
+its claims to be a safe language.
 Further, they give a framework for proving the soundness of unsafe code,
 applying it to Rust primitives, including those that provide shared
 references and reference-counted memory.
 They also include a more detailed view of Rust's semantics than this
-work contains, as I focus on the implementation rather than the
+work contains, as I focus on its implementation rather than
 formalisation.
 
 
