@@ -6,7 +6,7 @@ fn main() {
     println!("{:?}", deque);                    // `[5]'
     println!("{}, {}", deque.head, deque.tail); // `0, 31'
 
-    deque.reserve(30);
+    deque.reserve(30);                          // head should not change
     println!("{}, {}", deque.head, deque.tail); // `32, 31'
 
     deque.push_back(6);                         // CHERI: length violation!

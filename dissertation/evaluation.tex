@@ -57,7 +57,7 @@ developers.
 This section covers five memory safety flaws discovered in the Rust
 standard library, all preventable with CHERI capabilities.
 Where relevant, demonstrative microbenchmarks were performed on either
-CheriBSD on Qemu-CHERI with 128-bit capabilities, or FreeBSD~11.2
+CheriBSD on Qemu-CHERI with 128-bit capability pointers, or FreeBSD~11.2
 (amd64) for the non-capability comparison.
 In all cases, the Rust compiler was as described in
 \Cref{ch:rust,ch:impl}, specifying the target as appropriate.
@@ -150,7 +150,7 @@ It occurs in the \texttt{repeat} function on slices
 (\Cref{lst:slice-repeat}), which returns a vector containing a slice
 repeated as specified by the parameter.
 Here, a buffer overflow occurs when the length of returned vector would
-exceed the target's \texttt{usize}.
+overflow the target's \texttt{usize}.
 
 \begin{figure}[ht]
     \lstinputlisting{listings/slice-repeat.rs}
@@ -189,10 +189,6 @@ machine; other values may work depending on the operating system and
 allocator.
 
 \subsubsection{Observations}
-\todo{Think about this seriously. Is it at all practical? The obvious
-case is the write is interrupted before the address falls of the maximum
-value. Are there specific values that work for any platform?}
-
 This is difficult to exploit, as it would require a long slice or a
 large number \(n\) of repetitions, increasing the chance of a
 segmentation fault.
@@ -230,11 +226,11 @@ of the slice.
 As `slice' suggests, they frequently represent a view into a larger
 slice, so this could reasonably be expected to be defined.
 
-Whether this is possible is implementation-dependent; arguably if the
+Whether this is possible is implementation-dependent; if the
 reverse \texttt{idx} is expected to handle bad values, then the
 underlying \texttt{idx} should arguably also handle them.
-If anything, this example illustrates the safety awareness of Rust
-developers, rather than a fundamental bug.
+If anything, this example  and its resolution is an example of the
+safety awareness of Rust developers, rather than a fundamental bug.
 
 
 \subsection{Iterator method violates Rust's uniqueness of shared references}
@@ -260,18 +256,18 @@ method which operates on raw pointers~\cite{rust-issue-vec-mut}.
 
 \subsubsection{Observations}
 This is a clear violation of one of Rust's temporal safety guarantees,
-that mutable references must not be shared.
+that mutable references must not ordinarily be shared.
 While this is not strictly undefined behaviour, attempting to mutate the
 returned object is, defeating the point of getting a mutable slice.
 
 This appears to be bug caused by copying and pasting the Iterator
 \texttt{as\_slice} method when writing \texttt{as\_mut\_slice}.
 Again demonstrating the fallibility of programmers and motivating safe
-syntax, the language does not help in this low-level operation.
+syntax, neither the language nor the runtime helps in this situation.
 
 Though this error leads to temporal unsafety, this could be prevented by
 passing a read-only capability for an immutable borrow.
-\Cref{sec:eval-rust-enforce-immut} discusses this is more detail.
+\Cref{sec:eval-rust-enforce-immut} discusses this in more detail.
 
 
 \section{Benefits to CHERI as a Rust target}
@@ -279,9 +275,6 @@ passing a read-only capability for an immutable borrow.
 
 \subsection{Ownership gives complementary temporal safety}
 \label{sec:eval-cheri-spatial-temporal}
-
-\todo{CHERI seems to focus on spatial safety. What about revocation and
-temporal safety? How helpful are Rust lifetimes and ownership?}
 
 One of Rust's main objectives and early selling points was
 \emph{fearless concurrency}.
@@ -433,8 +426,9 @@ In any case, monotonicity means that the original permissions need to be
 borrowed permission.
 
 \subsubsection{Caveat}
-However, manipulating capabilities is not free and the overheads of this
-approach should be weighed against the existing type system.
+However, manipulating capabilities is not free and the overheads of
+manipulating capabilities should be weighed against enforcement within
+the existing type system.
 Additionally, this does not solve the inherent potential for programmer
 error in the compiler.
 

@@ -22,7 +22,7 @@ changes explicitly: e.g. memchr---there are only about 5 of these.}
 
 Rust uses LLVM as a backend for compilation.
 The CTSRD project maintains a fork of LLVM with support for the
-current CHERI implementation, which extends the MIPS backend to
+current CHERI implementation, extending the MIPS backend to
 support CHERI targets, and generic code to handle
 capabilities~\cite{cheri-prog-guide}.
 
@@ -71,8 +71,8 @@ standalone Rust programs.
 \begin{description}
     \item[\texttt{libcore}] for key definitions of traits and types,
     typechecking, compiler intrinsics, and other fundamental operations.
-    It also includes support for calling to foreign function interfaces
-    (FFI), unicode and number formatting, etc.
+    It also includes support for calling through foreign function
+    interfaces (FFI), Unicode and number formatting, etc.
     It could be thought of as a modern version of the standard C
     headers, apart from the core definitions it provides, which would be
     built into a compiler.
@@ -88,19 +88,19 @@ not as central to running Rust programs.
 I have not included them here in order to focus on evaluating the Rust
 compiler and a core set of features.
 
-\Cref{sec:impl-divergences} details modifications to the compiler and
-these libraries required to compile Rust programs.
+\Cref{sec:impl-div-compiler,sec:impl-div-lib} detail modifications to
+the compiler and these libraries required to compile Rust programs.
 
 \subsection{Compiler optimisations}
-Finally, optimisations are \emph{not} used.
+Optimisations are \emph{not} used.
 Optimisations are not supported at this point as they cause the Rust
 compiler to invoke LLVM APIs with values not supported by the CHERI
 backend, such as offsets of 128 bits.
-\Cref{sec:impl-width} discusses this briefly.
+\Cref{sec:impl-width} discusses related issues.
 
 
 \section{Changes to the compiler}
-\label{sec:impl-divergences}
+\label{sec:impl-div-compiler}
 
 The \cuf target has several differences to most existing targets in the
 Rust compiler.
@@ -139,13 +139,13 @@ these cases.
 The immediately obvious solution is to support a 64-bit index size, but
 this is met with a non-functional compiler.
 As \Cref{sec:rust-usize} noted, the Rust language defines the
-\texttt{usize} to be equal to the pointer width, and this assumption is
-sufficiently widespread in the compiler to make it impractical to change
-within the scope of this project.
-However, if this definition is changed, or the definitions of
-\texttt{usize} can be distinguished from the usage of index sizes for
-code generation, then the changes in the next section may not be
-necessary.
+\texttt{usize} to be equal to the pointer width.
+This assumption is sufficiently widespread in the compiler to be
+impractical to change within the scope of this project.
+However, if this definition is changed, or the definition of
+\texttt{usize} for typechecking compiled programs can be distinguished
+from the usage of index sizes for code generation, then the changes in
+the next section may not be necessary.
 
 
 \subsubsection{Changes and limitations}
@@ -177,22 +177,22 @@ CHERI uses LLVM address space 200 for capabilities, and 0 for
 non-capability pointers.
 Supporting pure capability mode only requires use of address space 200.
 
-By contrast, Rust currently only generates code that uses address space
-0, the default address space in LLVM.
-There is also no support to use multiple address spaces within or across
-compilation units.
+However, the Rust compiler currently only generates code that uses
+address space 0, the default address space in LLVM.
+There is no support for multiple address spaces within or across
+compilation units either.
 
 \subsubsection{Choices and implications}
 With pure capability mode, only one address space is required, thus the
 latter problem is avoided.
 In any case, there is no requirement to support legacy code and pointer
 manipulation idioms in the scope of this work, thus little reason to
-support hybrid mode, which allows the use of untagged pointers.
+support the use of untagged pointers, and hence hybrid mode.
 
 \subsubsection{Changes and limitations}
 The main change was to make Rust aware of LLVM address spaces other than
 0; it already specified this as the default.
-Previous work to support the AVR platform on Rust already (in principle)
+Previous work to support Rust on the AVR platform already (in principle)
 supported address space 1 for functions, so the changes required were to
 determine the pointer width correctly from the LLVM data layout string,
 and to ensure allocations were made to the correct address space, again
@@ -242,5 +242,11 @@ This choice should be revisited by if CHERI is to be made an official
 target in the Rust compiler, as it is slightly unergonomic, even if the
 ABI is not typically configured, and is not specified for other targets.
 
+
+\section{Changes to core libraries}
+\label{sec:impl-div-lib}
+
+\todo{See todo at start of ch
+The changes to the compiler in *sec were not sufficient\ldots}
 
 \end{document}
