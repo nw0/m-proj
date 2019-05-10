@@ -155,11 +155,10 @@ overflow the target's \texttt{usize}.
 \begin{figure}[ht]
     \lstinputlisting{listings/slice-repeat.rs}
     \caption{
-        \wip{rewrite}
         Rust's slice \texttt{repeat}, from \texttt{alloc::slice}.
-        Parts omitted for brevity.
+        Part omitted for brevity.
         This code attempts to write beyond the end of a buffer.
-        The error is in line~4; it was fixed by checking the
+        The error is in line~5; it was fixed by checking the
         multiplication against integer overflow.
     }
     \label{lst:slice-repeat}
