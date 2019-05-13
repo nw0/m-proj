@@ -213,7 +213,13 @@ Some common situations in which bounds checks are avoided:
     } implemented for the \texttt{SliceIndex} trait.
     In theory, this \emph{might} be susceptible to an off-by-one error,
     but such a mistake is easily discovered in unit tests.
-    \Cref{sec:rust-unsafe} covers how unsafe code is used for optimisation.
+    \Cref{sec:rust-unsafe} covers how unsafe code is used for
+    optimisation.
+    \item[Built-in sorting] Both built-in sorting implementations,
+    timsort (stable) and quicksort (unstable) use the unsafe
+    \texttt{get\_unchecked} method.
+    They also use unsafe \texttt{ptr} methods to swap and write
+    elements.
     \item[Image processing] Dr\"oge demonstrates different optimisation
     strategies without resorting to Unsafe Rust, while still avoiding
     bounds checks and other unnecessary operations~\cite{droge-opt}.
