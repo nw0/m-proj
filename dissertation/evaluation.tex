@@ -416,23 +416,6 @@ However, they are unavoidable in some situations, such as random array
 accesses.
 
 
-\subsection{Enforcing sub-array bounds}
-
-In Rust, \emph{slices} can be created from continuous segments of an
-iterable.
-Slices can be passed to functions, only allowing them to refer to part
-of an array, or a \emph{subslice}.
-Using pointer manipulation, such a function could access indices of the
-array which are not part of the slice.
-This is not undefined behaviour as the pointer would point to a valid
-part of the object, although it must be done in Unsafe Rust.
-
-With CHERI capabilities, a subslice could be passed as a pointer with
-bounds restricted to the relevant segment of the array.
-It would then be impossible for a function to access the other elements
-unexpectedly, again enforcing the principle of least privilege.
-
-
 \subsection{Enforcing immutability with capabilities}
 \label{sec:eval-rust-enforce-immut}
 
@@ -482,6 +465,28 @@ reference in Rust does not suffer this problem, as it is not possible to
 derive a mutable reference from an immutable one.
 Indeed, this idiom does not occur in Rust as immutability is conveyed by
 the function signature.
+
+
+\subsection{Enforcing sub-object bounds}
+
+In Rust, \emph{slices} can be created from continuous segments of an
+iterable.
+Slices can be passed to functions, only allowing them to refer to part
+of an array, or a \emph{subslice}.
+Using pointer manipulation, such a function could access indices of the
+array which are not part of the slice.
+This is not undefined behaviour as the pointer would point to a valid
+part of the object, although it must be done in Unsafe Rust.
+
+With CHERI capabilities, a subslice could be passed as a pointer with
+bounds restricted to the relevant segment of the array.
+It would then be impossible for a function to access the other elements
+unexpectedly, again enforcing the principle of least privilege.
+
+Likewise, this can apply to struct members, generalising the protection
+to objects with known continuous layouts.
+The cost of doing this is similar to that of enforcing immutability in
+\Cref{sec:eval-rust-enforce-immut}.
 
 
 \subsection{Preventing use-after-free in Safe Rust}
@@ -615,10 +620,6 @@ permit safe calls~\cite{cheri2015}.
 A caller can thereby restrict the privileges of a callee function,
 preventing bugs in called libraries from propagating to the host
 program.
-
-
-\section{Issues unchanged by CHERI capabilities and Rust}
-\todo{Anything important? sub-object bounds?}
 
 
 \section{Porting safe languages to capability architectures}
