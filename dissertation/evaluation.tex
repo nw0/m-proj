@@ -272,6 +272,13 @@ passing a read-only capability for an immutable borrow.
 \section{Benefits to CHERI as a Rust target}
 \label{sec:eval-cheri}
 
+Capabilities are typically seen as a mechanism to improve the security
+of languages and runtimes.
+It is therefore slightly unusual to consider how a language might
+improve capabilities.
+Nevertheless, this section considers how Rust complements CHERI
+capabilities, presenting a contrast to other safe languages.
+
 \subsection{Ownership gives complementary temporal safety}
 \label{sec:eval-cheri-spatial-temporal}
 
@@ -360,6 +367,14 @@ especially for embedded platforms.
 \section{Benefits to Rust from CHERI capabilities}
 \label{sec:eval-rust}
 
+This section explores how memory safety can be improved in Rust by
+introducing CHERI capabilities.
+\todo{more: performance? semantics?}
+Capabilities can reduce the variety of undefined behaviour, while not
+affecting compiler assumptions: for instance, attempting to dereference
+a dangling pointer is guaranteed to trap, rather than possibly
+succeeding and accessing another object unintentionally.
+
 \subsection{Traditional vulnerabilities in Rust}
 \label{sec:eval-rust-vulns}
 
@@ -395,6 +410,10 @@ enabled.
 optimised out (\Cref{lst:rust-iter-unchecked}).
 However, they are unavoidable in some situations, such as random array
 accesses.
+
+
+\subsection{Enforcing sub-array bounds}
+\todo{subslice: unlike C because C has no slices}
 
 
 \subsection{Enforcing immutability with capabilities}
@@ -479,6 +498,7 @@ This creates a use-after-free bug~\cite{rust-nomicon-rc-leak}.
 
 This can be resolved by revocation, which CHERI does not inherently
 implement, but operating systems might implement on top of CHERI.
+\wip{discuss revocation?}
 As there are limitations to this approach, both to the granularity of
 revocations and the performance implications~\cite{cheri-v6}, this
 should be considered a mitigation rather than a solution.
@@ -486,8 +506,6 @@ should be considered a mitigation rather than a solution.
 
 \subsection{Safety of FFI calls}
 \label{sec:eval-rust-xprocess}
-
-\todo{``Some of this is seen-similar''}
 
 A quick survey of Rust crates that use FFI bindings shows that most of
 them deal with some form of low-level behaviour, including encryption,
@@ -502,6 +520,10 @@ With performance or low-level access as the primary goal of most Rust
 FFI calls, safety may not be a major concern, even if it could allow
 arbitrary code execution in the Rust
 program~\cite{szekeres-eternal-war}.
+
+Many of the following points apply to non-FFI code as well, although
+their protection across domain boundaries is perhaps more significant as
+FFI calls cannot be type- or borrow-checked.
 
 \subsubsection{Enforcing immutability across FFI boundaries}
 The modification of an immutable object is a source of undefined
@@ -557,16 +579,18 @@ This means, however, if that a programmer neglects to convert between
 the formats, passing a Rust string to a C function will quickly lead to
 an overflow.
 
-Object capabilities easily protect against this by storing object
-bounds.
+Object capabilities easily protect against this by storing and enforcing
+object bounds.
+Importantly, they protect the rest of the calling program's address
+space, preventing a cross-domain call from accessing data which was not
+explicitly passed to it.
 
 \subsubsection{CHERI compartmentalisation}
-\todo{write}
+\todo{write: faster than sandboxing, ability to restrict syscalls}
 
 
-\subsection{Unsafe semantics}
-Not everything is unsafe any more? Dereferencing arbitrary pointers now
-guaranteed to crash rather than leak.
+\section{Issues unchanged by CHERI capabilities and Rust}
+\todo{Anything important? sub-object bounds?}
 
 
 \section{Porting safe languages to capability architectures}
