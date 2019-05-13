@@ -54,8 +54,9 @@ While the Rust community is generally conscious about memory safety and
 security, nowhere is this more true than with the language and compiler
 developers.
 
-This section covers five memory safety flaws discovered in the Rust
-standard library, all preventable with CHERI capabilities.
+This section covers four entirely unrelated memory safety flaws
+discovered in the Rust standard library, all preventable with CHERI
+capabilities.
 Where relevant, demonstrative microbenchmarks were performed on either
 CheriBSD on Qemu-CHERI with 128-bit capability pointers, or FreeBSD~11.2
 (amd64) for the non-capability comparison.
@@ -82,7 +83,7 @@ the buffer, \texttt{self.cap()}
         The public-facing definitions for a \texttt{VecDeque}'s
         capacity, and pushing to the end.
         It will not escape the reader's attention that the
-        \texttt{capacity} might be mistaken for the \texttt{cap}, a
+        \texttt{capacity()} might be mistaken for the \texttt{cap()}, a
         likely cause of this error.
         These definitions are still current in Rust's built-in data
         structures.
@@ -95,6 +96,9 @@ Subsequently, the pointer to the deque's \texttt{head} would point to
 the address immediately after the buffer, rather than its start.
 Pushing to the back of the deque then attempts to write to the address
 after the buffer, rather than within it.
+
+This appears to have been caused by the similarity of the method names
+leading to an off-by-one error.
 
 \subsubsection{Demonstration microbenchmark}
 I checked that this spatial violation is caught by CHERI capabilities,
@@ -168,6 +172,12 @@ overflow the target's \texttt{usize}.
     \label{lst:slice-repeat}
 \end{figure}
 
+This appears to be a simple integer overflow translating to a buffer
+overflow.
+Note that this overflow will be caught when compiling Rust code in debug
+mode, as integer overflow checks will apply to all arithmetic; release
+mode instead uses two's complement and is \emph{not} undefined.
+
 \subsubsection{Demonstration microbenchmark}
 I did not demonstrate this by calling the \texttt{repeat} method as
 given: as noted below, attempting to copy more than \(2^{64}\) elements
@@ -207,6 +217,10 @@ An unhandled unsigned integer wrap-around could lead to out-of-bounds
 slice indexing through its reverse iterator~\cite{rust-pr-reverse}.
 \Cref{lst:bug-reverse} shows the relevant implementation, defined in the
 core library.
+
+In this situation, the assumptions about the underlying iterator
+implementation are not obvious, and thus not considered when writing
+this method.
 
 \begin{figure}[ht]
     \lstinputlisting{listings/bug-reverse.rs}
@@ -257,16 +271,16 @@ method which operates on raw pointers~\cite{rust-issue-vec-mut}.
     \label{lst:bug-mutslice}
 \end{figure}
 
+This bug appears to be caused by copying and pasting the Iterator
+\texttt{as\_slice} method when writing \texttt{as\_mut\_slice}.
+A demonstration of the fallibility of programmers and motivator for safe
+syntax, neither the language nor the runtime helps in this situation.
+
 \subsubsection{Observations}
 This is a clear violation of one of Rust's temporal safety guarantees,
 that mutable references must not ordinarily be shared.
 While this is not strictly undefined behaviour, attempting to mutate the
 returned object is, defeating the point of getting a mutable slice.
-
-This appears to be bug caused by copying and pasting the Iterator
-\texttt{as\_slice} method when writing \texttt{as\_mut\_slice}.
-Again demonstrating the fallibility of programmers and motivating safe
-syntax, neither the language nor the runtime helps in this situation.
 
 Though this error leads to temporal unsafety, this could be prevented by
 passing a read-only capability for an immutable borrow.
