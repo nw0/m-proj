@@ -14,9 +14,6 @@ It details the strategy taken, defining the scope of the project, and
 the differences of Rust to other languages which influence any effort to
 port Rust to CHERI.
 
-\todo{Distinguish compiler changes and libcore changes. Mention libcore
-changes explicitly: e.g. memchr---there are only about 5 of these.}
-
 \section{The Rust compiler and LLVM}
 \label{sec:impl-rustllvm}
 
@@ -251,7 +248,62 @@ ABI is not typically configured, and is not specified for other targets.
 \section{Changes to core libraries}
 \label{sec:impl-div-lib}
 
-\todo{See todo at start of ch
-The changes to the compiler in *sec were not sufficient\ldots}
+The changes to the compiler in \Cref{sec:impl-div-compiler} were not
+sufficient to compile Rust programs.
+Tests and benchmarks were not run against these libraries.
+
+My attempts to compile the core libraries were cursory, only
+investigating them as far as their functionality was required to run
+test programs.
+Therefore, it is possible that there are problems which I have not
+noticed.
+It is also possible that these changes might now be undone without
+affecting the success of compilation: this is untested.
+
+\subsection{\texttt{libcore}: formatting}
+Three formatting methods were modified:
+
+\begin{itemize}
+    \item A string writing method, used for writing text to files or the
+    console, was changed not to format strings before writing them.
+    Thus variables cannot be printed.
+    \item A pointer formatting method: this now prints a dummy string
+    instead of an address.
+    This was previously broken by invalid \texttt{ptrtoint} calls.
+    \item Number formatting: a method to print numbers in arbitrary
+    radices.
+    Oddly, some of the pattern-matching code refused to compile.
+\end{itemize}
+
+These methods are not relevant to my evaluation as I have used the C
+\texttt{printf} function for printing and formatting.\footnote{
+I introduced a macro, \texttt{prntf!}, to more easily invoke this:
+calling foreign functions is unsafe, and printing in particular involves
+a lot of boilerplate: the null terminator has to be added, and some
+pointer conversions performed.
+This severely reduced code readability in the evaluation.
+}
+
+
+\subsection{\texttt{libcore}: UTF-8 validation}
+The UTF-8 validation routine fails to compile into the core library: I
+did not attempt to debug this.
+I removed references to it.
+Again, this is not relevant to my evaluation as I have not used Unicode.
+
+
+\subsection{\texttt{libcore}: \texttt{memchr}}
+The \texttt{memchr} implementation is similar in functionality to its C
+version.
+It performs pointer manipulation and bitwise operations, and did not
+compile due to an iterator issue.
+
+
+\subsection{\texttt{liballoc}: macro invocation}
+Only a minor change was made: when returning an empty vector, to use
+\texttt{Vec::new()} instead of the macro \texttt{vec![]}.
+This was required because the macro was not in scope of the library as I
+debugged it.
+
 
 \end{document}
