@@ -417,7 +417,20 @@ accesses.
 
 
 \subsection{Enforcing sub-array bounds}
-\todo{subslice: unlike C because C has no slices}
+
+In Rust, \emph{slices} can be created from continuous segments of an
+iterable.
+Slices can be passed to functions, only allowing them to refer to part
+of an array, or a \emph{subslice}.
+Using pointer manipulation, such a function could access indices of the
+array which are not part of the slice.
+This is not undefined behaviour as the pointer would point to a valid
+part of the object, although it must be done in Unsafe Rust.
+
+With CHERI capabilities, a subslice could be passed as a pointer with
+bounds restricted to the relevant segment of the array.
+It would then be impossible for a function to access the other elements
+unexpectedly, again enforcing the principle of least privilege.
 
 
 \subsection{Enforcing immutability with capabilities}
