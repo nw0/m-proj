@@ -538,9 +538,14 @@ FFI calls, safety may not be a major concern, even if it could allow
 arbitrary code execution in the Rust
 program~\cite{szekeres-eternal-war}.
 
-Many of the following points apply to non-FFI code as well, although
-their protection across domain boundaries is perhaps more significant as
-FFI calls cannot be type- or borrow-checked.
+Most of the discussion below has to do with object capabilities and is
+thus inherent in the use of CHERI capabilities, but system call
+protection is a separate feature of CHERI compartmentalisation.
+Watson et al.\ describes the mechanism and security implications with
+regard to C~\cite{cheri2015}.
+Many of the points apply to non-FFI code as well, although protection
+across domain boundaries is perhaps more significant as FFI calls cannot
+be type- or borrow-checked.
 
 \subsubsection{Enforcing immutability across FFI boundaries}
 The modification of an immutable object is a source of undefined
@@ -602,8 +607,14 @@ Importantly, they protect the rest of the calling program's address
 space, preventing a cross-domain call from accessing data which was not
 explicitly passed to it.
 
-\subsubsection{CHERI compartmentalisation}
-\todo{write: faster than sandboxing, ability to restrict syscalls}
+\subsubsection{Protection of system calls}
+In addition to protecting the caller's memory, CHERI can be extended to
+protect access to system calls in FFI functions.
+This is achieved by funnelling system calls through classes which only
+permit safe calls~\cite{cheri2015}.
+A caller can thereby restrict the privileges of a callee function,
+preventing bugs in called libraries from propagating to the host
+program.
 
 
 \section{Issues unchanged by CHERI capabilities and Rust}
