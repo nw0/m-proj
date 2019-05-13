@@ -22,14 +22,14 @@ rather than \texttt{int}, and \texttt{usize} for array indices), and the
 built-in test harness.}
 
 For any future effort in porting Rust to CHERI, attention \emph{must} be
-paid to pointer width and indices (\Cref{sec:rust-usize}).
+paid to pointer width and indices (\Cref{sec:rust-usize,sec:impl-width}).
 \emph{Currently, this effectively prevents Rust code from compiling
 properly for CHERI.}
 
 \wip{What else?}
 
 
-\section{The Rust programming language}
+\subsection{The Rust programming language}
 Rust is billed as a fast and safe systems programming language.
 It uses both compile-time and runtime checks to prevent overflows,
 widely employing fat pointers for built-in data
@@ -40,7 +40,89 @@ same vector would also track the allocated capacity as a boundary.
 This redundancy suggests some room for optimisation.
 
 
-\subsection{Unsafe Rust}
+\section{Object ownership and borrow semantics}
+\label{sec:rust-borrow}
+
+\clar{So what?}
+
+One of the guarantees Rust offers is that Safe Rust should never lead to
+dangling pointers or memory leaks.
+Yet it does not have a garbage collector, or expose memory management.
+Instead, the compiler couples strict ownership analysis with borrow and
+move semantics to determine the lifetime of an object.
+As such, some programs which avoid use-after-free or other memory safety
+bugs may be semantically invalid Rust.
+
+\subsection{Ownership semantics}
+
+\begin{figure}[ht]
+    \lstinputlisting{listings/ownership-sigs.rs}
+    \caption{
+        \wip{improve example?}
+        Function signatures for passing a \texttt{Vec} to a function.
+        To prevent data races, only one code block can contain a mutable
+        reference to a variable at a time.
+    }
+    \label{lst:rust-ownership}
+\end{figure}
+
+Instead of passing objects by duplicating pointers, a function in Safe
+Rust will either take ownership of an object, or borrow it mutably or
+immutably.
+\Cref{lst:rust-ownership} shows some function signatures for
+moving ownership or borrowing.
+In contrast to C, the emphasis is not on access, but the nature of the
+access.\footnote{In Rust, references represent possession of an object,
+rather than the ability to access it.}
+As such, pointers cannot be casually duplicated\footnote{In Safe Rust.}
+to cause data races or temporal unsoundness generally.
+
+Ownership does not guarantee temporal safety on its own.
+However, it makes ownership explicit and provenance clear, preventing
+bugs such as use-after-free.
+\wip{unclear}
+
+\subsection{Caveat on memory leaks}
+An exception to the memory leak guarantee is the exposure of
+\texttt{mem::forget} in the core library as a safe function.
+This allows a programmer to end an object's lifetime to end without
+deallocating it, used to avoid double-frees in circular data structures.
+This can create a leak, as can a knot-tied reference-counted data
+structure, though knot-tying is made difficult in light of the single
+mutable reference rule.
+\Cref{sec:eval-rust-use-after-free} gives an example of a memory leak in
+Safe Rust.
+
+
+\section{Definitions of pointers and indices}
+\label{sec:rust-usize}
+
+In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
+conventionally equivalent to C's \texttt{uintptr\_t}, which \emph{may
+not be equivalent to \texttt{size\_t}}~\cite{rust-rfc-isize}.
+The width of a \texttt{usize} derives from the data layout's pointer
+width, 128 bits for a CHERI capability.
+Crucially, \texttt{usize} is used as the index size in Rust, for
+indexing into arrays, structs, and all objects, and is hence passed to
+LLVM instructions such as \texttt{getelementptr}.
+
+\subsection{Implications}
+Having a 128-bit \texttt{usize} means that the Rust compiler instructs
+LLVM to generate 128-bit indexed versions of intrinsics such as
+\texttt{memcpy}, in addition to indexing.
+However, not all bit widths for the \texttt{memcpy} intrinsic are
+supported by all targets~\cite{llvm-langref}, and CHERI supports a bit
+width of 64 but not 128.
+
+As it stands, this is an implementation detail which is the consequence
+of the language semantics.
+Nevertheless, to target CHERI properly, Rust must either support pointer
+widths larger than the index size, or use pointer widths differently in
+code generation.
+\Cref{sec:impl-width} explores the implementation in more detail.
+
+
+\section{Unsafe Rust}
 \label{sec:rust-unsafe}
 
 To provide Rust with more power, \emph{Unsafe} Rust permits several
@@ -63,6 +145,7 @@ and outputs to the unsafe block.
 caused by incorrect computation before an \texttt{unsafe} block, leading
 to a buffer overflow.
 
+\subsection{Optimisation with Unsafe Rust}
 As seen in \Cref{sec:rust-elision}, unsafe optimisations are used to
 avoid redundant checks, whether they are duplicated or simply known to
 be within bounds.
@@ -79,64 +162,32 @@ Naturally, there is scope for programmer error here:
 the standard library.
 
 
-\subsection{Object ownership and borrow semantics}
-\label{sec:rust-borrow}
-
-\clar{So what?}
-
-One of the guarantees Rust offers is that Safe Rust should never lead to
-dangling pointers or memory leaks.
-Yet it does not have a garbage collector, or expose memory management.
-Instead, the compiler couples strict ownership analysis with borrow and
-move semantics to determine the lifetime of an object.
-As such, some programs which avoid use-after-free or other memory safety
-bugs may be semantically invalid Rust.
+\section{Array bounds checks}
+\label{sec:rust-elision}
 
 \begin{figure}[ht]
-    \lstinputlisting{listings/ownership-sigs.rs}
+    \lstinputlisting{listings/vec-index-trait.rs}
     \caption{
-        \wip{improve example?}
-        Function signatures for passing a \texttt{Vec} to a function.
-        To prevent data races, only one code block can contain a mutable
-        reference to a variable at a time.
+        Like built-in arrays, Rust's \texttt{Vec} uses intrinsic
+        indexing.
+        The same bounds checks therefore apply to random indexing into a
+        \texttt{Vec}, or any structure built on one.
     }
-    \label{lst:rust-ownership}
+    \label{lst:rust-vec-index}
 \end{figure}
-
-Instead of pointers, a function in Safe Rust will either take ownership
-of an object, or borrow it mutably or immutably.
-\Cref{lst:rust-ownership} shows some function signatures for
-moving ownership or borrowing.
-In contrast to C, the emphasis is not on access, but the nature of the
-access.\footnote{In Rust, references represent possession of an object,
-rather than the ability to access it.}
-As such, pointers cannot be casually duplicated\footnote{In Safe Rust.}
-to cause data races or temporal unsoundness generally.
-
-Ownership does not guarantee temporal safety on its own.
-However, it makes ownership explicit and provenance clear, preventing
-bugs such as use-after-free.
-\wip{unclear}
-
-\subsubsection{Caveat on memory leaks}
-An exception to the memory leak guarantee is the exposure of
-\texttt{mem::forget} in the core library as a safe function.
-This allows a programmer to end an object's lifetime to end without
-deallocating it, used to avoid double-frees in circular data structures.
-This can create a leak, as can a knot-tied reference-counted data
-structure, though knot-tying is made difficult in light of the single
-mutable reference rule.
-\Cref{sec:eval-rust-use-after-free} gives an example of a memory leak in
-Safe Rust.
-
-
-\subsection{Optimisation by eliding checks}
-\label{sec:rust-elision}
 
 For spatial safety, Rust implements runtime bounds checks to
 prevent out-of-bounds accesses.
 This may appear to harbour large overheads, although with optimisations
 many checks are elided.
+In fact, bounds checks mainly apply to random indexing, as seen in
+\Cref{lst:bg-rust-index}.
+They also apply when Rust's intrinsic indexing is used, through the
+\texttt{Index} and \texttt{IndexMut} traits.
+For example, \Cref{lst:rust-vec-index} shows that \texttt{Vec} uses
+this intrinsic, and therefore has bounds checks.
+
+\subsection{Optimisation by eliding checks}
 \Cref{lst:rust-iter-unchecked} shows examples of bounds check elision in
 generated code, based on iterators and detecting when the length is
 checked.
@@ -174,25 +225,6 @@ Some common situations in which bounds checks are avoided:
     implementations.
 \end{description}
 
-Therefore when writing idiomatic Rust, bounds checks mainly apply to
-random indexing, as seen in \Cref{lst:bg-rust-index}.
-They also apply when Rust's intrinsic indexing is used, through the
-\texttt{Index} and \texttt{IndexMut} traits.
-For example, \Cref{lst:rust-vec-index} shows that \texttt{Vec} uses
-this intrinsic, and therefore has bounds checks.
-Consequently, the overall performance impact of bounds checks is small.
-
-\begin{figure}[ht]
-    \lstinputlisting{listings/vec-index-trait.rs}
-    \caption{
-        Like built-in arrays, Rust's \texttt{Vec} uses intrinsic
-        indexing.
-        The same bounds checks therefore apply to random indexing into a
-        \texttt{Vec}, or any structure built on one.
-    }
-    \label{lst:rust-vec-index}
-\end{figure}
-
 \begin{figure}[ht]
     \lstinputlisting{listings/sums-iter.rs}
     \lstinputlisting[language={[mips64]Assembler}]{listings/array-itersum.s}
@@ -227,7 +259,7 @@ Consequently, the overall performance impact of bounds checks is small.
     \label{lst:rust-iter-checked}
 \end{figure}
 
-\subsubsection{Another approach to removing bounds checks}
+\subsection{Another approach to removing bounds checks}
 Finally, there is an experimental effort~\cite{rust-crate-indexing} to
 remove array bounds checks using dependent types, using the principles
 described by Xi and Pfenning~\cite{xi-pfenning-dependent} and applied to
@@ -236,34 +268,6 @@ Note that this could add a significant compile-time
 overhead, as it necessarily utilises type-, lifetime, and ownership
 checkers, which Rust runs before optimisations: this results in
 heavy computation to remove checks that are usually avoided anyway.
-
-
-\subsection{Definitions of pointers and indices}
-\label{sec:rust-usize}
-
-In Rust, a \texttt{usize} is defined to be a pointer-sized integer,
-conventionally equivalent to C's \texttt{uintptr\_t}, which \emph{may
-not be equivalent to \texttt{size\_t}}~\cite{rust-rfc-isize}.
-The width of a \texttt{usize} derives from the data layout's pointer
-width, 128 bits for a CHERI capability.
-Crucially, \texttt{usize} is used as the index size in Rust, for
-indexing into arrays, structs, and all objects, and is hence passed to
-LLVM instructions such as \texttt{getelementptr}.
-
-\subsubsection{Implications}
-Having a 128-bit \texttt{usize} means that the Rust compiler instructs
-LLVM to generate 128-bit indexed versions of intrinsics such as
-\texttt{memcpy}, in addition to indexing.
-However, not all bit widths for the \texttt{memcpy} intrinsic are
-supported by all targets~\cite{llvm-langref}, and CHERI supports a bit
-width of 64 but not 128.
-
-As it stands, this is an implementation detail which is the consequence
-of the language semantics.
-Nevertheless, to target CHERI properly, Rust must either support pointer
-widths larger than the index size, or use pointer widths differently in
-code generation.
-\Cref{sec:impl-width} explores the implementation in more detail.
 
 
 \section{Summary}
