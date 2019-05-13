@@ -20,13 +20,13 @@ safety.\footnote{Usability differences include the lack of automatic
 typecasting, the explicit use of integer widths (e.g.\ \texttt{i32}
 rather than \texttt{int}, and \texttt{usize} for array indices), and the
 built-in test harness.}
+I also discuss some techniques and patterns used by the Rust compiler
+and programmers for optimisation of Rust code.
 
 For any future effort in porting Rust to CHERI, attention \emph{must} be
 paid to pointer width and indices (\Cref{sec:rust-usize,sec:impl-width}).
 \emph{Currently, this effectively prevents Rust code from compiling
 properly for CHERI.}
-
-\wip{What else?}
 
 
 \subsection{The Rust programming language}
@@ -271,6 +271,17 @@ heavy computation to remove checks that are usually avoided anyway.
 
 
 \section{Summary}
-\todo{summarise\ldots}
+
+This chapter introduced some important semantic characteristics of Rust,
+and showed how it provides some of its memory safety guarantees
+It then examined how Rust minimised the overheads of its guarantees, and
+the tools that programmers can use to do the same.
+Both of these inform the evaluation in \Cref{ch:eval}.
+
+Next, \Cref{ch:impl} considers the implementation of the Rust compiler
+and core libraries, and how they interact with the CHERI ISA.
+\Cref{sec:rust-usize} in particular is a definition that has not
+translated well to the CHERI architecture, but is consistent with it,
+given a careful implementation.
 
 \end{document}
