@@ -109,9 +109,13 @@ Sample code is shown in \Cref{lst:micro-capacity}.
         An off-by-one error in \texttt{reserve} results in an unsound
         call another function, updating \texttt{head} to 32.
         Under x86 without capabilities, the program terminates normally,
-        printing output as shown in the comments.
+        printing output as shown in the
+        comments.{\protect\textsuperscript\textdagger}
         With CHERI capabilities, execution continues until line~12, which
         traps due to a length violation.
+        \\ {\footnotesize \protect\textdagger\ The \texttt{prntf!} macro
+        is \emph{not} built-in; I define it for convenience. See
+        \cref{foot:prntf} on \cpageref{foot:prntf}.}
     }
     \label{lst:micro-capacity}
 \end{figure}
