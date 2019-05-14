@@ -15,7 +15,7 @@ Undefined behaviour allows compilers to assume that certain conditions never hol
 
 Consequently, crucial checks can be optimised away and invariants violated by compilers, resulting in executables vulnerable to memory attacks~\cite{simon2018wygiwyc}.
 Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appears to function correctly, and gloss over the subtleties of the C standard~\cite{memarian2016cdepths};
-these represent future opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
+these represent opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
 
 \todo{Talk about spatial and temporal safety +new points from evaluation}
 
@@ -26,9 +26,9 @@ these represent future opportunities for vulnerabilities to arise when code is o
 
 Rust is billed as a fast, safe language designed for concurrent systems
 programming.
-Safe Rust claims to offer type- and memory-safety, and guarantees not to
-encounter dangling pointers or any undefined
-behaviour~\cite{rust-nomicon-safe-unsafe}.
+Safe Rust claims to offer type- and memory-safety, and provides
+guarantees that no dangling pointers or any undefined behaviour will
+occur~\cite{rust-nomicon-safe-unsafe}.
 
 To achieve this, it uses compile-time and runtime checks, relying on a
 combination of LLVM optimisations and \emph{Unsafe} Rust code to

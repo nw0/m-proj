@@ -77,10 +77,10 @@ rather than the ability to access it.}
 As such, pointers cannot be casually duplicated\footnote{In Safe Rust.}
 to cause data races or temporal unsoundness generally.
 
-Ownership does not guarantee temporal safety on its own.
-However, it makes ownership explicit and provenance clear, preventing
-bugs such as use-after-free.
-\wip{unclear}
+Ownership and borrowing are the foundations of Rust's temporal safety
+guarantees.
+They make object provenance clear, preventing bugs including
+use-after-free at compile time.
 
 \subsection{Caveat on memory leaks}
 An exception to the memory leak guarantee is the exposure of
