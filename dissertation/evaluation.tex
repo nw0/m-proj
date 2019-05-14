@@ -658,5 +658,20 @@ program.
 \section{Strengthening unsafety}
 \label{sec:eval-betterunsafe}
 
+\todo{
+Unsafety exists because compiler analysis is too strong: want to allow
+correct but unprovable things.
+One of the reasons is that creating UB is easy with unsafe code: not
+supposed to be possible in Safe Rust.
+Capabilities can rule out 2/9 sources of UB by trapping rather than doing
+unexpected things, improving safety (only spatial! dangling temporal
+pointers still an issue)
+This is explicitly safe:
+https://doc.rust-lang.org/nomicon/what-unsafe-does.html
+Like CHERI, Safe Rust allows oob pointers, as long as they're not
+dereferenced.
+This doesn't stop optimisation, since dereferencing dangling
+pointers/mutating immut data is UB anyway.
+}
 
 \end{document}
