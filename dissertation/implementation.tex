@@ -98,6 +98,30 @@ This is a good starting point to find a CHERI-supporting LLVM commit
 which will compile the Rust compiler.
 
 
+\subsection{Compiler usage}
+Enabling the \cuf target when building the Rust compiler necessitates
+compiling the complete Rust standard library for CHERI, which is not
+possible at this stage.
+I identified and used two workflows for compiling programs:
+
+\subsubsection{Integrated compilation with Xargo}
+Xargo describes itself as a ``sysroot manager'', meaning that it will
+(cross-)compile versions of the libraries for target platforms.
+This is useful where binary releases do not exist for those platforms;
+it allows the use of modified libraries, and in particular it does not
+require that the entire standard library is compiled.
+
+By default it only compiles \texttt{core}; when using \texttt{alloc}
+this must be specified through \texttt{Xargo.toml}.
+This approach is recommended, although it can make code generation
+errors difficult to debug.
+
+Note that Xargo \emph{does not expect dependencies (e.g.\
+\texttt{libcore}) to change!}
+Therefore, it does not always recompile a ``sysroot'' after
+modifications.
+Invoking it with a build tool might be advisable.
+
 \section{Changes to the compiler}
 \label{sec:impl-div-compiler}
 
