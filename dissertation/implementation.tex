@@ -102,6 +102,8 @@ which will compile the Rust compiler.
 Enabling the \cuf target when building the Rust compiler necessitates
 compiling the complete Rust standard library for CHERI, which is not
 possible at this stage.
+The default package manager, Cargo, does not support this situation and
+cannot be used.
 I identified and used two workflows for compiling programs:
 
 \subsubsection{Integrated compilation with Xargo}
@@ -121,6 +123,28 @@ Note that Xargo \emph{does not expect dependencies (e.g.\
 Therefore, it does not always recompile a ``sysroot'' after
 modifications.
 Invoking it with a build tool might be advisable.
+
+\subsubsection{Scripted compilation with \texttt{llc} and Clang}
+This is the traditional compilation-and-linking process.
+
+\begin{enumerate}
+    \item First, libraries are compiled as Rust libraries
+    (\texttt{.rlib}) and dynamic libraries (\texttt{.so}).
+    This is done by using \texttt{rustc}, not Cargo.
+    \item Then, Rust programs are compiled to LLVM IR (again with
+    \texttt{rustc}), manually specifying the Rust libraries for
+    definitions.
+    One can compile to object code directly, but this step can be
+    helpful for debugging and ensuring that all the desired target
+    attributes and flags are passed in the next step.
+    \item Next, \texttt{llc} is used to compile the LLVM IR to object
+    files.
+    \item Finally, Clang links against the CheriBSD sysroot.
+\end{enumerate}
+
+I provide sample Makefiles which use this process for the test programs
+in this project, including appropriate command-line arguments.
+
 
 \section{Changes to the compiler}
 \label{sec:impl-div-compiler}
