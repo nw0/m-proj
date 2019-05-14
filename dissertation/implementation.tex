@@ -14,33 +14,6 @@ It details the strategy taken, defining the scope of the project, and
 the differences of Rust to other languages which influence any effort to
 port Rust to CHERI.
 
-\section{The Rust compiler and LLVM}
-\label{sec:impl-rustllvm}
-
-Rust uses LLVM as a backend for compilation.
-The CTSRD project maintains a fork of LLVM with support for the
-current CHERI implementation, extending the MIPS backend to
-support CHERI targets, and generic code to handle
-capabilities~\cite{cheri-prog-guide}.
-
-\subsection{Incompatibilities with the LLVM backend}
-Due to the pointer width and index size divergence
-(\Cref{sec:rust-usize}), two incompatibilities were found with the CHERI
-LLVM backend.
-These have been fixed in the current version.
-
-\begin{itemize}
-    \item Rust may attempt to generate an unusual pointer offset when
-    calling or returning from functions.\footnote{Fix at \url{https://github.com/CTSRD-CHERI/llvm-project/commit/39cfdf711a759a4799bd32f50af07f5f6f43c987}.}
-    \item Rust sometimes attempts to generate unaligned loads.
-    This is not possible in the pure capability ABI.\footnote{Fix at \url{https://github.com/CTSRD-CHERI/llvm-project/commit/d8e6acf3d4094270cd55b70341a6f9c4d032db81}.}
-\end{itemize}
-
-The Rust project also maintains a fork of LLVM, with minor changes, and
-provide `known good' combinations of LLVM and Rust compiler commits.
-This is a good starting point to find a CHERI-supporting LLVM commit
-which will compile the Rust compiler.
-
 
 \section{Strategy}
 \label{sec:impl-what}
@@ -95,6 +68,34 @@ Optimisations are not supported at this point as they cause the Rust
 compiler to invoke LLVM APIs with values not supported by the CHERI
 backend, such as offsets of 128 bits.
 \Cref{sec:impl-width} discusses related issues.
+
+
+\section{The Rust compiler and LLVM}
+\label{sec:impl-rustllvm}
+
+Rust uses LLVM as a backend for compilation.
+The CTSRD project maintains a fork of LLVM with support for the
+current CHERI implementation, extending the MIPS backend to
+support CHERI targets, and generic code to handle
+capabilities~\cite{cheri-prog-guide}.
+
+\subsection{Incompatibilities with the LLVM backend}
+Due to the pointer width and index size divergence
+(\Cref{sec:rust-usize}), two incompatibilities were found with the CHERI
+LLVM backend.
+These have been fixed in the current version.
+
+\begin{itemize}
+    \item Rust may attempt to generate an unusual pointer offset when
+    calling or returning from functions.\footnote{Fix at \url{https://github.com/CTSRD-CHERI/llvm-project/commit/39cfdf711a759a4799bd32f50af07f5f6f43c987}.}
+    \item Rust sometimes attempts to generate unaligned loads.
+    This is not possible in the pure capability ABI.\footnote{Fix at \url{https://github.com/CTSRD-CHERI/llvm-project/commit/d8e6acf3d4094270cd55b70341a6f9c4d032db81}.}
+\end{itemize}
+
+The Rust project also maintains a fork of LLVM, with minor changes, and
+provide `known good' combinations of LLVM and Rust compiler commits.
+This is a good starting point to find a CHERI-supporting LLVM commit
+which will compile the Rust compiler.
 
 
 \section{Changes to the compiler}
