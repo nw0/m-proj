@@ -429,6 +429,19 @@ However, they are unavoidable in some situations, such as random array
 accesses.
 
 
+\subsection{Memory footprint decrease for redundant object metadata}
+
+Currently, any vector or array slice stores a pointer to the relevant
+object and its length~\cite{blandy-orendorff}.
+As bounds information can be derived from the CHERI capability pointer
+to the same object, it is redundant to store the length.
+
+\subsubsection{Impact on the current implementation}
+Rust stores the length as a \texttt{usize}, in this case an
+\texttt{i128}.
+\todo{This is very bad--CGetLen is probably much more efficient than 2x load double!}
+
+
 \subsection{Object immutability enforcement}
 \label{sec:eval-rust-enforce-immut}
 
