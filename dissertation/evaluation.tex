@@ -422,10 +422,9 @@ invoked, rather than terminating the program directly.
 Therefore the CHERI mechanism is fully compatible with the existing
 panicking framework.
 
-However, most bounds checks are elided with compiler optimisations
-enabled.
-\Cref{sec:rust-elision} gives some situations in which bounds checks are
-optimised out (\Cref{lst:rust-iter-unchecked}).
+This is a low-impact improvement, as most bounds checks are elided with
+compiler optimisations enabled; see \Cref{sec:rust-elision} for examples
+where checks are already optimised.
 However, they are unavoidable in some situations, such as random array
 accesses.
 
