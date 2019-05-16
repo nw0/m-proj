@@ -96,8 +96,9 @@ safety, guarding against undiscovered vulnerabilities.
 \section{Contributions}
 \label{sec:intro-contrib}
 
-The main objective of this project was to evaluate the utility of
-porting Rust to CHERI.
+Traditionally, capability mechanisms have been evaluated against C, but
+the main objective of this project was to evaluate the utility of
+porting Rust, a safe language, to CHERI.
 In summary, the contributions of this work are:
 
 \todo{Rewrite, rephrase, and reorder these points.}
@@ -106,28 +107,39 @@ In summary, the contributions of this work are:
     \item A survey of work relating to safe languages and capability
     platforms, and efforts to manage undefined behaviour and safety in
     programming languages.
-    \item An evaluation of the benefits and detriments porting a safe
-    language to CHERI, and capability architectures in general.
-    This covers the benefits for the language, the architecture, and how
-    a language may be enriched by capabilities.
+
     \item A summary of features and techniques Rust uses to provide
     memory safety guarantees, and how it optimises these.
     The differences between Rust and other languages, as they pertain to
     capability architectures and CHERI.
-    Microbenchmarks demonstrating two potential vulnerabilities in
-    the Rust standard library, functional on x86 but prevented by CHERI.
-    \item Patches to the Rust compiler (1.35), providing
-    \texttt{cheri-unknown-freebsd} (CHERI128) as a working target.
-    This compiles the Rust core library without optimisations.
-    \item An overview of the relevant concerns for future implementers
+
+    \item An analysis of previous errors leading to vulnerabilities in
+    Rust, the memory safety implications, and how they are mitigated
+    using capabilities.
+    Two demonstrative microbenchmarks of vulnerabilities in the Rust
+    standard library, shown to be functional on x86 but prevented by
+    CHERI capabilities.
+
+    \item An evaluation of the benefits and detriments of porting Rust
+    to CHERI, and capability architectures in general.
+    This covers the benefits for the language, the architecture, and how
+    Rust is enriched by capabilities.
+    \wip{more}
+
+    \item Patches to the Rust compiler (1.35) which enable compilation
+    to the \texttt{cheri-unknown-freebsd} target with 128-bit CHERI
+    capabilities.
+    This is able to compile the Rust core library without optimisations.
+
+    \item Details of the relevant concerns for future implementers
     porting Rust to CHERI.
 \end{itemize}
 
-This work is \emph{not} intended to port Rust to CHERI.
+This work is \emph{not} intended to be a complete implementation of
+CHERI support in the Rust compiler.
 Rather, it prototypes support for Rust compilation to pure capability
 \wip{what's purecap} code to illustrate the benefit of CHERI
-capabilities to a safe language, rather than providing a full
-implementation.
+capabilities to a safe language.
 
 
 \section{Report structure}
