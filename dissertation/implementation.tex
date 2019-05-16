@@ -351,4 +351,22 @@ This was required because the macro was not in scope of the library as I
 debugged it.
 
 
+\section{Summary}
+
+This chapter recorded and explained the strategy taken to evaluate Rust
+on CHERI, which defines the scope of this project.
+It documented techniques and processes which may be of use to future
+implementers, as well as specific differences in the CHERI architecture
+that lead to implementation conflicts with Rust.
+For example, \Cref{sec:impl-width} explains implementation details of
+the Rust compiler arising from the definition of index sizes, as well as
+the choices made to resolve the issue for this project.
+
+The strategy taken and compromises made set the stage for
+\Cref{ch:eval}, where I evaluate the application of CHERI capabilities
+to Rust, and Rust guarantees to CHERI.
+They inform the evaluation and define its limitations, which I
+explicitly consider in \wip{ref sec}.
+
+
 \end{document}
