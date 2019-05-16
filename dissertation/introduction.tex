@@ -23,8 +23,8 @@ attacks~\cite{simon2018wygiwyc}.
 Many systems and compiler programmers frequently underestimate the
 pervasiveness of undefined behaviour in code that appears to function
 correctly, and gloss over the subtleties of the C
-standard~\cite{memarian2016cdepths};
-these represent opportunities for vulnerabilities to arise when code is
+standard~\cite{memarian2016cdepths}.
+These represent opportunities for vulnerabilities to arise when code is
 optimised away by compiler transformations~\cite{wang2013towards}.
 
 
@@ -34,7 +34,8 @@ Rust is billed as a fast, safe language designed for concurrent systems
 programming.
 Safe Rust claims to offer type- and memory-safety, and provides
 guarantees that no dangling pointers or any undefined behaviour will
-occur~\cite{rust-nomicon-safe-unsafe}.
+occur~\cite{rust-nomicon-safe-unsafe}, giving both spatial and temporal
+memory protection.
 
 To achieve this, it uses compile-time and runtime checks, relying on a
 combination of LLVM optimisations and \emph{Unsafe} Rust code to
@@ -42,13 +43,11 @@ minimise the performance overhead.
 However, as with all code that requires fine control over memory,
 mistakes in writing Unsafe Rust give rise to potential vulnerabilities.
 
-\todo{Talk about spatial and temporal safety +new points from evaluation}
-
 \subsubsection{Vulnerabilities in Rust}
-There have been a number of bugs and potential vulnerabilities in Rust,
-none of which are believed to be exploited.
-Some of these were exposed but potentially preventable with CHERI
-capabilities (discussed in \Cref{sec:eval-bugs}):
+There have been several unrelated bugs and potential vulnerabilities in
+Rust, all believed to be unexploited.
+Some are preventable with CHERI capabilities, and these are examined in
+\Cref{sec:eval-bugs}:
 
 \begin{itemize}
     \item Standard library: buffer overflow when pushing to a
@@ -72,10 +71,11 @@ Others are not mitigated by capabilities:
     compiler, CVE-2018-1000622~\cite{cve-rustdoc,rust-advisory-rustdoc}.
 \end{itemize}
 
-Collectively, these show that even with a language designed for safety,
-and in a safety-conscious developer community, it is still difficult to
-avoid bugs that lead to unsoundness and possible vulnerabilities.
-Therefore, more tools are needed to build and operate reliable and
+Rust is a language with an explicit priority of memory safety, developed
+by a community of safety- and security-conscious programmers.
+Collectively, these flaws demonstrate that such favourable conditions
+are not sufficient to eliminate unsoundness and vulnerabilities.
+On the contrary, more tools are needed to build and operate reliable and
 secure software.
 
 
@@ -88,7 +88,9 @@ permissions, giving programs fine-grained mechanisms to enforce the
 security principles of \emph{least privilege} and \emph{intentional
 use}~\cite{neumann-principles}.
 
-Just as using capabilities in C programs can prevent unintended operations on memory, applying capabilities to unsafe Rust code would provide an additional layer of safety, guarding against undiscovered vulnerabilities and potentially shrinking the set of unsafe operations.
+Just as using capabilities in C programs prevents unintended operations
+on memory, applying capabilities to Rust provides an additional layer of
+safety, guarding against undiscovered vulnerabilities.
 
 
 \section{Contributions}
