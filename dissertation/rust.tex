@@ -43,8 +43,6 @@ This redundancy suggests some room for optimisation.
 \section{Object ownership and borrow semantics}
 \label{sec:rust-borrow}
 
-\clar{So what?}
-
 One of the guarantees Rust offers is that Safe Rust should never lead to
 dangling pointers or memory leaks.
 Yet it does not have a garbage collector, or expose memory management.
@@ -58,10 +56,11 @@ bugs may be semantically invalid Rust.
 \begin{figure}[ht]
     \lstinputlisting{listings/ownership-sigs.rs}
     \caption{
-        \wip{improve example?}
         Function signatures for passing a \texttt{Vec} to a function.
         To prevent data races, only one code block can contain a mutable
-        reference to a variable at a time.
+        (exclusive) reference to a variable, like \texttt{x}, at a time.
+        Multiple immutable (shared) references (e.g. \texttt{w}) are
+        allowed.
     }
     \label{lst:rust-ownership}
 \end{figure}

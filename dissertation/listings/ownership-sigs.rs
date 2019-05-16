@@ -1,14 +1,8 @@
-// Lifetime ends; v becomes uninitialised in caller.
-fn take_ownership(v: Vec<i32>);
+// Lifetime ends; `v' becomes uninitialised in caller.
+// Caller is returned a vector, which could be `v'.
+fn take(v: Vec<i32>) -> Vec<i32>;
 
-// Lifetime ends; v becomes uninitialised in caller.
-// Caller receives a vector, which may be the original vector.
-fn take_and_return(v: Vec<i32>) -> Vec<i32>;
-
-// Receiving an immutable reference.
-// The vector is still defined for the caller afterward.
-fn borrow(v: &Vec<i32>);
-
-// Receiving a mutable reference.
-// The vector is still defined for the caller afterward; it may be changed.
-fn borrow_mutably(v: &mut Vec<i32>);
+// Borrowing references from the caller:
+// `w' is defined for the caller afterward and must not change
+// `x' is defined for the caller afterward but could have changed
+fn borrow(w: &Vec<i32>, x: &mut Vec<i32>);
