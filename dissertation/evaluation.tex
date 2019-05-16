@@ -393,7 +393,7 @@ affecting compiler assumptions: for instance, attempting to dereference
 a dangling pointer is guaranteed to trap, rather than possibly
 succeeding and accessing another object unintentionally.
 
-\subsection{Traditional vulnerabilities in Rust}
+\subsection{Mitigation of traditional vulnerabilities}
 \label{sec:eval-rust-vulns}
 
 One class of attacks that Rust aims to mitigate is buffer overflows.
@@ -409,7 +409,7 @@ their C analogues, giving rise to the bugs discussed in
 Capabilities can combat this by preventing out-of-bounds accesses.
 
 
-\subsection{Removal of bounds checks}
+\subsection{Bounds checks removal}
 \label{sec:eval-rust-bounds}
 
 With capabilities, bounds checks can be removed altogether: instead of
@@ -430,7 +430,7 @@ However, they are unavoidable in some situations, such as random array
 accesses.
 
 
-\subsection{Enforcing immutability with capabilities}
+\subsection{Object immutability enforcement}
 \label{sec:eval-rust-enforce-immut}
 
 Modifying an immutable object is undefined behaviour in Rust, and should
@@ -481,7 +481,7 @@ Indeed, this idiom does not occur in Rust as immutability is conveyed by
 the function signature.
 
 
-\subsection{Enforcing sub-object bounds}
+\subsection{Sub-object bound enforcement}
 
 In Rust, \emph{slices} can be created from continuous segments of an
 iterable.
@@ -503,7 +503,7 @@ The cost of doing this is similar to that of enforcing immutability in
 \Cref{sec:eval-rust-enforce-immut}.
 
 
-\subsection{Preventing use-after-free in Safe Rust}
+\subsection{Use-after-free elimination in Safe Rust}
 \label{sec:eval-rust-use-after-free}
 
 As we have discovered, spatial integrity is not an absolute guarantee in
@@ -540,7 +540,7 @@ revocations and the performance implications~\cite{cheri-v6}, this
 should be considered a mitigation rather than a solution.
 
 
-\subsection{Safety of FFI calls}
+\subsection{Improved safety of FFI calls}
 \label{sec:eval-rust-xprocess}
 
 A quick survey of Rust crates that use FFI bindings shows that most of
@@ -566,7 +566,7 @@ Many of the points apply to non-FFI code as well, although protection
 across domain boundaries is perhaps more significant as FFI calls cannot
 be type- or borrow-checked.
 
-\subsubsection{Enforcing immutability across FFI boundaries}
+\subsubsection{Enforcement of immutability across FFI boundaries}
 The modification of an immutable object is a source of undefined
 behaviour in Rust.
 This is normally enforced by type-checking, but this is impossible
@@ -595,7 +595,7 @@ capability to regain access to the original data~\cite{cheri-v6}.
 This could also allow less trusted code to handle Rust objects while
 still guaranteeing integrity and confidentiality.
 
-\subsubsection{Use-after-free through FFI}
+\subsubsection{Prevention of use-after-free from FFI}
 The use of FFI functions can bypass Rust's object lifetime model, as
 there is no way to ensure that an FFI function has not stored or leaked
 references to borrowed Rust objects.
@@ -605,7 +605,7 @@ While this cannot be completely prevented with capabilities as-is,
 \wip{ref} discusses the potential to use revocations
 to manage this risk.
 
-\subsubsection{Overflowing object boundaries}
+\subsubsection{Enforcement of object boundaries}
 \clar{Demonstration microbenchmark?}
 
 Objects can only be passed to C as raw pointers.
