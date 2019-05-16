@@ -7,22 +7,28 @@
 \section{Motivation}
 \label{sec:intro-motiv}
 
-\wip{This is chopped up from the proposal}
 \subsection{Background}
-Many security vulnerabilities are bugs arising from the lack of memory safety in C; an example of a traditional exploit is the buffer overflow.
-The C language specification includes a number of situations that lead to \emph{undefined behaviour}: akin to a deduction of `falsity' in logic, after these points the state of the program might be arbitrary.
-Undefined behaviour allows compilers to assume that certain conditions never hold, enabling them to make powerful (but dangerous) optimisations.
+Many security vulnerabilities are bugs arising from the lack of memory
+safety in C; an example of a traditional exploit is the buffer overflow.
+The C language specification includes a number of situations that lead
+to \emph{undefined behaviour}: akin to a deduction of `falsity' in
+logic, after these points the state of the program might be arbitrary.
+Undefined behaviour allows compilers to assume that certain conditions
+never hold, enabling them to make powerful (but dangerous)
+optimisations.
 
-Consequently, crucial checks can be optimised away and invariants violated by compilers, resulting in executables vulnerable to memory attacks~\cite{simon2018wygiwyc}.
-Many systems and compiler programmers frequently underestimate the pervasiveness of undefined behaviour in code that appears to function correctly, and gloss over the subtleties of the C standard~\cite{memarian2016cdepths};
-these represent opportunities for vulnerabilities to arise when code is optimised away by compiler transformations~\cite{wang2013towards}.
-
-\todo{Talk about spatial and temporal safety +new points from evaluation}
+Consequently, crucial checks can be optimised away and invariants
+violated by compilers, resulting in executables vulnerable to memory
+attacks~\cite{simon2018wygiwyc}.
+Many systems and compiler programmers frequently underestimate the
+pervasiveness of undefined behaviour in code that appears to function
+correctly, and gloss over the subtleties of the C
+standard~\cite{memarian2016cdepths};
+these represent opportunities for vulnerabilities to arise when code is
+optimised away by compiler transformations~\cite{wang2013towards}.
 
 
 \subsection{The Rust programming language}
-
-\wip{citations?}
 
 Rust is billed as a fast, safe language designed for concurrent systems
 programming.
@@ -35,6 +41,8 @@ combination of LLVM optimisations and \emph{Unsafe} Rust code to
 minimise the performance overhead.
 However, as with all code that requires fine control over memory,
 mistakes in writing Unsafe Rust give rise to potential vulnerabilities.
+
+\todo{Talk about spatial and temporal safety +new points from evaluation}
 
 \subsubsection{Vulnerabilities in Rust}
 There have been a number of bugs and potential vulnerabilities in Rust,
@@ -118,5 +126,9 @@ Rather, it prototypes support for Rust compilation to pure capability
 \wip{what's purecap} code to illustrate the benefit of CHERI
 capabilities to a safe language, rather than providing a full
 implementation.
+
+
+\section{Report structure}
+\todo{}
 
 \end{document}
