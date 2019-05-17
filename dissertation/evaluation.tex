@@ -430,13 +430,24 @@ accesses.
 
 
 \subsection{Memory footprint decrease for redundant object metadata}
+\label{sec:eval-rust-memfoot}
 
 Currently, any vector or array slice stores a pointer to the relevant
 object and its length~\cite{blandy-orendorff}.
 As bounds information can be derived from the CHERI capability pointer
 to the same object, it is redundant to store the length.
+Instead, a \texttt{CGetLen} instruction would be used to get the bounds
+information when needed: notably this is not required when indexing into
+the slice.
+This could save 64--128 bits on every slice, depending on alignment:
+instead of a 128-bit capability pointer and a 64-bit length variable,
+only the 128-bit capability is needed.
 
-\subsubsection{Impact on the current implementation}
+\todo{
+Note that the non-capability implementation would use a 64-bit pointer
+and a 64-bit variable, but the capability coprocessor speeds up
+operations (vague; cite/remove?)
+}
 
 
 Rust stores the length as a \texttt{usize}, in this case an
