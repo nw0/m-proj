@@ -437,6 +437,8 @@ As bounds information can be derived from the CHERI capability pointer
 to the same object, it is redundant to store the length.
 
 \subsubsection{Impact on the current implementation}
+
+
 Rust stores the length as a \texttt{usize}, in this case an
 \texttt{i128}.
 \todo{This is very bad--CGetLen is probably much more efficient than 2x load double!}

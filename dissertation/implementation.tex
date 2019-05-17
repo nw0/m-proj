@@ -200,6 +200,22 @@ type from LLVM as suitable for this value.
 This is not a functional problem: while 128-bit integer usage is not
 natively supported on CHERI, it is merely slower and LLVM will generate
 the correct instructions.
+However, the overhead is significant, as seen in
+\Cref{lst:impl-usize128}.
+
+\begin{figure}[ht]
+    \lstinputlisting[language={[mips64]Assembler}]{listings/boundscheck-usize128.s}
+    \lstinputlisting[language={[mips64]Assembler}]{listings/boundscheck-usize64.s}
+    \caption{
+        \wip{above from zeno, below from godbolt; in general needs rework}
+        Top: bounds check with 128-bit \texttt{usize} under CHERI;
+        bottom: bounds check with 64-bit \texttt{usize} under MIPS64.
+        Generated code for calls to a function which only indexes into a
+        given slice.
+        \wip{more}
+    }
+    \label{lst:impl-usize128}
+\end{figure}
 
 The other change is to truncate or extend integer types before calls to
 LLVM intrinsics and pointer operations.
