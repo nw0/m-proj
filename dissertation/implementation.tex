@@ -207,12 +207,10 @@ However, the overhead is significant, as seen in
     \lstinputlisting[language={[mips64]Assembler}]{listings/boundscheck-usize128.s}
     \lstinputlisting[language={[mips64]Assembler}]{listings/boundscheck-usize64.s}
     \caption{
-        \wip{above from zeno, below from godbolt; in general needs rework}
         Top: bounds check with 128-bit \texttt{usize} under CHERI;
         bottom: bounds check with 64-bit \texttt{usize} under MIPS64.
-        Generated code for calls to a function which only indexes into a
-        given slice.
-        \wip{more}
+        Bounds comparison code when calling into functions which index
+        into a given slice; all code before and after checks omitted.
     }
     \label{lst:impl-usize128}
 \end{figure}
