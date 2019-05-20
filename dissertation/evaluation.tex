@@ -718,10 +718,6 @@ program.
 \label{sec:eval-betterunsafe}
 
 \todo{
-Unsafety exists because compiler analysis is too strong: want to allow
-correct but unprovable things.
-One of the reasons is that creating UB is easy with unsafe code: not
-supposed to be possible in Safe Rust.
 Capabilities can rule out 2/9 sources of UB by trapping rather than doing
 unexpected things, improving safety (only spatial! dangling temporal
 pointers still an issue)
@@ -732,7 +728,19 @@ dereferenced.
 This doesn't stop optimisation, since dereferencing dangling
 pointers/mutating immut data is UB anyway.
 }
+\subsection{Rationale for Unsafe Rust}
+In Safe Rust, the compiler accepts programs which avoid memory safety
+problems using its type- and borrow-checkers.
+Unsafe Rust enables programs which would not otherwise pass this static
+analysis~\cite{rust-trpl-book}.
 
+Programmers bypass these checks by using raw pointers, unsafe traits, or
+using mutable static variables, all of which could violate temporal
+memory safety.
+Reaching undefined behaviour is possible with unsafe code, where it is
+not supposed to be possible in Safe Rust.
+
+\todo{link unsafe to undef}
 
 \section{Limitations}
 \todo{128-bit usize means no sensible evaluation of generated
