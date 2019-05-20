@@ -717,17 +717,6 @@ program.
 \section{Strengthening unsafety}
 \label{sec:eval-betterunsafe}
 
-\todo{
-Capabilities can rule out 2/9 sources of UB by trapping rather than doing
-unexpected things, improving safety (only spatial! dangling temporal
-pointers still an issue)
-This is explicitly safe:
-https://doc.rust-lang.org/nomicon/what-unsafe-does.html
-Like CHERI, Safe Rust allows oob pointers, as long as they're not
-dereferenced.
-This doesn't stop optimisation, since dereferencing dangling
-pointers/mutating immut data is UB anyway.
-}
 \subsection{Rationale for Unsafe Rust}
 In Safe Rust, the compiler accepts programs which avoid memory safety
 problems using its type- and borrow-checkers.
@@ -741,6 +730,50 @@ Reaching undefined behaviour is possible with unsafe code, where it is
 not supposed to be possible in Safe Rust.
 
 \todo{link unsafe to undef}
+
+
+\subsection{Restricting undefined behaviour with spatial integrity in CHERI}
+The undefined behaviour below takes the form of invariants assumed by
+the Rust compiler or LLVM; they all involve the usage of pointers or
+references.
+Transformations based on these assumptions are made safer, by
+guaranteeing a trap if the invariant is violated.
+
+\subsubsection{LLVM pointer aliasing rules}
+Breaking LLVM's pointer aliasing rules is a form of undefined behaviour
+in Rust~\cite{rust-undef}.
+In essence, the rules state that a pointer may not be used to access
+memory apart from those addresses it is based on.
+
+CHERI capabilities rule this out, due to monotonicity.
+In fact, they impose stronger conditions, as a capability formed by an
+\texttt{inttoptr} cannot be dereferenced.
+
+\subsubsection{Mutation of non-mutable data}
+CHERI capabilities can prevent the mutation of data reached through a
+shared reference by enforcing object immutability as detailed in
+\Cref{sec:eval-rust-enforce-immut}.
+In this case, the references are known to be immutable in Rust
+semantics, so this is easy to compile and enforce.
+
+\subsubsection{Enforcement of the \texttt{noalias} model}
+Likewise, CHERI capabilities can rule out violations of LLVM's
+\texttt{noalias} model in Rust by similar means.
+To check this, first note that the model will not be violated in Safe
+Rust, as the compiler enforced uniqueness of mutable references.
+It is thus only necessary to prevent the mutation of an object through a
+reference if other references to that object are being used.
+
+This can be done by deriving a read-only capability for immutable
+references.
+As the compiler enforces the uniqueness of mutable references, the two
+measures combined prevent violations of this model in unsafe code.
+
+An exception does exist: if a mutable reference is first converted to a
+raw pointer, which is subsequently duplicated in unsafe code.
+This would prevent the Rust compiler from enforcing the uniqueness of
+mutable references, abandoning Rust's temporal safety guarantees.
+
 
 \section{Limitations}
 \todo{128-bit usize means no sensible evaluation of generated
