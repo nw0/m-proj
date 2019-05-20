@@ -388,13 +388,11 @@ especially for embedded platforms.
 \section{Benefits to Rust from CHERI capabilities}
 \label{sec:eval-rust}
 
-This section explores how memory safety can be improved in Rust by
-introducing CHERI capabilities.
-\todo{more: performance? semantics?}
-Capabilities can reduce the variety of undefined behaviour, while not
-affecting compiler assumptions: for instance, attempting to dereference
-a dangling pointer is guaranteed to trap, rather than possibly
-succeeding and accessing another object unintentionally.
+This section explores how memory safety can be improved in the Rust
+compiler and runtime by introducing CHERI capabilities.
+\Cref{sec:eval-betterunsafe} instead considers how capabilities can be
+used to reduce the danger posed by undefined behaviour, enabling changes
+to the semantics of the language.
 
 \subsection{Mitigation of traditional vulnerabilities}
 \label{sec:eval-rust-vulns}
@@ -723,6 +721,14 @@ program.
 \section{Strengthening unsafety}
 \label{sec:eval-betterunsafe}
 
+This section considers the danger posed by undefined behaviour in Rust,
+and how it can be mitigated by CHERI capabilities, enhancing the
+semantics and guarantees of the language while not impeding compiler
+transformations and optimisation.
+
+I address four of the nine forms of undefined behaviour documented by
+the Rust project, and show how they are made safer with capabilities.
+
 \subsection{Rationale for Unsafe Rust}
 In Safe Rust, the compiler accepts programs which avoid memory safety
 problems using its type- and borrow-checkers.
@@ -761,9 +767,6 @@ the Rust compiler or LLVM; they all involve the usage of pointers or
 references.
 Transformations based on these assumptions are made safer, by
 guaranteeing a trap if the invariant is violated.
-
-I address four forms of undefined behaviour out of the nine documented
-by the Rust project, and show how they are made safer with capabilities.
 
 \subsubsection{LLVM pointer aliasing rules}
 Breaking LLVM's pointer aliasing rules is forbidden.
