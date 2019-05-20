@@ -689,6 +689,12 @@ preventing bugs in called libraries from propagating to the host
 program.
 
 
+\section{Overheads of CHERI capabilities in Rust}
+
+\subsection{Memory overheads}
+\todo{Transfer overhead (also see footprint reduction) -- positive but unpredictable?, tag overhead -- less than 5\% pretty much all situations}
+
+
 \section{Porting safe languages to capability architectures}
 \label{sec:eval-othersafe}
 
@@ -726,5 +732,10 @@ dereferenced.
 This doesn't stop optimisation, since dereferencing dangling
 pointers/mutating immut data is UB anyway.
 }
+
+
+\section{Limitations}
+\todo{128-bit usize means no sensible evaluation of generated
+instructions, no opt means no eval of runtimes. More?}
 
 \end{document}
