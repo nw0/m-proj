@@ -729,7 +729,22 @@ memory safety.
 Reaching undefined behaviour is possible with unsafe code, where it is
 not supposed to be possible in Safe Rust.
 
-\todo{link unsafe to undef}
+
+\subsection{From unsafe code to undefined behaviour}
+A requirement of the Rust language is that safe code should \emph{never}
+be able to exhibit undefined behaviour: unsafe code must be handled
+thoroughly to encapsulate UB.
+Thus Unsafe Rust and undefined behaviour are inextricably linked.
+
+Undefined behaviour in Rust is fairly simple to comprehend:
+the core list contains only 9 points~\cite{rust-undef},\footnote{
+\emph{The list is non-exhaustive}: in any case, Rust has no formal
+semantics or specification, making the idea of particular undefined
+behaviours rather arbitrary.}
+none of which are challenging to avoid, unlike signed integer overflow
+in C.
+The following sections show how the CHERI architecture can be used to
+restrict undefined behaviour, and thereby make Unsafe Rust safer.
 
 
 \subsection{Restricting undefined behaviour with spatial integrity in CHERI}
@@ -740,8 +755,7 @@ Transformations based on these assumptions are made safer, by
 guaranteeing a trap if the invariant is violated.
 
 \subsubsection{LLVM pointer aliasing rules}
-Breaking LLVM's pointer aliasing rules is a form of undefined behaviour
-in Rust~\cite{rust-undef}.
+Breaking LLVM's pointer aliasing rules is forbidden.
 In essence, the rules state that a pointer may not be used to access
 memory apart from those addresses it is based on.
 
@@ -773,6 +787,10 @@ An exception does exist: if a mutable reference is first converted to a
 raw pointer, which is subsequently duplicated in unsafe code.
 This would prevent the Rust compiler from enforcing the uniqueness of
 mutable references, abandoning Rust's temporal safety guarantees.
+
+
+\subsection{Restricting undefined behaviour with revocation}
+\todo{ref sec discussing revoc; write}
 
 
 \section{Limitations}
