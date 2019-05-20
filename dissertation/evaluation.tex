@@ -747,12 +747,15 @@ The following sections show how the CHERI architecture can be used to
 restrict undefined behaviour, and thereby make Unsafe Rust safer.
 
 
-\subsection{Restricting undefined behaviour with spatial integrity in CHERI}
+\subsection{Restricting undefined behaviour with CHERI capabilities}
 The undefined behaviour below takes the form of invariants assumed by
 the Rust compiler or LLVM; they all involve the usage of pointers or
 references.
 Transformations based on these assumptions are made safer, by
 guaranteeing a trap if the invariant is violated.
+
+I address four forms of undefined behaviour out of the nine documented
+by the Rust project, and show how they are made safer with capabilities.
 
 \subsubsection{LLVM pointer aliasing rules}
 Breaking LLVM's pointer aliasing rules is forbidden.
@@ -783,14 +786,38 @@ references.
 As the compiler enforces the uniqueness of mutable references, the two
 measures combined prevent violations of this model in unsafe code.
 
-An exception does exist: if a mutable reference is first converted to a
-raw pointer, which is subsequently duplicated in unsafe code.
+\paragraph{Caveat}
+A mutable reference can first be converted to a raw pointer, and
+subsequently duplicated in unsafe code.
 This would prevent the Rust compiler from enforcing the uniqueness of
-mutable references, abandoning Rust's temporal safety guarantees.
+mutable references or generating non-writeable capabilities, abandoning
+Rust's temporal safety guarantees.
 
+\subsubsection{Dereferencing null or dangling pointers}
+This invariant is traditionally used to show that a pointer is not
+null or dangling, if it has been previously dereferenced.
+That is to say a pointer which has already been dereferenced is safe to
+dereference again, which ties in with the aliasing rules discussed
+above.
+It is then considered safe to optimise away null
+checks~\cite{wang2013towards,llvm-undef-dce}, possibly causing an
+invalid dereference.
 
-\subsection{Restricting undefined behaviour with revocation}
-\todo{ref sec discussing revoc; write}
+While capabilities cannot prevent an attempt to dereference a pointer,
+they can prevent dereferences from succeeding.
+For instance, a null pointer or an arbitrarily-constructed pointer from
+\texttt{inttoptr} will fail to dereference on CHERI, as it would not
+possess a valid capability.
+This removes much of the danger from dereferencing a null or dangling
+pointer, by guaranteeing that it will trap rather than compromising the
+integrity or confidentiality of memory.
+
+\paragraph{Dangling pointers}
+By themselves, capabilities do not offer protection against
+dereferencing a dangling pointer, as they derive from a previously-valid
+object.
+However, revocation allows dangling pointers to be identified and marked
+\wip{ref}, preventing them from being used.
 
 
 \section{Limitations}
