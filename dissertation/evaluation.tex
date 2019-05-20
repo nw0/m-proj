@@ -329,7 +329,10 @@ Note: \Cref{sec:eval-rust-xprocess} discusses how CHERI capabilities can
 be used to make Rust's FFI or cross-process calls safer.
 
 \subsubsection{Temporal safety under CHERI}
-\todo{How much can I write about sweeping revocation in CHERI? + provenance analysis. Some of this might be moved to Rust benefits. Note this is a runtime overhead, but one that is (possibly?) reduced by lifetimes.}
+While not inherent to capability systems, CHERI enables a form of
+revocation, preventing dangling pointers from being dereferenced.
+See \Cref{sec:eval-rust-use-after-free} for an example of how revocation
+can be useful in Rust.
 
 
 \subsection{Safer code patterns yields easier porting to CHERI}
@@ -585,12 +588,15 @@ This creates a use-after-free bug~\cite{rust-nomicon-rc-leak}.
     \label{lst:eval-rust-rc-drop}
 \end{figure}
 
-This can be resolved by revocation, which CHERI does not inherently
-implement, but operating systems might implement on top of CHERI.
-\wip{discuss revocation?}
-As there are limitations to this approach, both to the granularity of
-revocations and the performance implications~\cite{cheri-v6}, this
-should be considered a mitigation rather than a solution.
+This can be resolved by revocation, for which CHERI capabilities provide
+a foundation by virtue of monotonicity and memory tagging.
+Revocation would prevent programs from reading or modifying memory which
+has been deallocated, or more importantly reallocated, another common
+source of vulnerabilities.
+Note that there are performance overheads associated with
+revocation~\cite{cheri-v6}, and Rust's temporal guarantees mean that its
+utility is largely constrained to unsafe code.
+This is discussed further in \Cref{sec:eval-betterunsafe-reasons}.
 
 
 \subsection{Improved safety of FFI calls}
@@ -655,8 +661,8 @@ references to borrowed Rust objects.
 This can lead to later temporal unsoundness in the Rust program.
 
 While this cannot be completely prevented with capabilities as-is,
-\wip{ref} discusses the potential to use revocations
-to manage this risk.
+\Cref{sec:eval-betterunsafe-reasons} discusses the possibility of using
+revocations to manage this risk.
 
 \subsubsection{Enforcement of object boundaries}
 \clar{Demonstration microbenchmark?}
@@ -748,6 +754,8 @@ restrict undefined behaviour, and thereby make Unsafe Rust safer.
 
 
 \subsection{Restricting undefined behaviour with CHERI capabilities}
+\label{sec:eval-betterunsafe-reasons}
+
 The undefined behaviour below takes the form of invariants assumed by
 the Rust compiler or LLVM; they all involve the usage of pointers or
 references.
@@ -816,8 +824,8 @@ integrity or confidentiality of memory.
 By themselves, capabilities do not offer protection against
 dereferencing a dangling pointer, as they derive from a previously-valid
 object.
-However, revocation allows dangling pointers to be identified and marked
-\wip{ref}, preventing them from being used.
+However, revocation allows dangling pointers to be identified and
+marked, preventing them from being used.
 
 
 \section{Limitations}
