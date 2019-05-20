@@ -399,12 +399,6 @@ The overhead of a 128-bit pointer can therefore be offset by the removal
 of a 64-bit length variable, negating the memory overhead for slices
 which would apply in other languages.
 
-\todo{
-Note that the non-capability implementation would use a 64-bit pointer
-and a 64-bit variable, but the capability coprocessor speeds up
-operations (vague; cite/remove?)
-}
-
 \subsubsection{Impact on data structures}
 Associating bounds information with pointers is a natural pattern for
 slices, which have one fixed bound.
@@ -437,6 +431,16 @@ pointed to in order to be used later.
     slice capability to be derived from the allocation capability, which
     could pose a problem.
 \end{description}
+
+\subsubsection{Memory overhead of CHERI capabilities}
+The memory traffic overheads of CHERI capabilities for diverse C
+benchmark programs is within 5--10\%~\cite{cheri-tagged-memory}, with
+the greatest impact on pointer-heavy workloads.
+In Rust, some overhead will still apply: notice that bounds are not
+checked with every slice access, but pointers are always larger.
+How this impacts cache usage is unclear, but it is not unreasonable to
+suggest that overheads will be at most as large as under equivalent C
+workloads.
 
 
 \section{Benefits to Rust from CHERI capabilities}
