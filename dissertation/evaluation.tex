@@ -385,6 +385,60 @@ with a speedy, low-runtime language, then Rust makes a sensible choice,
 especially for embedded platforms.
 
 
+\subsection{Larger pointer size offset by removing redundant bounds information}
+\label{sec:eval-cheri-memfoot}
+
+Currently, any vector or array slice stores a pointer to the relevant
+object and its length~\cite{blandy-orendorff}.
+As bounds information can be derived from the CHERI capability pointer
+to the same object, it is redundant to store the length.
+Instead, a \texttt{CGetLen} instruction would be used to get the bounds
+information when needed: notably this is not required when indexing into
+the slice.
+The overhead of a 128-bit pointer can therefore be offset by the removal
+of a 64-bit length variable, negating the memory overhead for slices
+which would apply in other languages.
+
+\todo{
+Note that the non-capability implementation would use a 64-bit pointer
+and a 64-bit variable, but the capability coprocessor speeds up
+operations (vague; cite/remove?)
+}
+
+\subsubsection{Impact on data structures}
+Associating bounds information with pointers is a natural pattern for
+slices, which have one fixed bound.
+However, vectors have different bounds for the allocated space and the
+initialised indices.
+Currently, these are known as the \emph{capacity} and \emph{length} of
+the vector respectively.
+This tension can be resolved in two ways, both requiring capability
+pointers to the allocation\footnote{
+Monotonicity implies that access to allocated space must be continuously
+pointed to in order to be used later.
+}:
+
+\begin{description}
+    \item[Initialised length variable] This is similar to the current
+    implementation, where the capacity variable can be dropped.
+    This saves space, as a length variable would be a \texttt{usize} (64
+    bits), where a capability would be 128 bits.
+    However, bounds checks will be required for indexing into vectors,
+    hence could not be completely removed from Rust compilation (to
+    CHERI).
+    \item[Slice capability pointer] A natural solution: this squares
+    with Rust's type system, where indexing is provided by the
+    \texttt{SliceIndex} trait implemented for slices.
+    However this requires more space, and it is unclear if deriving a
+    new slice capability for each push/pop operation on the vector will
+    be faster or slower than updating a length variable.
+    This should not affect concurrency when popping as CHERI
+    capabilities support atomic operations: pushing would require the
+    slice capability to be derived from the allocation capability, which
+    could pose a problem.
+\end{description}
+
+
 \section{Benefits to Rust from CHERI capabilities}
 \label{sec:eval-rust}
 
@@ -428,60 +482,6 @@ compiler optimisations enabled; see \Cref{sec:rust-elision} for examples
 where checks are already optimised.
 However, they are unavoidable in some situations, such as random array
 accesses.
-
-
-\subsection{Memory footprint decrease for redundant object metadata}
-\label{sec:eval-rust-memfoot}
-
-Currently, any vector or array slice stores a pointer to the relevant
-object and its length~\cite{blandy-orendorff}.
-As bounds information can be derived from the CHERI capability pointer
-to the same object, it is redundant to store the length.
-Instead, a \texttt{CGetLen} instruction would be used to get the bounds
-information when needed: notably this is not required when indexing into
-the slice.
-This could save 64--128 bits on every slice, depending on alignment:
-instead of a 128-bit capability pointer and a 64-bit length variable,
-only the 128-bit capability is needed.
-
-\todo{
-Note that the non-capability implementation would use a 64-bit pointer
-and a 64-bit variable, but the capability coprocessor speeds up
-operations (vague; cite/remove?)
-}
-
-\subsubsection{Impact on data structures}
-Associating bounds information with pointers is a natural pattern for
-slices, which have one fixed bound.
-However, vectors have different bounds for the allocated space and the
-initialised indices.
-Currently, these are known as the \emph{capacity} and \emph{length} of
-the vector respectively.
-This tension can be resolved in two ways, both requiring capability
-pointers to the allocation\footnote{
-Monotonicity implies that access to allocated space must be continuously
-pointed to in order to be used later.
-}:
-
-\begin{description}
-    \item[Initialised length variable] This is similar to the current
-    implementation, where the capacity variable can be dropped.
-    This saves space, as a length variable would be a \texttt{usize} (64
-    bits), where a capability would be 128 bits.
-    However, bounds checks will be required for indexing into vectors,
-    hence could not be completely removed from Rust compilation (to
-    CHERI).
-    \item[Slice capability pointer] A natural solution: this squares
-    with Rust's type system, where indexing is provided by the
-    \texttt{SliceIndex} trait implemented for slices.
-    However this requires more space, and it is unclear if deriving a
-    new slice capability for each push/pop operation on the vector will
-    be faster or slower than updating a length variable.
-    This should not affect concurrency when popping as CHERI
-    capabilities support atomic operations: pushing would require the
-    slice capability to be derived from the allocation capability, which
-    could pose a problem.
-\end{description}
 
 
 \subsection{Object immutability enforcement}
