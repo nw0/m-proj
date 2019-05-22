@@ -335,15 +335,8 @@ See \Cref{sec:eval-rust-use-after-free} for an example of how revocation
 can be useful in Rust.
 
 
-\subsection{Safer code patterns yields easier porting to CHERI}
-\label{sec:eval-cheri-port}
-
-Rust has been designed to guide programmers toward writing safe code,
-and to highlight potentially dangerous operations.
-Programmers have less cause to perform unusual or \emph{clever} pointer
-manipulation, writing code that does not immediately compile for CHERI.
-\Cref{sec:impl-div-lib} documented the limited incompatibilities in the
-core library; most changes affect the compiler.
+\subsection{Stronger pointer provenance model in Rust}
+\label{sec:eval-cheri-provenance}
 
 With a fully-functional Rust compiler for CHERI, porting Rust programs
 and crates should be relatively straightforward.
@@ -355,6 +348,17 @@ This is relevant because these incompatible pointer manipulations either
 require the use of Unsafe Rust for raw pointers, which gives up much of
 the safety guarantees motivating the use of Rust in the first instance,
 or are explicitly undefined behaviour in Rust, hence a non-issue.
+
+
+\subsection{Safer code patterns yields easier porting to CHERI}
+\label{sec:eval-cheri-port}
+
+Rust has been designed to guide programmers toward writing safe code,
+and to highlight potentially dangerous operations.
+Programmers have less cause to perform unusual or \emph{clever} pointer
+manipulation, writing code that does not immediately compile for CHERI.
+\Cref{sec:impl-div-lib} documented the limited incompatibilities in the
+core library; most changes affect the compiler.
 
 Nevertheless, one should recognise that the difficulty of porting C
 programs to capability architectures and CHERI in particular is not
