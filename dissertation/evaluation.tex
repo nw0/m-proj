@@ -287,7 +287,7 @@ passing a read-only capability for an immutable borrow.
 \Cref{sec:eval-rust-enforce-immut} discusses this in more detail.
 
 
-\section{Benefits to CHERI as a Rust target}
+\section{Implications of Rust semantics for CHERI targets}
 \label{sec:eval-cheri}
 
 Capabilities are typically seen as a mechanism to improve the security
@@ -457,7 +457,7 @@ suggest that overheads will be at most as large as under equivalent C
 workloads.
 
 
-\section{Benefits to Rust from CHERI capabilities}
+\section{Spatial integrity in Rust from CHERI capabilities}
 \label{sec:eval-rust}
 
 This section explores how memory safety can be improved in the Rust
@@ -615,7 +615,12 @@ utility is largely constrained to unsafe code.
 This is discussed further in \Cref{sec:eval-betterunsafe-reasons}.
 
 
-\subsection{Improved safety of FFI calls}
+\section{Capability sealing to protect objects in Safe Rust}
+\todo{Implement a `referable by FFI/unsafe' trait to prevent unsafe/ffi
+code from introspecting objects too far.}
+
+
+\section{Improved safety of FFI calls}
 \label{sec:eval-rust-xprocess}
 
 A quick survey of Rust crates that use FFI bindings shows that most of
@@ -641,7 +646,7 @@ Many of the points apply to non-FFI code as well, although protection
 across domain boundaries is perhaps more significant as FFI calls cannot
 be type- or borrow-checked.
 
-\subsubsection{Enforcement of immutability across FFI boundaries}
+\subsection{Enforcement of immutability across FFI boundaries}
 The modification of an immutable object is a source of undefined
 behaviour in Rust.
 This is normally enforced by type-checking, but this is impossible
@@ -655,7 +660,7 @@ This supports the use of \emph{least privilege} even across FFI
 boundaries.
 This is an FFI-analogue of \Cref{sec:eval-rust-enforce-immut}.
 
-\subsubsection{Sealed capabilities and callbacks}
+\subsection{Sealed capabilities and callbacks}
 Another situation that benefits from least privilege are callbacks from
 FFI code.
 In this scenario, an FFI function might ordinarily receive a pointer to
@@ -670,7 +675,7 @@ capability to regain access to the original data~\cite{cheri-v6}.
 This could also allow less trusted code to handle Rust objects while
 still guaranteeing integrity and confidentiality.
 
-\subsubsection{Prevention of use-after-free from FFI}
+\subsection{Prevention of use-after-free from FFI}
 The use of FFI functions can bypass Rust's object lifetime model, as
 there is no way to ensure that an FFI function has not stored or leaked
 references to borrowed Rust objects.
@@ -680,7 +685,7 @@ While this cannot be completely prevented with capabilities as-is,
 \Cref{sec:eval-betterunsafe-reasons} discusses the possibility of using
 revocations to manage this risk.
 
-\subsubsection{Enforcement of object boundaries}
+\subsection{Enforcement of object boundaries}
 \clar{Demonstration microbenchmark?}
 
 Objects can only be passed to C as raw pointers.
@@ -701,7 +706,7 @@ Importantly, they protect the rest of the calling program's address
 space, preventing a cross-domain call from accessing data which was not
 explicitly passed to it.
 
-\subsubsection{Protection of system calls}
+\subsection{Protection of system calls}
 In addition to protecting the caller's memory, CHERI can be extended to
 protect access to system calls in FFI functions.
 This is achieved by funnelling system calls through classes which only
@@ -709,12 +714,6 @@ permit safe calls~\cite{cheri2015}.
 A caller can thereby restrict the privileges of a callee function,
 preventing bugs in called libraries from propagating to the host
 program.
-
-
-\section{Overheads of CHERI capabilities in Rust}
-
-\subsection{Memory overheads}
-\todo{Transfer overhead (also see footprint reduction) -- positive but unpredictable?, tag overhead -- less than 5\% pretty much all situations}
 
 
 \section{Porting safe languages to capability architectures}
@@ -849,8 +848,30 @@ However, revocation allows dangling pointers to be identified and
 marked, preventing them from being used.
 
 
+\subsection{Optimisation in Safe Rust using hybrid mode}
+\todo{If Safe Rust is safe, save memory overhead of capabilities by only
+placing objects reachable by unsafe code in AS200.
+Note, though, that unsafe code in rife in libcore, so this may not be
+helpful.
+Also slices would need to be capability pointers, maybe.}
+
+
+\section{Distinguishing pointer width and index sizes}
+\todo{Why `bytes that a pointer takes up' is not what you want, how to
+fix this.
+What needs to be defined? How far should you go.
+Compare NSInteger, RISCV, clang/llvm.}
+
+
 \section{Limitations}
 \todo{128-bit usize means no sensible evaluation of generated
-instructions, no opt means no eval of runtimes. More?}
+instructions, no opt means no eval of runtimes.
+Do Rust heaps contain more pointers? out of scope
+Rust has no spec---lots more UB.
+Rust, CHERI under development and def of UB, capability impls might
+change.}
+
+
+\section{Summary}
 
 \end{document}
