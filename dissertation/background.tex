@@ -61,7 +61,7 @@ branching based on capability tags~\cite{cheri-risc-2014}.
 \subsubsection{Memory tagging}
 To allow pointers to be stored anywhere in memory, an out-of-band tag
 bit is associated with each (aligned) pointer-sized location in memory.
-If a location storing a capability is written to be a non-capability
+If a location storing a capability is written to by a non-capability
 instruction, this bit is cleared to preserve the unforgeability of
 pointers~\cite{cheri-risc-2014}.
 

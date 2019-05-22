@@ -84,11 +84,13 @@ use-after-free at compile time.
 \subsection{Caveat on memory leaks}
 An exception to the memory leak guarantee is the exposure of
 \texttt{mem::forget} in the core library as a safe function.
-This allows a programmer to end an object's lifetime to end without
-deallocating it, used to avoid double-frees in circular data structures.
-This can create a leak, as can a knot-tied reference-counted data
-structure, though knot-tying is made difficult in light of the single
-mutable reference rule.
+This allows a programmer to end an object's lifetime without
+deallocating it.
+Such a pattern might be used to avoid double-frees in circular data
+structures.
+Nevertheless, invoking this function can create a leak, as can a
+knot-tied reference-counted data structure, though knot-tying is made
+difficult in light of the single mutable reference rule.
 \Cref{sec:eval-rust-use-after-free} gives an example of a memory leak in
 Safe Rust.
 
