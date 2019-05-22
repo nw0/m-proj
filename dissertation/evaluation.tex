@@ -340,14 +340,24 @@ can be useful in Rust.
 
 With a fully-functional Rust compiler for CHERI, porting Rust programs
 and crates should be relatively straightforward.
-For example, common compatibility issues in CHERI due to pointer
+In particular, common compatibility issues in CHERI due to pointer
 provenance~\cite{cheri-2019-abstract} do not apply in Safe Rust,
-apart from pointer shape (solely a compiler issue; see
-\Cref{sec:impl-width}).
-This is relevant because these incompatible pointer manipulations either
-require the use of Unsafe Rust for raw pointers, which gives up much of
-the safety guarantees motivating the use of Rust in the first instance,
-or are explicitly undefined behaviour in Rust, hence a non-issue.
+as the compiler tracks object ownership comprehensively.\footnote{
+An exception to this statement is the `pointer shape' issue; see
+\Cref{sec:impl-width} for a discussion.
+}
+
+Due to Rust's lack of a specification and documented undefined
+behaviour, programmers are discouraged from performing such
+capability-incompatible pointer manipulation.
+It is still unclear if problematic pointer manipulation is currently UB
+in Rust, but community discussions suggest that it might be in
+future~\cite{rust-ucg-provenance}.
+As such, unsafe code should not rely on patterns that break provenance
+analysis in these ways.\footnote{
+An example of a data structure which might not be implementable in Rust
+(without exhibiting UB) in the XOR linked list.
+}
 
 
 \subsection{Safer code patterns yields easier porting to CHERI}
