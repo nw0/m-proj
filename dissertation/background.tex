@@ -75,6 +75,22 @@ unforgeability~\cite{cheri-risc-2014}.
 Thus capability bounds (length) cannot be increased, nor can a read-only
 capability derive a read-write one.
 
+\subsubsection{Protection mechanism}
+If an attempt is made to use a capability to access a different object,
+or otherwise violate its permissions, a hardware exception (trap)
+results.
+
+
+\subsection{Capability sealing}
+A capability may be \emph{sealed}, marking it as immutable or
+non-dereferenceable~\cite{cheri-v6}.
+Based on the \emph{object type} of a capability, the correct capability
+may be used to seal it; likewise another specific capability may be used
+to \emph{unseal} it, again allowing mutation and dereferencing.
+
+Applications of sealing in Rust are seen in
+\Cref{sec:eval-rust-xprocess}, \wip{ref}.
+
 
 \subsection{Using non-capability code}
 Code that is not capability-aware is interoperable with capability code,
