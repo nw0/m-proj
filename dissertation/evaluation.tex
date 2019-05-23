@@ -455,6 +455,8 @@ checked with every slice access, but pointers are always larger.
 How this impacts cache usage is unclear, but it is not unreasonable to
 suggest that overheads will be at most as large as under equivalent C
 workloads.
+\Cref{sec:eval-hybrid} outlines a strategy to reduce the memory
+impact of CHERI capabilities in Rust.
 
 
 \section{Spatial integrity in Rust from CHERI capabilities}
@@ -869,12 +871,16 @@ However, revocation allows dangling pointers to be identified and
 marked, preventing them from being used.
 
 
-\subsection{Optimisation in Safe Rust using hybrid mode}
+\section{Hybrid ABI: Minimising the memory footprint of CHERI capabilities}
+\label{sec:eval-hybrid}
 \todo{If Safe Rust is safe, save memory overhead of capabilities by only
 placing objects reachable by unsafe code in AS200.
 Note, though, that unsafe code in rife in libcore, so this may not be
 helpful.
-Also slices would need to be capability pointers, maybe.}
+Also slices would need to be capability pointers, maybe.
+
+This provides real benefits for using only safe code! And possibly
+lower-footprint than C.}
 
 
 \section{Distinguishing pointer width and index sizes}
