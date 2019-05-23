@@ -565,8 +565,6 @@ This is discussed further in \Cref{sec:eval-betterunsafe-reasons}.
 
 
 \section{Capability sealing to protect Rust objects}
-\todo{Implement a `referable by FFI/unsafe' trait to prevent unsafe/ffi
-code from introspecting objects too far.}
 
 \emph{Capability sealing} can prevent a capability from being used to
 mutate or dereference the memory it refers to, as described in
@@ -637,6 +635,30 @@ capability could be unsealed by the original program to regain access to
 the original data~\cite{cheri-v6}.
 This allows less trusted code to handle Rust objects while still
 guaranteeing integrity and confidentiality.
+
+
+\subsection{Fine-grained object protection}
+As an extension of the previous sections, not only can specific objects
+passed across unsafe or FFI boundaries be protected, but also objects
+transitively accessed via those objects.
+CHERI capabilities include an \emph{object type} field, on which sealing
+and unsealing can be predicated; this can be used to protect a
+`confidential object' type (and derivable types) from abuse by Unsafe
+Rust or FFI functions.
+This can easily be marked using a Rust trait.
+
+To motivate this protection, consider a library written in Safe Rust.
+Its authors may wish to restrict the ability of other code to abuse
+Unsafe Rust to read its data, for instance to protect customer records.
+Capability sealing presents a viable method to enforce this.
+
+Note that accessing an object which one has a reference to is not
+undefined.
+Sealing to prevent pointer dereferences can therefore be used to enforce
+invariants which other code may not conform to.
+For instance, a high-performance data structure might attempt a deep
+copy of its objects, which would be obstructed by sealing in the
+scenario above.
 
 
 \subsection{Efficacy and costs of sealing}
