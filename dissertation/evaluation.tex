@@ -574,7 +574,7 @@ mutate or dereference the memory it refers to, as described in
 This section describes how the Rust runtime can use this mechanism to
 enforce program invariants.
 
-\subsection{Object immutability enforcement}
+\subsection{Preserving object immutability in Unsafe Rust}
 \label{sec:eval-rust-enforce-immut}
 
 Modifying an immutable object is undefined behaviour in Rust, and should
@@ -584,29 +584,17 @@ excluded from being UB.
 There, the programmer is expected to implement an object safely without
 causing concurrency bugs.
 
+However, the compiler does not prevent this invariant from being
+violated in Unsafe Rust, where the programmer can essentially bypass the
+type system by casting raw pointers.
 There have been bugs in the standard library~\cite{rust-issue-vec-mut}
 (\Cref{sec:eval-bug-vec-mut}) resulting in mutable references to
 supposedly immutable objects.
+
 Since mutating these is undefined, it is reasonable to protect them
 from being written to, which can be accomplished with capabilities.
 This enforces the principle of least privilege on shared references.
-
-This can be done by deriving a non-writeable capability for every shared
-reference.
-I propose that the borrow checker continue to be used to prevent the
-holder of the original reference from mutating the object: this is the
-current behaviour, would avoid uncertainty over when an object could be
-written to again, and is not known to be a source of past errors.
-In any case, monotonicity means that the original permissions need to be
-`remembered', as they cannot later be derived from the read-only
-borrowed permission.
-
-\subsubsection{Caveat}
-However, manipulating capabilities is not free and the overheads of
-manipulating capabilities should be weighed against enforcement within
-the existing type system.
-Additionally, this does not solve the inherent potential for programmer
-error in the compiler.
+Sealing can be used to prevent mutation.
 
 \subsubsection{Note on differences from C}
 Enforcing C's \texttt{const} in hardware proved problematic for CHERI in
@@ -623,6 +611,41 @@ reference in Rust does not suffer this problem, as it is not possible to
 derive a mutable reference from an immutable one.
 Indeed, this idiom does not occur in Rust as immutability is conveyed by
 the function signature.
+
+
+\subsection{Preserving object immutability across FFI boundaries}
+No amount of type-checking can prevent a foreign function from modifying
+a supposedly immutable borrowed object, since foreign functions use raw
+pointers and are not bound to Rust's semantics.
+
+By passing a capability without write permissions to a function, this
+particular cause of undefined behaviour can be eliminated.
+This supports the use of \emph{least privilege} even across FFI
+boundaries.
+
+
+\subsection{Protecting data from callback functions}
+Another situation that benefits from least privilege are callbacks from
+FFI code.
+In this scenario, an FFI function might receive a pointer to data it is
+expected not to access, but instead merely to return the pointer to the
+original process at the correct time.
+
+This can be enforced through capability sealing.
+The foreign function would be unable to dereference the object, but the
+capability could be unsealed by the original program to regain access to
+the original data~\cite{cheri-v6}.
+This allows less trusted code to handle Rust objects while still
+guaranteeing integrity and confidentiality.
+
+
+\subsection{Efficacy and costs of sealing}
+However, manipulating capabilities is not free and the overheads of
+manipulating capabilities should be weighed against enforcement within
+the existing type system, which is statically enforced but does not
+protect against unsafe code.
+Additionally, this does not solve the inherent potential for programmer
+error in the compiler, such as incorrectly failing to seal a capability.
 
 
 \section{Improved safety of FFI calls}
@@ -645,40 +668,11 @@ program~\cite{szekeres-eternal-war}.
 Most of the discussion below has to do with object capabilities and is
 thus inherent in the use of CHERI capabilities, but system call
 protection is a separate feature of CHERI compartmentalisation.
-Watson et al.\ describes the mechanism and security implications with
+Watson et al.\ describe the mechanism and security implications with
 regard to C~\cite{cheri2015}.
 Many of the points apply to non-FFI code as well, although protection
 across domain boundaries is perhaps more significant as FFI calls cannot
 be type- or borrow-checked.
-
-\subsection{Enforcement of immutability across FFI boundaries}
-The modification of an immutable object is a source of undefined
-behaviour in Rust.
-This is normally enforced by type-checking, but this is impossible
-across a foreign function interface, since objects can only be passed
-using raw pointers, and the function signatures are not known to the
-Rust program.
-
-By passing a capability without write permissions to a function, this
-particular cause of undefined behaviour can be eliminated.
-This supports the use of \emph{least privilege} even across FFI
-boundaries.
-This is an FFI-analogue of \Cref{sec:eval-rust-enforce-immut}.
-
-\subsection{Sealed capabilities and callbacks}
-Another situation that benefits from least privilege are callbacks from
-FFI code.
-In this scenario, an FFI function might ordinarily receive a pointer to
-data which it might pass on via a callback, but have no need to inspect
-or mutate.
-
-This can be enforced through \emph{capability sealing}, which CHERI
-provides.
-The C function would be unable to dereference the object, but the
-callback function could, through some static method, unseal the
-capability to regain access to the original data~\cite{cheri-v6}.
-This could also allow less trusted code to handle Rust objects while
-still guaranteeing integrity and confidentiality.
 
 \subsection{Prevention of use-after-free from FFI}
 The use of FFI functions can bypass Rust's object lifetime model, as
