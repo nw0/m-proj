@@ -568,6 +568,12 @@ This is discussed further in \Cref{sec:eval-betterunsafe-reasons}.
 \todo{Implement a `referable by FFI/unsafe' trait to prevent unsafe/ffi
 code from introspecting objects too far.}
 
+\emph{Capability sealing} can prevent a capability from being used to
+mutate or dereference the memory it refers to, as described in
+\Cref{sec:bg-cheri-sealing}.
+This section describes how the Rust runtime can use this mechanism to
+enforce program invariants.
+
 \subsection{Object immutability enforcement}
 \label{sec:eval-rust-enforce-immut}
 
