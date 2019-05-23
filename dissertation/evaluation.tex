@@ -502,57 +502,6 @@ However, they are unavoidable in some situations, such as random array
 accesses.
 
 
-\subsection{Object immutability enforcement}
-\label{sec:eval-rust-enforce-immut}
-
-Modifying an immutable object is undefined behaviour in Rust, and should
-be prevented by the compiler in Safe Rust.
-The only exception to this pattern is the \texttt{UnsafeCell}, which is
-excluded from being UB.
-There, the programmer is expected to implement an object safely without
-causing concurrency bugs.
-
-There have been bugs in the standard library~\cite{rust-issue-vec-mut}
-(\Cref{sec:eval-bug-vec-mut}) resulting in mutable references to
-supposedly immutable objects.
-Since mutating these is undefined, it is reasonable to protect them
-from being written to, which can be accomplished with capabilities.
-This enforces the principle of least privilege on shared references.
-
-This can be done by deriving a non-writeable capability for every shared
-reference.
-I propose that the borrow checker continue to be used to prevent the
-holder of the original reference from mutating the object: this is the
-current behaviour, would avoid uncertainty over when an object could be
-written to again, and is not known to be a source of past errors.
-In any case, monotonicity means that the original permissions need to be
-`remembered', as they cannot later be derived from the read-only
-borrowed permission.
-
-\subsubsection{Caveat}
-However, manipulating capabilities is not free and the overheads of
-manipulating capabilities should be weighed against enforcement within
-the existing type system.
-Additionally, this does not solve the inherent potential for programmer
-error in the compiler.
-
-\subsubsection{Note on differences from C}
-Enforcing C's \texttt{const} in hardware proved problematic for CHERI in
-the past, due to functions like~\texttt{strchr} (C), which derive a
-non-\texttt{const} (mutable) pointer from an immutable
-one~\cite{cheri-prog-guide}.
-
-\begin{lstlisting}[language=C]
-char *strchr(const char *s, int c);
-\end{lstlisting}
-
-The proposal of deriving a read-only capability for each immutable
-reference in Rust does not suffer this problem, as it is not possible to
-derive a mutable reference from an immutable one.
-Indeed, this idiom does not occur in Rust as immutability is conveyed by
-the function signature.
-
-
 \subsection{Sub-object bound enforcement}
 
 In Rust, \emph{slices} can be created from continuous segments of an
@@ -615,9 +564,59 @@ utility is largely constrained to unsafe code.
 This is discussed further in \Cref{sec:eval-betterunsafe-reasons}.
 
 
-\section{Capability sealing to protect objects in Safe Rust}
+\section{Capability sealing to protect Rust objects}
 \todo{Implement a `referable by FFI/unsafe' trait to prevent unsafe/ffi
 code from introspecting objects too far.}
+
+\subsection{Object immutability enforcement}
+\label{sec:eval-rust-enforce-immut}
+
+Modifying an immutable object is undefined behaviour in Rust, and should
+be prevented by the compiler in Safe Rust.
+The only exception to this pattern is the \texttt{UnsafeCell}, which is
+excluded from being UB.
+There, the programmer is expected to implement an object safely without
+causing concurrency bugs.
+
+There have been bugs in the standard library~\cite{rust-issue-vec-mut}
+(\Cref{sec:eval-bug-vec-mut}) resulting in mutable references to
+supposedly immutable objects.
+Since mutating these is undefined, it is reasonable to protect them
+from being written to, which can be accomplished with capabilities.
+This enforces the principle of least privilege on shared references.
+
+This can be done by deriving a non-writeable capability for every shared
+reference.
+I propose that the borrow checker continue to be used to prevent the
+holder of the original reference from mutating the object: this is the
+current behaviour, would avoid uncertainty over when an object could be
+written to again, and is not known to be a source of past errors.
+In any case, monotonicity means that the original permissions need to be
+`remembered', as they cannot later be derived from the read-only
+borrowed permission.
+
+\subsubsection{Caveat}
+However, manipulating capabilities is not free and the overheads of
+manipulating capabilities should be weighed against enforcement within
+the existing type system.
+Additionally, this does not solve the inherent potential for programmer
+error in the compiler.
+
+\subsubsection{Note on differences from C}
+Enforcing C's \texttt{const} in hardware proved problematic for CHERI in
+the past, due to functions like~\texttt{strchr} (C), which derive a
+non-\texttt{const} (mutable) pointer from an immutable
+one~\cite{cheri-prog-guide}.
+
+\begin{lstlisting}[language=C]
+char *strchr(const char *s, int c);
+\end{lstlisting}
+
+The proposal of deriving a read-only capability for each immutable
+reference in Rust does not suffer this problem, as it is not possible to
+derive a mutable reference from an immutable one.
+Indeed, this idiom does not occur in Rust as immutability is conveyed by
+the function signature.
 
 
 \section{Improved safety of FFI calls}
