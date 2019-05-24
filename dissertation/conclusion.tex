@@ -24,6 +24,51 @@ ecosystem of modern software development.
 
 \section{Scope of contributions}
 
+A summary of the contributions of this project:
+
+\begin{itemize}
+    \item A summary of features and techniques Rust uses to provide
+    memory safety guarantees, and how it optimises these.
+    The differences between Rust and other languages, as they pertain to
+    capability architectures and CHERI.
+    A survey of work relating to safe languages and capability
+    platforms, and efforts to manage undefined behaviour and safety in
+    programming languages.
+
+    \item Patches to the Rust compiler (1.35) and core libraries which
+    enable compilation to the new \texttt{cheri-unknown-freebsd} target
+    utilising 128-bit CHERI capabilities.
+    These compile programs which use the Rust core library without
+    optimisations.
+
+    \item An analysis of previous errors leading to vulnerabilities in
+    Rust, the memory safety implications, and how they are mitigated
+    using capabilities.
+    Two demonstrative microbenchmarks of vulnerabilities in the Rust
+    standard library, shown to be functional on x86 but prevented by
+    CHERI capabilities.
+
+    \item An evaluation of the interactions between Rust and CHERI
+    protection mechanisms, and how hardware capabilities enhance Rust in
+    general.
+    An exploration of how features provided by the CHERI architecture
+    can be used to enforce Rust guarantees where its compiler and
+    runtime cannot, even as programs call into untrusted code and the
+    kernel.
+
+    \item Techniques and approaches that may be used to reduce the
+    overheads posed by memory protection when combining the two
+    approaches.
+    A consideration of how the duplication of functions can be
+    minimised, and how doing so affects the provided safety guarantees.
+
+    \item Details of the relevant concerns for future implementers
+    porting Rust to CHERI, or examining CHERI on other safe languages.
+    This includes a discussion on problematic points of the Rust
+    language which may need to be clarified, changed, or implemented
+    differently.
+\end{itemize}
+
 \section{Further work}
 
 \subsection{Clarify Rust's provenance model}
