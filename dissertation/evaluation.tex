@@ -351,13 +351,13 @@ An exception to this statement is the `pointer shape' issue; see
 Due to Rust's lack of a specification and documented undefined
 behaviour, programmers are discouraged from performing such
 capability-incompatible pointer manipulation.
-It is still unclear if problematic pointer manipulation is currently UB
-in Rust, but community discussions suggest that it might be in
+It is still unclear if problematic pointer manipulation is currently
+undefined in Rust, but community discussions suggest that it might be in
 future~\cite{rust-ucg-provenance}.
 As such, unsafe code should not rely on patterns that break provenance
 analysis in these ways.\footnote{
 An example of a data structure which might not be implementable in Rust
-(without exhibiting UB) in the XOR linked list.
+(without exhibiting undefined behaviour) in the XOR linked list.
 }
 
 
@@ -580,8 +580,9 @@ enforce program invariants.
 
 Modifying an immutable object is undefined behaviour in Rust, and should
 be prevented by the compiler in Safe Rust.
-The only exception to this pattern is the \texttt{UnsafeCell}, which is
-excluded from being UB.
+The only exception to this pattern is the \texttt{UnsafeCell},
+modifications to which are explicitly excluded from being undefined
+behaviour.
 There, the programmer is expected to implement an object safely without
 causing concurrency bugs.
 
@@ -786,7 +787,7 @@ not supposed to be possible in Safe Rust.
 \subsection{From unsafe code to undefined behaviour}
 A requirement of the Rust language is that safe code should \emph{never}
 be able to exhibit undefined behaviour: unsafe code must be handled
-thoroughly to encapsulate UB.
+thoroughly such that safe functions are defined on all inputs.
 Thus Unsafe Rust and undefined behaviour are inextricably linked.
 
 Undefined behaviour in Rust is fairly simple to comprehend:
