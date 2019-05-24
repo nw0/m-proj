@@ -167,9 +167,11 @@ An evaluation using Rust is more immediately relevant and readily
 comprehensible in the context of existing literature, and applicable in
 re-interpreting it.
 
-Additionally, it is trivial to link against C libraries, so a smaller
-proportion of the Rust standard libraries need be considered for a
-meaningful evaluation (\Cref{sec:impl-what}).
+\subsubsection{FFI: calling into other languages}
+Rust defines a \emph{foreign function interface} (FFI) that makes it
+trivial to link against C libraries, so a smaller proportion of the Rust
+standard libraries need be considered for a meaningful evaluation
+(\Cref{sec:impl-what}).
 
 
 \subsection{Object lifetimes and temporal safety}

@@ -317,7 +317,8 @@ preventing their leakage~\cite{cheri2015}.
 However, this provision only yields atomic pointer updates and
 identifiability of pointers;
 it is not precise enough to guarantee safety across thread or process
-boundaries, such as FFI and system calls~\cite{cheri-2019-abstract}.
+boundaries, such as foreign function interface (FFI) and system
+calls~\cite{cheri-2019-abstract}.
 While Rust does not provide temporal protection against other processes
 misusing its resources, its ownership model guarantees that a thread
 which has yielded a resource does not attempt to modify it while it has
@@ -615,13 +616,13 @@ the function signature.
 
 \subsection{Preserving object immutability across FFI boundaries}
 No amount of type-checking can prevent a foreign function from modifying
-a supposedly immutable borrowed object, since foreign functions use raw
-pointers and are not bound to Rust's semantics.
+a supposedly immutable borrowed object, since they use raw pointers and
+are not bound to Rust's semantics.
 
 By passing a capability without write permissions to a function, this
 particular cause of undefined behaviour can be eliminated.
-This supports the use of \emph{least privilege} even across FFI
-boundaries.
+This supports the use of \emph{least privilege} even across foreign
+function interfaces.
 
 
 \subsection{Protecting data from callback functions}
