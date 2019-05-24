@@ -27,46 +27,49 @@ ecosystem of modern software development.
 A summary of the contributions of this project:
 
 \begin{itemize}
-    \item A summary of features and techniques Rust uses to provide
-    memory safety guarantees, and how it optimises these.
-    The differences between Rust and other languages, as they pertain to
-    capability architectures and CHERI.
-    A survey of work relating to safe languages and capability
-    platforms, and efforts to manage undefined behaviour and safety in
-    programming languages.
+    \item Patches to the Rust compiler and core libraries enabling
+    support for CHERI capabilities, without compiler optimisations.
+    Details of the necessary further work to fully support a CHERI
+    target, including the language design choices which pose problems
+    for this task.
+    These modifications formed the basis on which I evaluated Rust on
+    CHERI.
 
-    \item Patches to the Rust compiler (1.35) and core libraries which
-    enable compilation to the new \texttt{cheri-unknown-freebsd} target
-    utilising 128-bit CHERI capabilities.
-    These compile programs which use the Rust core library without
-    optimisations.
-
-    \item An analysis of previous errors leading to vulnerabilities in
-    Rust, the memory safety implications, and how they are mitigated
-    using capabilities.
-    Two demonstrative microbenchmarks of vulnerabilities in the Rust
-    standard library, shown to be functional on x86 but prevented by
-    CHERI capabilities.
+    \item Verification that the modified compiler produces programs
+    which use capabilities, by demonstrating capability protection
+    against previous vulnerabilities.
+    Analyses of these and other vulnerabilities, which were all present
+    in the Rust core library, showing that capabilities are effective in
+    fully mitigating the errors.
 
     \item An evaluation of the interactions between Rust and CHERI
-    protection mechanisms, and how hardware capabilities enhance Rust in
-    general.
-    An exploration of how features provided by the CHERI architecture
-    can be used to enforce Rust guarantees where its compiler and
-    runtime cannot, even as programs call into untrusted code and the
-    kernel.
+    protection mechanisms, focussed on how the two complement each
+    other to provide stronger memory safety guarantees.
+    I elucidated how CHERI provisions such as \emph{capability sealing}
+    bring new memory safety properties to Rust, especially the means
+    to enforce previously-unenforceable invariants on which Rust
+    predicates its memory safety guarantees.
 
-    \item Techniques and approaches that may be used to reduce the
-    overheads posed by memory protection when combining the two
-    approaches.
-    A consideration of how the duplication of functions can be
-    minimised, and how doing so affects the provided safety guarantees.
+    \item The evaluation further investigated approaches that reduce the
+    overheads posed by these memory protection mechanisms without
+    reducing memory safety.
+    It proposed configurations that avoid unnecessary duplication of
+    strong protections, but instead work to reinforce the most
+    vulnerable points of Rust programs: the use of unsafe code and
+    cross-domain calls.
+    Further, I highlighted the trade-offs of different combinations of
+    protection techniques and how they affect memory safety, crucial
+    factors for implementers bringing Rust to CHERI.
 
-    \item Details of the relevant concerns for future implementers
-    porting Rust to CHERI, or examining CHERI on other safe languages.
-    This includes a discussion on problematic points of the Rust
-    language which may need to be clarified, changed, or implemented
-    differently.
+    \item I addressed details of the Rust language and implementation
+    that currently prevent full Rust compatibility with CHERI.
+    Of specific interest is the definition of \texttt{usize} in the
+    language, changes to which would need to be put to the Rust
+    community.
+    Also discussed is how different aspects of protection and
+    implementation might apply to other safe languages and their
+    runtimes, providing insight into CHERI's implications for the wider
+    software development ecosystem.
 \end{itemize}
 
 \section{Further work}
