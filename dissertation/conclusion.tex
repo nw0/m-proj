@@ -150,4 +150,38 @@ effective memory analysis tool for Rust code running on any platform.
 
 \subsection{Fine-grained capability protection}
 
+Previous Rust bugs resulting in memory vulnerabilities occur in unsafe
+code.
+This is because Safe Rust does not have the expressivity to dereference
+memory except in specific ways, including arrays and structs.
+Further, the Rust developers are keen to uphold the tenet that Safe Rust
+should never exhibit undefined behaviour, and on multiple occasions have
+removed or marked unsafe code which violated this assumption.
+They do so on the grounds that this is incorrect behaviour.
+
+It is therefore reasonable to assume that this will continue, and Rust
+vulnerabilities relating to memory protection will only occur through
+the use of Unsafe Rust.
+
+\subsubsection{Approaches}
+\Cref{sec:eval-capability-using-type} suggested how certain Rust types
+requiring particularly sensitive handling could be protected by
+capabilities, and \Cref{sec:eval-hybrid} examined the implications of
+protecting objects reachable by unsafe code.
+In both cases, using regular pointers for the remaining objects could
+reduce the memory overheads of capabilities on Rust programs.
+
+Both would be challenging to implement, as Rust would first need to be
+extended to support multiple LLVM address spaces, then additional
+provenance analysis would be needed to determine which objects should be
+protected.
+
+However, the benefits are sizeable if non-capability pointers could be
+used widely: this would result in lower memory overheads than C
+programs, for instance.
+This is also safer than focussing capability protection on risky C
+libraries,\footnote{Such as image and video codecs} as provenance is far
+clearer in Rust, obviating the possibility of other unchecked code
+interfering with the capability protection.
+
 \end{document}
