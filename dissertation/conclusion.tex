@@ -86,6 +86,7 @@ I am planning to delete said point from that section. Should I do so?}
 \subsection{Clarify Rust's provenance model}
 
 \subsection{Pointer-width sized indices}
+\label{sec:further-usize}
 
 \subsubsection{Changes to Rust semantics}
 \Cref{sec:eval-usize} considered Rust's \texttt{usize} definition, which
@@ -119,8 +120,33 @@ between pointer size and index size, the CTSRD project has experience
 resolving similar issues in Clang and LLVM, showing that the problem is
 not insurmountable.
 
+
 \subsection{Runtime and memory overhead analysis}
-\todo{Can use miri to count pointers in the heap? Hence do memory analysis}
+This work demonstrated that Rust protections can work alongside CHERI
+capabilities and explored the safety and semantic implications.
+However, the runtime and memory overheads of CHERI have not been
+explored.
+
+\subsubsection{Approaches}
+To measure runtime overheads, a possibility is to compare against a MIPS
+FreeBSD target, which I include in the patches provided in this project.
+These should compile any Rust program with optimisations, although it
+should be noted that Rust releases are not tested against the MIPS64
+Linux and amd64 FreeBSD targets from which this
+derives~\cite{rust-platform-support}.
+The major reason this comparison is not currently possible is the lack
+of optimisations, and performance issues caused by 128-bit index sizes
+(see \Cref{sec:further-usize}), both beyond the scope of this work.
+
+For memory overheads, similar techniques to those employed by Joannou et
+al.\ \cite{cheri-tagged-memory} can be used, by core-dumping Rust
+programs.
+Another plausible approach might be to use Rust's Mid-level IR
+interpreter (\emph{Miri}) to track heap pointers, and compute overheads
+from there.
+This would give precise measurement of overheads, as well as present an
+effective memory analysis tool for Rust code running on any platform.
+
 
 \subsection{Fine-grained capability protection}
 
