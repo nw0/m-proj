@@ -86,10 +86,38 @@ I am planning to delete said point from that section. Should I do so?}
 \subsection{Clarify Rust's provenance model}
 
 \subsection{Pointer-width sized indices}
-\todo{These aren't necessarily helpful: propose to use `address-width' usize through rfc}
 
-\subsection{Resolution of \texttt{usize} and pointer width in the compiler}
-\todo{Also, enable optimisations}
+\subsubsection{Changes to Rust semantics}
+\Cref{sec:eval-usize} considered Rust's \texttt{usize} definition, which
+is ``pointer-sized integer'', why this is not desirable, and explored
+alternatives.
+As this is both a semantic and performance issue on CHERI
+(\Cref{sec:impl-width}), it should be a priority to resolve this
+definition sooner rather than later.
+
+Nevertheless, this is not a straightforward task.
+A unilateral change would involve large divergences from the upstream
+code, as the pointer width and index sizes are implicitly used
+interchangeably in the Rust compiler.
+Since such a change affects the Rust semantics, and potentially
+introduces new types, it inevitably will have to be proposed via the
+Rust RFC system.
+The issue has been discussed before~\cite{rust-rfc-isize,rust-int-uint};
+I suggest that the least controversial change would be to reinterpret
+the current rule and leave the introduction of any new types for a later
+effort.
+This could take a significant amount of time and human effort to effect,
+and is entirely beyond the scope of this exploratory work.
+
+\subsubsection{Implementation in the compiler}
+This change could then be implemented in the compiler.
+As noted above, this would be challenging to do without first achieving
+consensus on the semantics.
+
+While there are numerous references that do not fully distinguish
+between pointer size and index size, the CTSRD project has experience
+resolving similar issues in Clang and LLVM, showing that the problem is
+not insurmountable.
 
 \subsection{Runtime and memory overhead analysis}
 \todo{Can use miri to count pointers in the heap? Hence do memory analysis}
