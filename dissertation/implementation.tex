@@ -86,10 +86,19 @@ These have been fixed in the current version.
 
 \begin{itemize}
     \item Rust may attempt to generate an unusual pointer offset when
-    calling or returning from functions.\footnote{Fix at \url{https://github.com/CTSRD-CHERI/llvm-project/commit/39cfdf711a759a4799bd32f50af07f5f6f43c987}.}
+    calling or returning from functions.\footnote{Fix accessible at
+    \url{https://github.com/CTSRD-CHERI/llvm-project/commit/39cfdf711a759a4799bd32f50af07f5f6f43c987};
+    thanks to Alexander Richardson.}
     \item Rust sometimes attempts to generate unaligned loads.
-    This is not possible in the pure capability ABI.\footnote{Fix at \url{https://github.com/CTSRD-CHERI/llvm-project/commit/d8e6acf3d4094270cd55b70341a6f9c4d032db81}.}
+    This is not possible in the pure capability ABI.\footnote{Fix
+    accessible at
+    \url{https://github.com/CTSRD-CHERI/llvm-project/commit/d8e6acf3d4094270cd55b70341a6f9c4d032db81};
+    thanks to Alexander Richardson.}
 \end{itemize}
+
+Both of these were identified as a result of extensive debugging and
+code generation failures, requiring analysis across both the Rust compiler
+and LLVM.
 
 The Rust project also maintains a fork of LLVM, with minor changes, and
 provide `known good' combinations of LLVM and Rust compiler commits.
