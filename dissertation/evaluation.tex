@@ -886,6 +886,25 @@ Also slices would need to be capability pointers, maybe.
 This provides real benefits for using only safe code! And possibly
 lower-footprint than C.}
 
+\subsection{Safe Rust is memory safe}
+Observe that the bugs covered in \Cref{sec:eval-bugs} occur in Unsafe
+Rust: either from the exposure of unsafe methods as safe, thereby
+failing to handle all the cases, or through errors in the unsafe code
+itself.
+This is no coincidence: Safe Rust is not expressive enough to generate
+memory safety errors, as it lacks the memory manipulation primitives to
+do so.
+This is evinced by the additional actions programmers may take in Unsafe
+Rust~\cite{rust-nomicon-safe-unsafe}.
+
+Being satisfied that Safe Rust is indeed memory safe, references that
+are only manipulated in Safe Rust need not be protected by capabilities,
+reducing the overall memory overhead.
+
+
+\subsection{Pointer provenance for Unsafe Rust}
+\subsection{Limitations of object reachability}
+
 
 \section{Distinguishing pointer width and index sizes}
 \label{sec:eval-usize}
