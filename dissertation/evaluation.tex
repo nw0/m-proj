@@ -793,7 +793,7 @@ thoroughly such that safe functions are defined on all inputs.
 Thus Unsafe Rust and undefined behaviour are inextricably linked.
 
 Undefined behaviour in Rust is fairly simple to comprehend:
-the core list contains only 9 points~\cite{rust-undef},\footnote{
+the core list contains only 9 points~\cite{rust-ref},\footnote{
 \emph{The list is non-exhaustive}: in any case, Rust has no formal
 semantics or specification, making the idea of particular undefined
 behaviours rather arbitrary.}
@@ -964,6 +964,34 @@ case, along with specific compiler primitives.
 fix this.
 What needs to be defined? How far should you go.
 Compare NSInteger, RISCV, clang/llvm.}
+
+\Cref{sec:rust-usize,sec:impl-width} discussed the implications of
+Rust's implementation of index size or \texttt{usize} in the compiler.
+Here I consider how its definition could be changed or reinterpreted to
+make it compatible with CHERI.
+
+\subsection{Definition of \texttt{usize}}
+The \texttt{usize} type is classified as a `machine-dependent integer
+type'.
+It is an \emph{unsigned integer type with the same number of bits as the
+platform's pointer type, which can represent every memory address in the
+process}~\cite{rust-ref}.
+Elsewhere, the Rust documentation states that it is \emph{the
+pointer-sized integer type}, and that \emph{the size of this primitive
+is how many bytes it takes to reference any location in memory}, stating
+that it is 8 bytes on a 64-bit target~\cite{rust-std-primitive-usize}.
+
+Likewise, the \texttt{isize} is defined as its signed counterpart.
+The Rust reference notes that the \emph{theoretical upper bound on
+object and array size is the maximum \texttt{isize} value}, even though
+the \texttt{usize} type is used for indexing into slices.
+
+\subsubsection{Representing every memory address}
+There is no pair of morphisms that translate between integers (including
+the \texttt{usize}) and CHERI capabilities.
+This is due to monotonicity, where integers cannot be transformed into
+pointers, and enforced by the memory tagging mechanism.
+Thus no memory address can be recovered solely from an integer.
 
 
 \section{Limitations}
