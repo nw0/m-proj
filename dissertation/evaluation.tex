@@ -378,7 +378,7 @@ This must be weighed against the prospect of updating the Rust compiler.
 
 
 \subsection{Comparable performance to C}
-\label{eval:cheri-perf}
+\label{sec:eval-cheri-perf}
 
 While Rust possesses strong safety features, it also provides good
 performance.
@@ -925,7 +925,29 @@ However, if each raw pointer is a capability pointer, such code will
 still be unable to violate memory safety.
 
 
-\subsection{Limitations of object reachability}
+\subsection{Reduction in memory overhead of capabilities}
+Such a scheme would use non-capability pointers in the default LLVM
+address space for memory only accessed by Safe Rust code.
+This results in reduction in the memory overhead of capabilities, due to
+the use of ordinary pointers; the overhead being constrained to objects
+that are manipulated in unsafe code.
+This is possible using the hybrid ABI, rather than the pure capability
+ABI implemented in this project.
+
+Note that Rust is considered to be similarly performant to C
+(\Cref{sec:eval-cheri-perf}).
+However, C lacks a separation of `safe' and `unsafe' code, and hence
+lacks a practical mechanism to distinguish low-risk code, making this
+optimisation impossible.
+It is possible to focus on dangerous libraries, traditionally those
+providing high-performance data parsing, and only use capabilities
+there.
+Nevertheless, this ignores the fact that serious vulnerabilities in C code
+have been unexpectedly found in otherwise safe-looking code, sometimes
+due to the subtleties of the C standard~\cite{memarian2016cdepths}.
+Consequently, capability protection could be optimised for a lower
+footprint on Rust code than C, potentially making it the ideal language
+for a CHERI platform.
 
 
 \section{Distinguishing pointer width and index sizes}
