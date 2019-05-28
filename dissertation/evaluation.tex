@@ -960,11 +960,6 @@ case, along with specific compiler primitives.
 \section{Distinguishing pointer width and index sizes}
 \label{sec:eval-usize}
 
-\todo{Why `bytes that a pointer takes up' is not what you want, how to
-fix this.
-What needs to be defined? How far should you go.
-Compare NSInteger, RISCV, clang/llvm.}
-
 \Cref{sec:rust-usize,sec:impl-width} discussed the implications of
 Rust's implementation of index size or \texttt{usize} in the compiler.
 Here I consider how its definition could be changed or reinterpreted to
@@ -1039,6 +1034,39 @@ minor clarification may take considerable time to make it into the
 documentation.
 From a semantic standpoint, however, to use a 128-bit \texttt{usize} on
 CHERI128 would be not only inconvenient, but incorrect.
+
+
+\subsection{Integer types in C}
+C has several related machine-dependent integer types:
+
+\begin{description}
+    \item[\texttt{size\_t}] Integer type appropriate to represent the
+    size of any object, including indexing into at array.
+    This is the most frequent use of \texttt{usize} in Rust.
+    \item[\texttt{ptrdiff\_t}] Integer type large enough to store the
+    difference between two addresses. In Rust, there is no motive to
+    compare pointers from different allocations, so a \texttt{size\_t}
+    equivalent suffices.
+    \item[\texttt{intptr\_t}] Optional signed integer type large enough to hold
+    a pointer. The commonly-understood definition of \texttt{isize} in Rust.
+    \item[\texttt{uintptr\_t}] Optional unsigned integer type large enough to hold
+    a pointer. The commonly-understood definition of \texttt{usize} in Rust.
+\end{description}
+
+What is important to see is that the specific integer value of a pointer
+is of no intrinsic interest, and only matters in comparison to other
+pointers.
+Further, it is meaningless to compare pointers to different objects.
+The Rust core library's principal use of the LLVM \texttt{inttoptr}
+primitive is to determine the size of an allocation, which is consistent
+with the above statements.
+
+Most importantly, the key argument for only having one integer type that
+corresponds to C's four was that Rust semantics are different, and the
+require different reasoning and types.
+This is precisely true: there is no functional use for non-address part
+of a CHERI capability pointer, and the addressable range should
+\emph{not} be conflated with the pointer size.
 
 
 \section{Limitations}
