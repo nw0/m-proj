@@ -877,14 +877,6 @@ marked, preventing them from being used.
 
 \section{Hybrid ABI: Minimising the memory footprint of CHERI capabilities}
 \label{sec:eval-hybrid}
-\todo{If Safe Rust is safe, save memory overhead of capabilities by only
-placing objects reachable by unsafe code in AS200.
-Note, though, that unsafe code in rife in libcore, so this may not be
-helpful.
-Also slices would need to be capability pointers, maybe.
-
-This provides real benefits for using only safe code! And possibly
-lower-footprint than C.}
 
 \subsection{Safe Rust is memory safe}
 Observe that the bugs covered in \Cref{sec:eval-bugs} occur in Unsafe
@@ -948,6 +940,21 @@ due to the subtleties of the C standard~\cite{memarian2016cdepths}.
 Consequently, capability protection could be optimised for a lower
 footprint on Rust code than C, potentially making it the ideal language
 for a CHERI platform.
+
+
+\subsection{Limitations}
+Optimisation opportunity could be limited, however.
+Many routines in the core library use unsafe code to manipulate objects,
+such as the built-in sorting algorithms.
+It is unclear how many routines do this to avoid bounds-checked
+accesses, as is the sole reason in sorting: recall that runtime bounds
+checking is redundant in CHERI, but only with the use of capabilities.
+
+A study of the proportion of Rust references not used in unsafe code is
+therefore advisable.
+Note that not all references passed to Unsafe Rust need to be marked:
+only usage for raw pointer operations and FFI calls are relevant in this
+case, along with specific compiler primitives.
 
 
 \section{Distinguishing pointer width and index sizes}
