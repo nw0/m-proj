@@ -903,6 +903,28 @@ reducing the overall memory overhead.
 
 
 \subsection{Pointer provenance for Unsafe Rust}
+Due to Rust's strong provenance model, all references can be traced to
+their original object, and so can raw pointers generated from that
+object.
+Thus all references used in Unsafe Rust can be tracked to their
+instantiation at compile time, and marked to indicate that a capability
+pointer should be used.
+Unsafe Rust code would therefore only encounter capability pointers.
+
+Likewise, this analysis can determine all objects reached from unsafe
+code: similar analysis is already performed to prevent modifying
+immutable objects in Unsafe Rust.\footnote{
+To be clear, Unsafe Rust can still be used to modify immutable objects
+by casting to (Rust) raw pointers.
+The provenance of these raw pointers is still tracked by the compiler.
+}
+
+Note that raw pointers can be manipulated to point to a different
+object, even if this is undefined behaviour in Rust.
+However, if each raw pointer is a capability pointer, such code will
+still be unable to violate memory safety.
+
+
 \subsection{Limitations of object reachability}
 
 
