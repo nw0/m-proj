@@ -1011,6 +1011,36 @@ For instance, the 8 tag bits provided on the AArch64 architecture are of
 no interest when using a \texttt{usize}.
 
 
+\subsection{Rust context}
+This is a complex issue in Rust.
+Rust RFC \#544~\cite{rust-rfc-isize} is ostensibly a naming issue for
+this pointer-sized integer type, but it provides an excellent background
+to the semantics and usage of this type in Rust.
+Indeed, its complexity is such that the community understands
+\texttt{usize} to be ``the size of a pointer by definition.'', or
+``defined\ldots[to be] the same size as *const ()'', i.e.\ a raw
+pointer.
+The closest thing to a dissenting opinion gave that ``traditionally,
+\texttt{usize == uintptr\_t}''.\footnote{
+These are responses to a clarification of the definition of
+\texttt{usize} garnered on the Rust compiler forum on Zulip.
+In particular, the query included the CHERI example stating that 64 bits
+were used for addressing in a 128-bit pointer.
+}
+
+Despite these statements, I claim that the text of the definitions and
+the usage show that the \texttt{usize} need only be large enough to
+reference memory addresses.
+Thus 48 bits suffice on CHERI, though 64 might be a more practical
+value.
+
+This is something of a controversial issue in Rust, and even a seemingly
+minor clarification may take considerable time to make it into the
+documentation.
+From a semantic standpoint, however, to use a 128-bit \texttt{usize} on
+CHERI128 would be not only inconvenient, but incorrect.
+
+
 \section{Limitations}
 \todo{128-bit usize means no sensible evaluation of generated
 instructions, no opt means no eval of runtimes.
