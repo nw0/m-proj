@@ -986,12 +986,29 @@ The Rust reference notes that the \emph{theoretical upper bound on
 object and array size is the maximum \texttt{isize} value}, even though
 the \texttt{usize} type is used for indexing into slices.
 
-\subsubsection{Representing every memory address}
+\subsection{Representing every memory address}
 There is no pair of morphisms that translate between integers (including
 the \texttt{usize}) and CHERI capabilities.
 This is due to monotonicity, where integers cannot be transformed into
 pointers, and enforced by the memory tagging mechanism.
 Thus no memory address can be recovered solely from an integer.
+
+Notwithstanding the difference between \emph{represent} and
+\emph{reference}, and the existence of arbitrary pointer values, it
+seems clear that there should be some sort of correspondence between
+pointers and \texttt{usize} values.
+Specifically, the text suggests that this correspondence is between
+\emph{memory addresses} or \emph{locations}, rather than any data
+associated with a pointer.
+
+\subsubsection{Usage in the compiler and core library}
+This correspondence is echoed in compiler usage and the core library.
+Usages of \texttt{usize} are not concerned with tag information that may
+be associated with a pointer; they refer to sizes, ranges, and
+distances.
+
+For instance, the 8 tag bits provided on the AArch64 architecture are of
+no interest when using a \texttt{usize}.
 
 
 \section{Limitations}
