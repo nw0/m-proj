@@ -1147,4 +1147,23 @@ weakly-typed languages such as C.
 \section{Summary}
 \label{sec:eval-summary}
 
+This chapter began by demonstrating how effectively CHERI capabilities
+mitigate Rust vulnerabilities.
+In the course of writing this report, another vulnerability in the Rust
+standard library surfaced~\cite{rust-advisory-cast}: it permitted
+arbitrary typecasting and hence buffer overflows.
+Again this is prevented by CHERI capabilities.
+
+It detailed how Rust and CHERI memory protection mechanisms interact,
+and choices that would maximise the benefit while minimising the cost.
+This was done in light of Rust's semantics and definition of undefined
+behaviour, identifying the weakest points in the language and showing
+how they can be protected with capabilities.
+Consideration was also given to implementation issues in the compiler,
+resulting from under-defined semantics, and a strategy to tackle this
+presented.
+Finally, it generalised the impact of Rust capabilities to other
+languages and runtimes, showing the areas which would benefit the most
+and least from capability protection.
+
 \end{document}
