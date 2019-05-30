@@ -1107,20 +1107,18 @@ guarantee that data is not inspected or modified when passing references
 through system or cross-process calls, enforcing the principle of least
 privilege.
 
-\todo{Think about (categorise?) these:}
-\begin{itemize}
-    \item What are the major existing problems with the language?
-    \item Existing vulnerabilities?
-    \item What guarantees does the language provide?
-    \item Where does it derive its safety from? Some type systems may
-    have overheads that cannot be easily reduced.
-    \item Is Cython still Python?
-    \item Do you make code invalid? e.g.\ can no longer get change a
-    const ptr to a mut ptr? memchr strikes again
-    \item Assumptions about address spaces and pointers---do they
-    already use fat/smart pointers?
-    \item Are there multiple runtime implementations?
-\end{itemize}
+
+\subsection{Non-optimisation: type systems}
+Languages may use type systems to make significant guarantees about
+programs: this is especially true in functional languages.
+Outside of these, Java and Rust have sophisticated type systems; the use
+of capabilities cannot optimise checks that are made at compile time.
+
+A contrasting example is Python, which performs type-checking at
+runtime: this cannot be optimised by capabilities either, as more
+information is derived from types in general.
+Ultimately, it may be the case that capabilities are uniquely useful for
+weakly-typed languages such as C.
 
 
 \section{Summary}
