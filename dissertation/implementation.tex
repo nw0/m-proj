@@ -343,15 +343,7 @@ Three formatting methods were modified:
 \end{itemize}
 
 These methods are not relevant to my evaluation as I have used the C
-\texttt{printf} function for printing and formatting.\footnote{
-I introduced a macro, \texttt{prntf!}, to more easily invoke this:
-calling foreign functions is unsafe, and passing strings in particular
-involves a lot of boilerplate: the null terminator has to be added, and
-pointer conversions performed.
-This Rust macro, which uses the same syntax as the C function,
-considerably improves code readability in the evaluation.
-\label{foot:prntf}
-}
+\texttt{printf} function for printing and formatting.
 
 
 \subsection{\texttt{libcore}: UTF-8 validation}

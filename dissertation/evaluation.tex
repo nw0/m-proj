@@ -118,8 +118,9 @@ Sample code is shown in \Cref{lst:micro-capacity}.
         With CHERI capabilities, execution continues until line~12, which
         traps due to a length violation.
         \\ {\footnotesize \protect\textdagger\ The \texttt{prntf!} macro
-        is \emph{not} built-in; I define it for convenience. See
-        \cref{foot:prntf} on \cpageref{foot:prntf}.}
+        is \emph{not} built-in; I define it for convenience. Using the
+        same syntax as the C \texttt{printf} function, it avoids
+        considerable unsafe boilerplate while enhancing readability.}
     }
     \label{lst:micro-capacity}
 \end{figure}
@@ -344,8 +345,7 @@ and crates should be relatively straightforward.
 In particular, common compatibility issues in CHERI due to pointer
 provenance~\cite{cheri-2019-abstract} do not apply in Safe Rust,
 as the compiler tracks object ownership comprehensively.\footnote{
-An exception to this statement is the `pointer shape' issue; see
-\Cref{sec:impl-width} for a discussion.
+An exception is `pointer shape'; see \Cref{sec:impl-width}.
 }
 
 Due to Rust's lack of a specification and documented undefined
@@ -356,8 +356,8 @@ undefined in Rust, but community discussions suggest that it might be in
 future~\cite{rust-ucg-provenance}.
 As such, unsafe code should not rely on patterns that break provenance
 analysis in these ways.\footnote{
-An example of a data structure which might not be implementable in Rust
-(without exhibiting undefined behaviour) in the XOR linked list.
+For example, the XOR linked list \emph{might} not be implementable
+in Rust without exhibiting undefined behaviour.
 }
 
 
@@ -423,8 +423,8 @@ Currently, these are known as the \emph{capacity} and \emph{length} of
 the vector respectively.
 This tension can be resolved in two ways, both requiring capability
 pointers to the allocation\footnote{
-Monotonicity implies that access to allocated space must be continuously
-pointed to in order to be used later.
+Monotonicity implies that the full allocated space must be continuously
+pointed to; otherwise it is leaked.
 }:
 
 \begin{description}
@@ -683,10 +683,9 @@ A quick survey of Rust crates that use FFI bindings shows that most of
 them deal with some form of low-level behaviour, including encryption,
 memory allocation, USB interfaces, and filesystem mounts.\footnote{
     Rust crates are published libraries.
-    The reader may be interested to peruse a selection of crates at
+    A survey of the ``Rust package registry'' may be of interest:
     \url{https://crates.io/search?q=-sys};
     a \texttt{-sys} suffix conventionally denotes an FFI crate.
-    \texttt{crates.io} is advertised as the ``Rust Package Registry''.
 }
 With performance or low-level access as the primary goal of most Rust
 FFI calls, safety may not be a major concern, even if it could allow
@@ -773,7 +772,7 @@ Thus Unsafe Rust and undefined behaviour are inextricably linked.
 
 Undefined behaviour in Rust is fairly simple to comprehend:
 the core list contains only 9 points~\cite{rust-ref},\footnote{
-\emph{The list is non-exhaustive}: in any case, Rust has no formal
+\emph{The list is non-exhaustive.} Note: Rust has no formal
 semantics or specification, making the idea of particular undefined
 behaviours rather arbitrary.}
 none of which are challenging to avoid, unlike signed integer overflow
@@ -885,9 +884,11 @@ Unsafe Rust code would therefore only encounter capability pointers.
 Likewise, this analysis can determine all objects reached from unsafe
 code: similar analysis is already performed to prevent modifying
 immutable objects in Unsafe Rust.\footnote{
-To be clear, Unsafe Rust can still be used to modify immutable objects
-by casting to (Rust) raw pointers.
-The provenance of these raw pointers is still tracked by the compiler.
+For completeness, unsafe code can modify immutable objects by casting to
+(Rust) raw pointers.
+The provenance of these raw pointers is still tracked by the compiler;
+see Stacked Borrows for an effort using provenance to enforce semantics
+on Unsafe Rust~\cite{rust-stacked-borrows}.
 }
 
 Note that raw pointers can be manipulated to point to a different
@@ -996,10 +997,10 @@ Indeed, its complexity is such that the community understands
 pointer.
 The closest thing to a dissenting opinion gave that ``traditionally,
 \texttt{usize == uintptr\_t}''.\footnote{
-These are responses to a clarification of the definition of
-\texttt{usize} garnered on the Rust compiler forum on Zulip.
-In particular, the query included the CHERI example stating that 64 bits
-were used for addressing in a 128-bit pointer.
+Responses in clarification of the definition of \texttt{usize}, from the
+Rust compiler forum on Zulip.
+The query included the CHERI example, where 64 bits of a 128-bit pointer
+are used for addressing.
 }
 
 Despite these statements, I claim that the text of the definitions and

@@ -4,22 +4,14 @@
 \chapter{The Rust Programming Language}
 \label{ch:rust}
 
-This work refers to version 1.35 of the Rust
-compiler.\footnote{Specifically, the nightly build dated March 22, 2019,
-commit \texttt{2210e9a}. \\ Accessible at
-\url{https://github.com/rust-lang/rust/commit/2210e9a6a99c4241d82e85ca71fd291d5ef91c7f}.
-\\ Patches for CHERI compatibility at \url{https://github.com/CTSRD-CHERI/rust/}.}
-
-
 \section{Overview}
 This chapter gives an overview of Rust and the major differences from
 comparable programming languages.
 It focusses on semantic differences, rather than usability differences,
 although those also make a significant contribution to code
 safety.\footnote{Usability differences include the lack of automatic
-typecasting, the explicit use of integer widths (e.g.\ \texttt{i32}
-rather than \texttt{int}, and \texttt{usize} for array indices), and the
-built-in test harness.}
+typecasting, the explicit use of integer types (e.g.\ \texttt{i32}, or
+\texttt{usize} for array indices), and the built-in test harness.}
 I also discuss some techniques and patterns used by the Rust compiler
 and programmers for optimisation of Rust code.
 
@@ -27,6 +19,12 @@ For any future effort in porting Rust to CHERI, attention \emph{must} be
 paid to pointer width and indices (\Cref{sec:rust-usize,sec:impl-width}).
 \emph{Currently, this effectively prevents Rust code from compiling
 properly for CHERI.}
+
+This work refers to version 1.35 of the Rust
+compiler.\footnote{Commit \texttt{2210e9a}, nightly build of March 22nd,
+2019. \\ Source:
+\url{https://github.com/rust-lang/rust/commit/2210e9a6a99c4241d82e85ca71fd291d5ef91c7f}.
+\\ Patches for CHERI compatibility: \url{https://github.com/CTSRD-CHERI/rust/}.}
 
 
 \subsection{The Rust programming language}
@@ -71,8 +69,8 @@ immutably.
 \Cref{lst:rust-ownership} shows some function signatures for
 moving ownership or borrowing.
 In contrast to C, the emphasis is not on access, but the nature of the
-access.\footnote{In Rust, references represent possession of an object,
-rather than the ability to access it.}
+access.\footnote{References represent ownership of an object, rather
+than access to it.}
 As such, pointers cannot be casually duplicated\footnote{In Safe Rust.}
 to cause data races or temporal unsoundness generally.
 
@@ -207,10 +205,8 @@ Some common situations in which bounds checks are avoided:
     \item[Built-in iterators] The default iterator applying to arrays
     (\Cref{lst:rust-iter-unchecked}) uses the unsafe
     \texttt{get\_unchecked} method\footnote{
-    This adds an offset to the array's base pointer and dereferences it
-    directly.
-    Other \texttt{unchecked} methods exist, e.g.\ in string
-    conversions.
+        This dereferences an array offset without checking bounds.
+        Other \texttt{unchecked} methods include string conversions.
     } implemented for the \texttt{SliceIndex} trait.
     In theory, this \emph{might} be susceptible to an off-by-one error,
     but such a mistake is easily discovered in unit tests.
