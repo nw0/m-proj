@@ -713,8 +713,6 @@ While this cannot be completely prevented with capabilities as-is,
 revocations to manage this risk.
 
 \subsection{Enforcement of object boundaries}
-\clar{Demonstration microbenchmark?}
-
 Objects can only be passed to C as raw pointers.
 As such, a buffer overflow through an FFI function is no more difficult
 than in C natively, and no less serious.
@@ -1048,15 +1046,6 @@ require different reasoning and types.
 This is precisely true: there is no functional use for non-address part
 of a CHERI capability pointer, and the addressable range should
 \emph{not} be conflated with the pointer size.
-
-
-\section{Limitations}
-\todo{128-bit usize means no sensible evaluation of generated
-instructions, no opt means no eval of runtimes.
-Do Rust heaps contain more pointers? out of scope
-Rust has no spec---lots more UB.
-Rust, CHERI under development and def of UB, capability impls might
-change.}
 
 
 \section{Porting safe languages to capability architectures}
