@@ -9,39 +9,54 @@
 discussed the compromises that were made to compile Rust's core
 libraries for CHERI.
 
-This chapter contains the main evaluation on the benefits and detriments
-of porting Rust to CHERI.
-The key questions this evaluation seeks to address are:
+This chapter contains the main evaluation of CHERI capabilities in a
+safe language, Rust.
+An overview of the focusses of each section:
 
 \begin{description}
-    \item[\Cref{sec:eval-cheri}] What implications do Rust programs and a
-    compilation toolchain have for CHERI?
-    Specifically, how do Rust's unique characteristics---its borrow
-    checker and lifetime model, temporal safety guarantees, small
-    runtime---translate to a capability architecture?
-    Do they complement or overlap the functionality provided by CHERI?
-    \item[\Cref{sec:eval-rust}] What implications does running on a
-    CHERI architecture have for Rust?
-    More concretely, what are the safety and performance differences
-    from running on other platforms such as x86 or MIPS?
-    \item[\Cref{sec:eval-bugs}] Can CHERI capabilities mitigate or prevent
-    vulnerabilities in Rust, and what is the nature of these flaws?
-    Do they manifest differently in Rust, and can they be mitigated by
-    other means?
-    If C equivalents for these flaws exist, what nature do they take and
-    does CHERI behave similarly? \wip{rework}
-    If equivalents in other safe languages exist\ldots
-    \item[\Cref{sec:eval-porting}] What are the general concerns when
-    porting a safe language to CHERI or other capability architectures?
-    Generally, are safe languages easier to port to CHERI? Do they
-    derive more benefit from capabilities than unsafe languages?
-    \wip{Why hasn't anyone written about doing this?}
-    \item[\Cref{sec:eval-betterunsafe}] How can the safety guarantees
-    and boundaries of unsafe code be changed with the use of CHERI
-    capabilities, or: do capabilities give rise to a different natural
-    definition of unsafe code?
-    What insight does this provide for language design and
-    non-capability platforms?
+    \item[\Cref{sec:eval-bugs}]
+    Previous vulnerabilities in the Rust standard libraries.
+    It shows that bugs in unsafe code are not substantially different
+    from C, and includes demonstration microbenchmarks showing that
+    CHERI capabilities provide an effective mitigation.
+
+    \item[\Cref{sec:eval-cheri}]
+    The implications of the Rust language and toolchain for CHERI.
+    How Rust's guarantees complement capabilities, and why Rust is an
+    ideal candidate for porting to CHERI due to its memory model and
+    performance.
+
+    \item[\Cref{sec:eval-rust,sec:eval-sealing,sec:eval-rust-xprocess}]
+    The implications of CHERI capabilities on the Rust language.
+    How Rust's guarantees can be enforced even in Unsafe Rust, and
+    extended to cover cross-domain function calls, without changing
+    language semantics.
+
+    \item[\Cref{sec:eval-betterunsafe}]
+    The connection between Unsafe Rust and undefined behaviour,
+    referring to underlying assumptions in the language.
+    How CHERI capabilities can rule out forms of undefined behaviour in
+    Rust, by guaranteeing a hardware exception on violation.
+
+    \item[\Cref{sec:eval-hybrid}]
+    A method to minimise memory overheads of capability protection by
+    using the hybrid ABI, which allows both capability and
+    non-capability pointers in a single program.
+    A consideration of the conditions that allow this and the guarantees
+    it provides.
+
+    \item[\Cref{sec:eval-usize}]
+    An argument for reinterpreting the previously-discussed
+    \texttt{usize} definition, with respect to its usage in the
+    languages.
+    Reference is made to community consensus, existing definitions, and
+    types in other languages.
+
+    \item[\Cref{sec:eval-porting}]
+    General concerns and implications when introducing capabilities to
+    safe languages; when they benefit the most and least.
+
+    \item[\Cref{sec:eval-summary}] Chapter summary.
 \end{description}
 
 
@@ -568,6 +583,7 @@ This is discussed further in \Cref{sec:eval-betterunsafe-reasons}.
 
 
 \section{Capability sealing to protect Rust objects}
+\label{sec:eval-sealing}
 
 \emph{Capability sealing} can prevent a capability from being used to
 mutate or dereference the memory it refers to, as described in
@@ -1129,5 +1145,6 @@ weakly-typed languages such as C.
 
 
 \section{Summary}
+\label{sec:eval-summary}
 
 \end{document}
