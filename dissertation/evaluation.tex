@@ -31,7 +31,7 @@ The key questions this evaluation seeks to address are:
     If C equivalents for these flaws exist, what nature do they take and
     does CHERI behave similarly? \wip{rework}
     If equivalents in other safe languages exist\ldots
-    \item[\Cref{sec:eval-othersafe}] What are the general concerns when
+    \item[\Cref{sec:eval-porting}] What are the general concerns when
     porting a safe language to CHERI or other capability architectures?
     Generally, are safe languages easier to port to CHERI? Do they
     derive more benefit from capabilities than unsafe languages?
@@ -743,25 +743,6 @@ preventing bugs in called libraries from propagating to the host
 program.
 
 
-\section{Porting safe languages to capability architectures}
-\label{sec:eval-othersafe}
-
-\todo{Think about (categorise?) these:}
-\begin{itemize}
-    \item What are the major existing problems with the language?
-    \item Existing vulnerabilities?
-    \item What guarantees does the language provide?
-    \item Where does it derive its safety from? Some type systems may
-    have overheads that cannot be easily reduced.
-    \item Is Cython still Python?
-    \item Do you make code invalid? e.g.\ can no longer get change a
-    const ptr to a mut ptr? memchr strikes again
-    \item Assumptions about address spaces and pointers---do they
-    already use fat/smart pointers?
-    \item Are there multiple runtime implementations?
-\end{itemize}
-
-
 \section{Strengthening unsafety}
 \label{sec:eval-betterunsafe}
 
@@ -1076,6 +1057,25 @@ Do Rust heaps contain more pointers? out of scope
 Rust has no spec---lots more UB.
 Rust, CHERI under development and def of UB, capability impls might
 change.}
+
+
+\section{Porting safe languages to capability architectures}
+\label{sec:eval-porting}
+
+\todo{Think about (categorise?) these:}
+\begin{itemize}
+    \item What are the major existing problems with the language?
+    \item Existing vulnerabilities?
+    \item What guarantees does the language provide?
+    \item Where does it derive its safety from? Some type systems may
+    have overheads that cannot be easily reduced.
+    \item Is Cython still Python?
+    \item Do you make code invalid? e.g.\ can no longer get change a
+    const ptr to a mut ptr? memchr strikes again
+    \item Assumptions about address spaces and pointers---do they
+    already use fat/smart pointers?
+    \item Are there multiple runtime implementations?
+\end{itemize}
 
 
 \section{Summary}
