@@ -1068,6 +1068,45 @@ This section generalises many of its observations to other safe
 languages, giving a preview of the relevant concerns when bringing other
 languages and runtimes to hardware capability platforms.
 
+
+\subsection{Weaknesses in language runtimes}
+Many safe languages employ type systems to prevent unauthorised reading
+or writing of data, but their runtimes can be a source of
+vulnerabilities.
+For example, a 2017 bug in CPython\footnote{The Python runtime.}
+contained a bug potentially giving arbitrary code execution from a heap
+overflow~\cite{cpython-overflow}.
+
+\Cref{sec:eval-micro-repeat} showed a similar exploit prevented by CHERI
+capabilities, and in the Python example, the heap allocation would not
+successfully overflow with capabilities.
+Note that CPython is written in a combination of C and Python, and this
+routine in particular is written in C.
+This shows how safe languages suffer vulnerabilities through their
+runtimes.
+
+
+\subsection{Unsafe code}
+Continuing from the previous section, like Rust's \texttt{unsafe}, most
+`safe' languages provide escape hatches: an example is Haskell's
+\texttt{performUnsafeIO}.
+Failing to do so limits the range of behaviour that programs in that
+language can exhibit efficiently.
+Similar mechanisms are used to call code written in other languages,
+such as via the Java Native Interface (JNI).
+
+Chisnall et al.\ have considered the application of CHERI capabilities
+to JNI calls~\cite{cheri-jni}, and Watson et al.\ demonstrate
+compartmentalisation alongside CHERI capabilities~\cite{cheri2015}.
+In both cases, protections are applied to what is generally the only
+significant attack surface of a program, making it an efficient design
+choice.
+
+Likewise, capability-aware languages could employ capability sealing to
+guarantee that data is not inspected or modified when passing references
+through system or cross-process calls, enforcing the principle of least
+privilege.
+
 \todo{Think about (categorise?) these:}
 \begin{itemize}
     \item What are the major existing problems with the language?
