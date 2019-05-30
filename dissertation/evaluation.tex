@@ -1108,6 +1108,23 @@ through system or cross-process calls, enforcing the principle of least
 privilege.
 
 
+\subsection{Language semantics and implementation}
+Each language has a different memory model, which may not be fully
+consistent with CHERI, which may prevent certain idioms from translating
+properly.
+C has a notoriously weak memory model, permitting pointer operations
+which destroy provenance under CHERI, making them non-dereferenceable:
+in particular, such patterns are used in real-world
+programs~\cite{memarian2016cdepths}.
+
+Nevertheless, when Davis et al.\ examine the issue for FreeBSD and
+PostgreSQL, pointer provenance is not as significant an issue as one
+might expect~\cite{cheri-2019-abstract}.
+It is probable that any pointer provenance issues to do with safe
+languages come from, as in Rust, the compiler and runtime rather than
+general programs written in that language.
+
+
 \subsection{Non-optimisation: type systems}
 Languages may use type systems to make significant guarantees about
 programs: this is especially true in functional languages.
