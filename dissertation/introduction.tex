@@ -58,6 +58,9 @@ Some are preventable with CHERI capabilities, and these are examined in
     \item Standard library: unsafe Iterator method duplicates
     exclusive mutable references, violating temporal
     safety~\cite{rust-issue-vec-mut}.
+    \item Standard library: safe trait implementation allows arbitrary
+    typecasting and thus buffer overflows,
+    CVE-2019-12083~\cite{cve-cast,rust-advisory-cast}.
 \end{itemize}
 
 Others are not mitigated by capabilities:
