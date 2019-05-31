@@ -154,6 +154,43 @@ language.
 
 
 \section{Report structure}
-\todo{}
+This report is divided into six chapters, detailing the above
+contributions and their context:
+
+\begin{description}
+    \item[\Cref{ch:bg}]
+    An overview of CHERI capabilities and their mechanism, and how they
+    can be used to improve memory safety.
+    Motivation for the choice of Rust as a safe programming language to
+    study.
+    A survey of work relating to other hardware capability
+    implementations, other mechanisms that provide memory safety, and
+    similar techniques for safe languages including Java and Rust.
+    \item[\Cref{ch:rust}]
+    An introduction to the properties of Rust I consider relevant to
+    memory safety and this project in particular.
+    This includes a brief discussion of its semantics, Unsafe Rust, and
+    some common optimisation patterns.
+    \item[\Cref{ch:impl}]
+    The main changes made to the Rust compiler and core libraries to
+    enable compilation to CHERI.
+    This chapter outlines the scope of my implementation, hence
+    evaluation, and presents challenges encountered that currently
+    prevent a more complete implementation of Rust compilation to CHERI.
+    \item[\Cref{ch:eval}]
+    A long chapter, and main contribution of this work.
+    The evaluation of CHERI capabilities for Rust: why Rust is an ideal
+    language for capability protection, and how its safety is improved
+    by capabilities.
+    This includes demonstration of capabilities against past
+    vulnerabilities, how they can rule out some undefined behaviour, and
+    options for stronger protection and enforcement of Rust guarantees
+    by using features offered by the architecture.
+    Concerns when porting Rust to safe languages.
+    \item[\Cref{ch:con}]
+    The conclusion: recontextualisation of the work, challenges faced,
+    and a detailed recapitulation of contributions outlined above.
+    A discussion of future work in bringing Rust to CHERI.
+\end{description}
 
 \end{document}
