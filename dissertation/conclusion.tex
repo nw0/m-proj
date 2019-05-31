@@ -77,7 +77,41 @@ ecosystem of modern software development.
 As a preliminary step, \Cref{sec:eval-porting} covers the initial
 concerns when porting safe languages to capability architectures.
 
-\todo{challenges}
+
+\section{Challenges}
+
+This project has not been without its challenging points.
+A recurring problem was the conflict caused by changing the pointer
+width to 128 bits, various aspects of which were recorded in
+\Cref{sec:rust-usize,sec:impl-width,sec:eval-usize}.
+The issue effectively prevents full Rust compatibility with CHERI
+capabilities, and in this project prevents the use of compiler
+optimisations.
+The definition is part of the language specification, and a source of
+some controversy in the Rust community; I put forth small, plausible
+changes to remove the conflict with CHERI.
+A detriment of this issue has been the inability to perform more
+sophisticated evaluation of CHERI overheads in Rust, as Joannou et al.\
+have done for C~\cite{cheri-tagged-memory}.
+
+Another challenge was maintaining the relevance of the work.
+At first glance, the motivation is obvious.
+Capabilities make C much safer: can they do the same for a safe language
+like Rust?
+Could they optimise out dynamic checks like array bounds checks, leading
+to a measurable performance increase?
+
+The nuances emerge when one considers Unsafe Rust, or the diverse
+`escape hatches' in other languages.
+Perhaps the relevant questions are those of where languages benefit the
+most, or equally where capabilities are \emph{least} useful.
+The dearth of literature studying capabilities under safe programming
+languages does not help;
+indeed the proposition that capabilities are less obviously useful for
+safe languages seems increasingly reasonable.
+These serve to illustrate the value of segmenting safe and unsafe code
+and enabling fine-grained protection in the language
+(\Cref{sec:eval-capability-using-type,sec:eval-hybrid}).
 
 
 \section{Scope of contributions}
