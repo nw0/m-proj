@@ -1,0 +1,23 @@
+\renewcommand{\abstractname}{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+\begin{abstract}
+\setcounter{page}{5}
+
+The lack of memory safety in C still causes untold numbers of security
+vulnerabilities up to the present day.
+Both Rust, a safe programming language, and CHERI, an architecture
+providing hardware capabilities, claim to provide low-overhead memory
+safety to prevent exploits.
+
+This work explores the implications and interactions of CHERI
+capabilities for a safe language, Rust.
+Previous work typically considers capabilities and type-safe languages
+as mutually exclusive protection; instead I present evidence that the
+two can, in fact, complement each other.
+To do this, I implement Rust compilation to a CHERI architecture,
+demonstrating that capabilities are effective against previous Rust
+vulnerabilities and detailing how they can be used to maximise memory
+safety in Rust with minimal overheads.
+
+\end{abstract}
