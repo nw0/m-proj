@@ -16,9 +16,9 @@ An overview of the focusses of each section:
 \begin{description}
     \item[\Cref{sec:eval-bugs}]
     Previous vulnerabilities in the Rust standard libraries.
-    It shows that bugs in unsafe code are not substantially different
-    from C, and includes demonstration microbenchmarks showing that
-    CHERI capabilities provide an effective mitigation.
+    It shows that bugs in Unsafe Rust are not substantially different
+    from those in C, and includes microbenchmarks demonstrating
+    that CHERI capabilities provide an effective mitigation.
 
     \item[\Cref{sec:eval-cheri}]
     The implications of the Rust language and toolchain for CHERI.
@@ -35,7 +35,7 @@ An overview of the focusses of each section:
     \item[\Cref{sec:eval-betterunsafe}]
     The connection between Unsafe Rust and undefined behaviour,
     referring to underlying assumptions in the language.
-    How CHERI capabilities can rule out forms of undefined behaviour in
+    How CHERI capabilities rule out forms of undefined behaviour in
     Rust, by guaranteeing a hardware exception on violation.
 
     \item[\Cref{sec:eval-hybrid}]
@@ -48,7 +48,7 @@ An overview of the focusses of each section:
     \item[\Cref{sec:eval-usize}]
     An argument for reinterpreting the previously-discussed
     \texttt{usize} definition, with respect to its usage in the
-    languages.
+    language.
     Reference is made to community consensus, existing definitions, and
     types in other languages.
 

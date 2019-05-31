@@ -14,8 +14,7 @@ The C language specification includes a number of situations that lead
 to \emph{undefined behaviour}: akin to a deduction of `falsity' in
 logic, after these points the state of the program might be arbitrary.
 Undefined behaviour allows compilers to assume that certain conditions
-never hold, enabling them to make powerful (but dangerous)
-optimisations.
+never hold, enabling powerful (but dangerous) optimisations.
 
 Consequently, crucial checks can be optimised away and invariants
 violated by compilers, resulting in executables vulnerable to memory
@@ -146,9 +145,9 @@ In summary, the contributions of this work are:
 
 This work is \emph{not} intended to be a complete implementation of
 CHERI support in the Rust compiler.
-Rather, it prototypes support for Rust compilation to pure capability
-\wip{what's purecap} code to illustrate the benefit of CHERI
-capabilities to a safe language.
+Rather, it prototypes support for replacing pointers with capabilities
+in Rust, to illustrate the benefit of CHERI capabilities to a safe
+language.
 
 
 \section{Report structure}
