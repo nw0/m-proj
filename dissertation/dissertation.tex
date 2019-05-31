@@ -47,6 +47,11 @@
 \usepackage{cleveref}
 \usepackage{emptypage}  % don't number empty pages
 \usepackage{afterpage}
+\newcommand\blankpage{%
+	\null
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\newpage}
 \usepackage[labelfont=bf,font=small,margin=11pt]{caption}
 
 \usepackage{mdframed}
@@ -61,6 +66,7 @@
 
 \begin{document}
 
+    \include{acknowledgements}
     \include{abstract}
 
     \tableofcontents{}
