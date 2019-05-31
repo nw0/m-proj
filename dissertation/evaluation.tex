@@ -1149,9 +1149,10 @@ weakly-typed languages such as C.
 
 This chapter began by demonstrating how effectively CHERI capabilities
 mitigate Rust vulnerabilities.
-In the course of writing this report, another vulnerability in the Rust
-standard library surfaced~\cite{rust-advisory-cast}: it permitted
-arbitrary typecasting and hence buffer overflows.
+As further evidence of this point, another vulnerability in the Rust
+standard library was announced while writing this
+report~\cite{rust-advisory-cast}: it permitted arbitrary typecasting and
+hence buffer overflows.
 Again this is prevented by CHERI capabilities.
 
 It detailed how Rust and CHERI memory protection mechanisms interact,

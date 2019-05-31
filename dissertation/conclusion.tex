@@ -8,46 +8,77 @@
 This project examined protection mechanisms to provide memory safety at
 the intersection of hardware and computer architecture, compilers, and
 programming language semantics.
-The varied approaches and measures shed light on the subtlety of
+The varied approaches and measures shed light on the subtleties of
 two orthogonal problems: spatial and temporal integrity.
 These insights illustrate different ways of enforcing the principles of
 \emph{least privilege} and \emph{intentional use}, and the compromises
 and difficulties that arise from their interaction.
 
-Even as the benefits of hardware capabilities are clear to see, this
-work provides an understanding of their benefits in the context of a
-safe language, Rust.
+Even as the benefits of hardware capabilities are well-studied for C,
+this work provides an understanding of their benefits in the context of
+a safe language, Rust.
 Each safe language provides different guarantees, and enforces them
 differently; Rust defines semantics and performs most of its enforcement
 through static checking, rejecting programs with unclear invariants.
 The strict constraints that this places on programs motivates Unsafe
 Rust, which provides programmers more control over their programs.
-Here capabilities demonstrate their value, providing dynamic checks
-where static checks are not possible.
+In the standard library, unsafe code is even used to optimise string
+processing, a traditional source of C buffer overflows.
+\Cref{sec:rust-unsafe,sec:rust-elision} gave an overview of where
+Unsafe Rust is used.
 
-The evaluation (\Cref{ch:eval}) emphasised how Rust's protections
-yield to programmer error, showing the utility of CHERI capabilities to
-protect objects even within Unsafe Rust.
-It went on to discuss how capabilities may strengthen and enforce
-guarantees given by the language, through features like sealing.
-Capabilities therefore equip Rust with a powerful tool for increasing
-its memory safety.
+It is in unsafe code that capabilities demonstrate their value,
+providing dynamic checks where static checks are not possible.
+\Cref{sec:eval-bugs} examined how Rust's protections yield to
+programmer error, giving analyses of previous vulnerabilities in the
+Rust standard library.
+Further, it showed that capabilities successfully prevent these
+vulnerabilities from exploitation.
+Indeed, in the course of writing this report, another vulnerability in
+the Rust standard library surfaced~\cite{rust-advisory-cast}: this too
+is preventable by CHERI capabilities!
+
+The evaluation went on to discuss how capabilities can strengthen and
+enforce guarantees given by the language, using features like
+\emph{capability sealing} to protect data given to cross-domain calls.
+This protection obviates expensive measures like sandboxing, frequently
+considered too costly to use in many real-world applications.
+I emphasise that capabilities equip Rust with powerful powerful
+mechanisms for increasing memory safety at low cost, yet this is
+achievable \emph{without} changing the language semantics or memory
+model.
+A similar claim cannot be made for C, due to its weak pointer
+provenance model~\cite{cheri-2019-abstract}.
+Further, I elaborate on how capabilities interact with, and can rule out
+several forms of undefined behaviour in Rust.
+Compiler transformations relying on those forms are thus safe to
+perform on CHERI, without concern of violating the integrity or
+confidentiality of data.
 
 I also examined how Rust's techniques complement CHERI memory safety,
 offering a clear pointer provenance model, a safe sub-language, and
 complementary temporal safety guarantees.
-These qualities make Rust code easier to compile with capabilities,
+These properties make Rust code easier to compile with capabilities,
 enable the targeted use of capabilities to protect the most vulnerable
 objects, and closure of some of the most common vulnerabilities that
-CHERI capabilities do not currently address.
+CHERI architectures do not currently address.
 Combined, these permit optimisations on capability usage not possible
 with C codebases, showcasing the promise of combining capability
 architectures with safe languages.
+With Rust performance comparable to that of C without capabilities,
+these optimisations could mean that Rust code will be even \emph{faster}
+than C code under capability protection.
+This is especially true as workloads become more bounded by memory
+throughput, where capability overheads are most significant.
 
 Even as CHERI begins to form a foundation for its own temporal memory
 protection, the study of how the architecture interacts with memory-safe
 languages forms a basis for realising its potential in the larger
 ecosystem of modern software development.
+As a preliminary step, \Cref{sec:eval-porting} covers the initial
+concerns when porting safe languages to capability architectures.
+
+\todo{challenges}
 
 
 \section{Scope of contributions}
