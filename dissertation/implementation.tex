@@ -55,7 +55,7 @@ standalone Rust programs.
 
 Other parts of the standard library will compile for CHERI, but they are
 not as central to running Rust programs.
-I have not included them here in order to focus on evaluating the Rust
+I have not included them in order to focus on evaluating the Rust
 compiler and a core set of features.
 
 \Cref{sec:impl-div-compiler,sec:impl-div-lib} detail modifications to
@@ -121,8 +121,8 @@ This is useful where binary releases do not exist for those platforms;
 it allows the use of modified libraries, and in particular it does not
 require that the entire standard library is compiled.
 
-By default it only compiles \texttt{core}; when using \texttt{alloc}
-this must be specified through \texttt{Xargo.toml}.
+By default it only compiles \texttt{core}; use of \texttt{alloc}
+is specified through \texttt{Xargo.toml}.
 This approach is recommended, although it can make code generation
 errors difficult to debug.
 
@@ -348,8 +348,7 @@ These methods are not relevant to my evaluation as I have used the C
 
 \subsection{\texttt{libcore}: UTF-8 validation}
 The UTF-8 validation routine fails to compile into the core library: I
-did not attempt to debug this.
-I removed references to it.
+did not attempt to debug this, instead removing references to it.
 Again, this is not relevant to my evaluation as I have not used Unicode.
 
 

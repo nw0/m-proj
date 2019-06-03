@@ -134,12 +134,11 @@ additional actions~\cite{rust-trpl-book}:
     \item Implementing an unsafe trait
 \end{itemize}
 
-While these seem fairly innocuous (considering the large body of
-existing C code), this is significant in the restrictions imposed on
-Safe Rust.
+While these seem fairly innocuous compared to abstractions in C, they impose
+significant restrictions on Safe Rust.
 It's important to note that unsafety need not necessarily come from
 the \texttt{unsafe} code block itself, but from the handling of inputs
-and outputs to the unsafe block.
+to the unsafe block.
 \Cref{sec:eval-micro-repeat} shows a bug in a built-in data structure
 caused by incorrect computation before an \texttt{unsafe} block, leading
 to a buffer overflow.
@@ -148,7 +147,7 @@ to a buffer overflow.
 As seen in \Cref{sec:rust-elision}, unsafe optimisations are used to
 avoid redundant checks, whether they are duplicated or simply known to
 be within bounds.
-Unsafe code in the core library is also used for unchecked conversions,
+The core library uses unsafe code for unchecked conversions,
 or other unchecked indexing, like into a Unicode string at a known
 character boundary.
 
@@ -244,7 +243,7 @@ Some common situations in which bounds checks are avoided:
     } implemented for the \texttt{SliceIndex} trait.
     In theory, this \emph{might} be susceptible to an off-by-one error,
     but such a mistake is easily discovered in unit tests.
-    \Cref{sec:rust-unsafe} covers how unsafe code is used for
+    \Cref{sec:rust-unsafe} covered how unsafe code is used for
     optimisation.
     \item[Built-in sorting] Both built-in sorting implementations,
     timsort (stable) and quicksort (unstable) use the unsafe
@@ -267,24 +266,24 @@ Finally, there is an experimental effort~\cite{rust-crate-indexing} to
 remove array bounds checks using dependent types, using the principles
 described by Xi and Pfenning~\cite{xi-pfenning-dependent} and applied to
 Rust by Beingessner~\cite{beingessner}.
-Note that this could add a significant compile-time
-overhead, as it necessarily utilises type-, lifetime, and ownership
-checkers, which Rust runs before optimisations: this results in
-heavy computation to remove checks that are usually avoided anyway.
+However, this adds significant compile-time overheads, as it necessarily
+utilises type-, lifetime, and ownership checkers, which Rust runs before
+optimisations: this results in heavy computation to remove checks that
+are usually avoided anyway.
 
 
 \section{Summary}
 
 This chapter introduced some important semantic characteristics of Rust,
-and showed how it provides some of its memory safety guarantees
+and showed how it provides some of its memory safety guarantees.
 It then examined how Rust minimised the overheads of its guarantees, and
-the tools that programmers can use to do the same.
+the tools that programmers employ to do the same.
 Both of these inform the evaluation in \Cref{ch:eval}.
 
 Next, \Cref{ch:impl} considers the implementation of the Rust compiler
 and core libraries, and how they interact with the CHERI ISA.
-\Cref{sec:rust-usize} in particular is a definition that has not
-translated well to the CHERI architecture, but is consistent with it,
-given a careful implementation.
+The \texttt{usize} (\Cref{sec:rust-usize}) in particular is a definition
+that has not translated well to the CHERI architecture, but is
+consistent with it, if interpreted carefully.
 
 \end{document}

@@ -33,7 +33,7 @@ against execution of writeable data.
 A recurring theme in this work is the definition and usage of pointers.
 For instance, the proper usage of a capability renders object bounds
 checks redundant: can this optimise bounds checks in Rust?
-We will also see that CHERI's implementation of capability pointers
+We will also see how CHERI's implementation of capability pointers
 stretches a key language definition in Rust due to its usage in the
 compiler.
 
@@ -46,7 +46,7 @@ CHERI extends the 64-bit MIPS ISA to support capabilities.
 Its design emphasises incremental adoption, and the principles of least
 privilege and intentional use, to mitigate unintended vulnerabilities.
 Its hybrid approach enables capability code to be used alongside
-non-capability code, allowing a concentration on higher-risk code and
+non-capability code, allowing concentration on higher-risk code and
 libraries~\cite{cheri-v6}.
 
 \subsection{Implementation overview}
@@ -121,7 +121,7 @@ Most evaluations of capability implementations focus on the C language,
 as a kind of lowest common denominator in computer systems.
 Further, its stereotypical memory unsafety precedes the reasonable
 assumption that C programs would benefit from capabilities, perhaps more
-so than a safe language would.
+so than a safe language might.
 
 Rust is an example of a safe language.
 The following sections briefly motivate the choice of Rust as a language
@@ -262,8 +262,8 @@ This avoids giving libraries access to memory which should not be
 shared, and frustrates attacks such as control-flow hijacking.
 
 This approach comes with considerable overhead, with Lamowski et al.\
-reporting slowdown factors between 1.3 and 44, albeit generally at the
-low end (1.5--\(8\times\)).
+reporting slowdown factors between \(1.3\times\) and \(44\times\),
+albeit generally at the low end (1.5--\(8\times\)).
 Considerable overhead is likely due to data transfer.
 
 CHERI avoids this overhead, and can call foreign functions in the same
@@ -349,13 +349,13 @@ formalisation.
 
 
 \section{Context}
-This chapter briefly introduced capabilities, which one may wish to
+This chapter briefly introduced capabilities, which
 contrast with Rust's ownership and lifetime semantics in
 \Cref{sec:rust-borrow}.
 It defined the basic mechanism and properties of the CHERI
 implementation of capabilities, which are necessary for understanding
 the rest of this work, especially the evaluation (\Cref{ch:eval});
-it then motivated the study of capabilities applied to a safe language
+it then motivated the study of capabilities applied to safe languages
 in general, and Rust in particular.
 The survey of related work again contextualises this project by
 comparison to other capability mechanisms, and protection techniques

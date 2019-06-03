@@ -38,7 +38,7 @@ occur~\cite{rust-nomicon-safe-unsafe}, giving both spatial and temporal
 memory protection.
 
 To achieve this, it uses compile-time and runtime checks, relying on a
-combination of LLVM optimisations and \emph{Unsafe} Rust code to
+combination of LLVM optimisations and \emph{Unsafe Rust} code to
 minimise the performance overhead.
 However, as with all code that requires fine control over memory,
 mistakes in writing Unsafe Rust give rise to potential vulnerabilities.
@@ -76,7 +76,7 @@ Others are not mitigated by capabilities:
 
 Rust is a language with an explicit priority of memory safety, developed
 by a community of safety- and security-conscious programmers.
-Collectively, these flaws demonstrate that such favourable conditions
+Collectively, these flaws demonstrate that even such favourable conditions
 are not sufficient to eliminate unsoundness and vulnerabilities.
 On the contrary, more tools are needed to build and operate reliable and
 secure software.
@@ -137,7 +137,7 @@ In summary, the contributions of this work are:
     \item Techniques and approaches that may be used to reduce the
     overheads posed by memory protection when combining the two
     approaches.
-    A consideration of how the duplication of functions can be
+    A consideration of how the duplication of functionality can be
     minimised, and how doing so affects the provided safety guarantees.
 
     \item Details of the relevant concerns for future implementers
@@ -150,7 +150,7 @@ In summary, the contributions of this work are:
 This work is \emph{not} intended to be a complete implementation of
 CHERI support in the Rust compiler.
 Rather, it prototypes support for replacing pointers with capabilities
-in Rust, to illustrate the benefit of CHERI capabilities to a safe
+in Rust, to illustrate the benefit of CHERI capabilities for a safe
 language.
 
 
@@ -168,12 +168,12 @@ contributions and their context:
     implementations, other mechanisms that provide memory safety, and
     similar techniques for safe languages including Java and Rust.
     \item[\Cref{ch:rust}]
-    An introduction to the properties of Rust I consider relevant to
+    An introduction to the properties of Rust relevant to
     memory safety and this project in particular.
     This includes a brief discussion of its semantics, Unsafe Rust, and
     some common optimisation patterns.
     \item[\Cref{ch:impl}]
-    The main changes made to the Rust compiler and core libraries to
+    The main changes made to the Rust compiler and core libraries that
     enable compilation to CHERI.
     This chapter outlines the scope of my implementation, hence
     evaluation, and presents challenges encountered that currently

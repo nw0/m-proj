@@ -175,12 +175,12 @@ contributions:
 \label{sec:further-usize}
 
 \subsubsection{Changes to Rust semantics}
-\Cref{sec:eval-usize} considered Rust's \texttt{usize} definition, which
-is ``pointer-sized integer'', why this is not desirable, and explored
+\Cref{sec:eval-usize} considered Rust's \texttt{usize} definition
+(``pointer-sized integer''), why this is not desirable, and explored
 alternatives.
 As this is both a semantic and performance issue on CHERI
 (\Cref{sec:impl-width}), it should be a priority to resolve this
-definition sooner rather than later.
+definition.
 
 Nevertheless, this is not a straightforward task.
 A unilateral change would involve large divergences from the upstream

@@ -39,7 +39,7 @@ An overview of the focusses of each section:
     Rust, by guaranteeing a hardware exception on violation.
 
     \item[\Cref{sec:eval-hybrid}]
-    A method to minimise memory overheads of capability protection by
+    A method to minimise the memory overheads of capability protection by
     using the hybrid ABI, which allows both capability and
     non-capability pointers in a single program.
     A consideration of the conditions that allow this and the guarantees
@@ -145,8 +145,8 @@ However, I was unable to force this situation without modifying the
 allocator for the purpose.
 
 \subsubsection{Observations}
-This scenario is a plain example of a bounds violation that can be
-prevented using capabilities.
+This scenario is a plain example of a bounds violation that is
+prevented by capabilities.
 Had the underlying implementation not used an unchecked write (line 12
 of \Cref{lst:deque-defs}), this would also have been prevented by Rust's
 bounds checks, as the \texttt{VecDeque} is backed by a vector.
@@ -179,7 +179,7 @@ overflow the target's \texttt{usize}.
     \lstinputlisting{listings/slice-repeat.rs}
     \caption{
         Rust's slice \texttt{repeat}, from \texttt{alloc::slice}.
-        Part omitted for brevity.
+        Parts omitted for brevity.
         This code attempts to write beyond the end of a buffer.
         The error is in line~5; it was fixed by checking the
         multiplication against integer overflow.
@@ -355,7 +355,7 @@ can be useful in Rust.
 \label{sec:eval-cheri-provenance}
 
 With a fully-functional Rust compiler for CHERI, porting Rust programs
-and crates should be relatively straightforward.
+and crates should be straightforward.
 In particular, common compatibility issues in CHERI due to pointer
 provenance~\cite{cheri-2019-abstract} do not apply in Safe Rust,
 as the compiler tracks object ownership comprehensively.\footnote{
@@ -365,7 +365,7 @@ An exception is `pointer shape'; see \Cref{sec:impl-width}.
 Due to Rust's lack of a specification and documented undefined
 behaviour, programmers are discouraged from performing such
 capability-incompatible pointer manipulation.
-It is still unclear if problematic pointer manipulation is currently
+It is unclear if problematic pointer manipulation is currently
 undefined in Rust, but community discussions suggest that it might be in
 future~\cite{rust-ucg-provenance}.
 As such, unsafe code should not rely on patterns that break provenance
@@ -417,13 +417,12 @@ especially for embedded platforms.
 \subsection{Larger pointer size can be offset by removing redundant bounds information}
 \label{sec:eval-cheri-memfoot}
 
-Currently, any vector or array slice stores a pointer to the relevant
+Currently, any memory slice stores a pointer to the relevant
 object and its length~\cite{blandy-orendorff}.
-As bounds information can be derived from the CHERI capability pointer
-to the same object, it is redundant to store the length.
-Instead, a \texttt{CGetLen} instruction would be used to get the bounds
-information when needed: notably this is not required when indexing into
-the slice.
+As bounds information can be derived from a CHERI capability pointer, it
+is redundant to store the length.
+Instead, a \texttt{CGetLen} instruction could retrieve the bounds
+information when needed.
 The overhead of a 128-bit pointer can therefore be offset by the removal
 of a 64-bit length variable, negating the memory overhead for slices
 which would apply in other languages.
@@ -465,9 +464,9 @@ pointed to; otherwise it is leaked.
 The memory traffic overheads of CHERI capabilities for diverse C
 benchmark programs is within 5--10\%~\cite{cheri-tagged-memory}, with
 the greatest impact on pointer-heavy workloads.
-In Rust, some overhead will still apply: notice that bounds are not
-checked with every slice access, but pointers are always larger.
-How this impacts cache usage is unclear, but it is not unreasonable to
+In Rust, some overhead will still apply: capability pointers are always
+larger, and bounds checks are only occasionally saved.
+The impact on cache usage is unclear, but it is not unreasonable to
 suggest that overheads will be at most as large as under equivalent C
 workloads.
 \Cref{sec:eval-hybrid} outlines a strategy to reduce the memory
@@ -534,6 +533,8 @@ With CHERI capabilities, a subslice could be passed as a pointer with
 bounds restricted to the relevant segment of the array.
 It would then be impossible for a function to access the other elements
 unexpectedly, again enforcing the principle of least privilege.
+Additionally, this can enforce Rust's temporal protection when splitting
+slices with the \texttt{split\_at\_mut} method.
 
 Likewise, this can apply to struct members, generalising the protection
 to objects with known continuous layouts.
@@ -572,7 +573,7 @@ This creates a use-after-free bug~\cite{rust-nomicon-rc-leak}.
 
 This can be resolved by revocation, for which CHERI capabilities provide
 a foundation by virtue of monotonicity and memory tagging.
-Revocation would prevent programs from reading or modifying memory which
+Revocation prevents programs from reading or modifying memory which
 has been deallocated, or more importantly reallocated, another common
 source of vulnerabilities.
 Note that there are performance overheads associated with
@@ -619,7 +620,7 @@ the past, due to functions like~\texttt{strchr} (C), which derive a
 non-\texttt{const} (mutable) pointer from an immutable
 one~\cite{cheri-prog-guide}.
 
-\begin{lstlisting}[language=C]
+\begin{lstlisting}[language=C,numbers=none]
 char *strchr(const char *s, int c);
 \end{lstlisting}
 
@@ -731,11 +732,11 @@ Objects can only be passed to C as raw pointers.
 As such, a buffer overflow through an FFI function is no more difficult
 than in C natively, and no less serious.
 
-A simple example of an overflow opportunity uses the well-known source
-of overflows which is a C string with a missing NUL terminating byte.
+A simple example of an overflow is a C string with a missing NUL
+terminating byte.
 To overcome this, Rust strings instead store a length value and a byte
 array, making them non-interchangeable with C strings.
-This means, however, if that a programmer neglects to convert between
+However, if a programmer neglects to convert between
 the formats, passing a Rust string to a C function will quickly lead to
 an overflow.
 
@@ -825,7 +826,7 @@ semantics, so this is easy to compile and enforce.
 Likewise, CHERI capabilities can rule out violations of LLVM's
 \texttt{noalias} model in Rust by similar means.
 To check this, first note that the model will not be violated in Safe
-Rust, as the compiler enforced uniqueness of mutable references.
+Rust, as the compiler enforces uniqueness of mutable references.
 It is thus only necessary to prevent the mutation of an object through a
 reference if other references to that object are being used.
 
@@ -1010,7 +1011,7 @@ Indeed, its complexity is such that the community understands
 \texttt{usize} to be ``the size of a pointer by definition.'', or
 ``defined\ldots[to be] the same size as *const ()'', i.e.\ a raw
 pointer.
-The closest thing to a dissenting opinion gave that ``traditionally,
+A more cautious opinion gave that ``traditionally,
 \texttt{usize == uintptr\_t}''.\footnote{
 Responses in clarification of the definition of \texttt{usize}, from the
 Rust compiler forum on Zulip.
