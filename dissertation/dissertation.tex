@@ -45,7 +45,7 @@
 }
 \urlstyle{rm}
 \usepackage{cleveref}
-\usepackage{emptypage}  % don't number empty pages
+%\usepackage{emptypage}  % don't number empty pages
 \usepackage{afterpage}
 \newcommand\blankpage{%
 	\null
@@ -56,6 +56,8 @@
 \usepackage[labelfont=bf,font=small,margin=11pt]{caption}
 
 \usepackage{mdframed}
+
+\usepackage{datetime}
 
 
 \newcommand{\wip}[1]{\fcolorbox{red}{white}{\color{red}\textbf{WIP}\quad#1}}
@@ -74,11 +76,14 @@
 
 \begin{document}
 
+    \pagestyle{empty}
+    \pagenumbering{roman}
     \include{titlepage}
     \include{declaration}
     \include{acknowledgements}
     \include{abstract}
 
+    \pagestyle{plain}
     \tableofcontents{}
 
     \subfile{introduction}

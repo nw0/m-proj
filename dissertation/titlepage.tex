@@ -1,4 +1,8 @@
 % title page information
+
+\newdateformat{monthyeardate}{%
+  \monthname[\THEMONTH] \THEYEAR}
+
 \begin{titlepage} 
 
 \begin{center}
@@ -45,7 +49,7 @@ Email: \authoremail \\
 
 \begin{center}
 \noindent
-\today
+{\monthyeardate\today}
 \end{center}
 
 \end{titlepage} 
