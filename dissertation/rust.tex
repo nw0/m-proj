@@ -49,8 +49,6 @@ move semantics to determine the lifetime of an object.
 As such, some programs which avoid use-after-free or other memory safety
 bugs may be semantically invalid Rust.
 
-\subsection{Ownership semantics}
-
 \begin{figure}[ht]
     \lstinputlisting{listings/ownership-sigs.rs}
     \caption{
@@ -62,6 +60,8 @@ bugs may be semantically invalid Rust.
     }
     \label{lst:rust-ownership}
 \end{figure}
+
+\subsection{Ownership semantics}
 
 Instead of passing objects by duplicating pointers, a function in Safe
 Rust will either take ownership of an object, or borrow it mutably or
@@ -180,13 +180,47 @@ prevent out-of-bounds accesses.
 This may appear to harbour large overheads, although with optimisations
 many checks are elided.
 In fact, bounds checks mainly apply to random indexing, as seen in
-\Cref{lst:bg-rust-index}.
+\Cref{lst:bg-rust-index} (\cpageref{lst:bg-rust-index}).
 They also apply when Rust's intrinsic indexing is used, through the
 \texttt{Index} and \texttt{IndexMut} traits.
 For example, \Cref{lst:rust-vec-index} shows that \texttt{Vec} uses
 this intrinsic, and therefore has bounds checks.
 
 \subsection{Optimisation by eliding checks}
+\begin{figure}[p]
+    \lstinputlisting{listings/sums-iter.rs}
+    \lstinputlisting[language={[mips64]Assembler}]{listings/array-itersum.s}
+    \caption{
+        Four ways to sum an array in Rust: the first three identically
+        generate the shown MIPS assembler, and could be considered
+        idiomatic Rust.
+        The fourth generates nearly the same code: it uses an index of 1
+        instead of 8, allowing the omission of lines~3--4!
+        It also omits lines~12--13, which appear to be redundant.
+        Note that no bounds checks are present.
+        Optimised code generated; comments added for ease of reading.
+    }
+    \label{lst:rust-iter-unchecked}
+\end{figure}
+
+\begin{figure}[p]
+    \lstinputlisting{listings/sum-checked.rs}
+    \lstinputlisting[language={[mips64]Assembler}]{listings/array-checkedsum.s}
+    \caption{
+        How not to sum an array in Rust.
+        Observe that \texttt{sum\_checked} is nearly identical to
+        \texttt{sum\_loop} in \Cref{lst:rust-iter-unchecked}, save for
+        the comparison on line~5.
+        The compiler fails to detect that our accesses are safe due to
+        the small manipulation of the variable storing the length.
+        Thus an additional branch instruction appears on line~14.
+        Optimised code generated;
+        \texttt{panic\_bounds\_check} string substituted in place of
+        mangled version.
+    }
+    \label{lst:rust-iter-checked}
+\end{figure}
+
 \Cref{lst:rust-iter-unchecked} shows examples of bounds check elision in
 generated code, based on iterators and detecting when the length is
 checked.
@@ -227,40 +261,6 @@ Some common situations in which bounds checks are avoided:
     of built-ins may require knowledge of the underlying (unsafe)
     implementations.
 \end{description}
-
-\begin{figure}[ht]
-    \lstinputlisting{listings/sums-iter.rs}
-    \lstinputlisting[language={[mips64]Assembler}]{listings/array-itersum.s}
-    \caption{
-        Four ways to sum an array in Rust: the first three identically
-        generate the shown MIPS assembler, and could be considered
-        idiomatic Rust.
-        The fourth generates nearly the same code: it uses an index of 1
-        instead of 8, allowing the omission of lines~3--4!
-        It also omits lines~12--13, which appear to be redundant.
-        Note that no bounds checks are present.
-        Optimised code generated; comments added for ease of reading.
-    }
-    \label{lst:rust-iter-unchecked}
-\end{figure}
-
-\begin{figure}[htp]
-    \lstinputlisting{listings/sum-checked.rs}
-    \lstinputlisting[language={[mips64]Assembler}]{listings/array-checkedsum.s}
-    \caption{
-        How not to sum an array in Rust.
-        Observe that \texttt{sum\_checked} is nearly identical to
-        \texttt{sum\_loop} in \Cref{lst:rust-iter-unchecked}, save for
-        the comparison on line~5.
-        The compiler fails to detect that our accesses are safe due to
-        the small manipulation of the variable storing the length.
-        Thus an additional branch instruction appears on line~14.
-        Optimised code generated;
-        \texttt{panic\_bounds\_check} string substituted in place of
-        mangled version.
-    }
-    \label{lst:rust-iter-checked}
-\end{figure}
 
 \subsection{Removing bounds checks with dependent types}
 Finally, there is an experimental effort~\cite{rust-crate-indexing} to

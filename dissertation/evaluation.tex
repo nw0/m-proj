@@ -100,8 +100,7 @@ the buffer, \texttt{self.cap()}
         It will not escape the reader's attention that the
         \texttt{capacity()} might be mistaken for the \texttt{cap()}, a
         likely cause of this error.
-        These definitions are still current in Rust's built-in data
-        structures.
+        These definitions are current in Rust.
         \texttt{push\_back} annotated with implicit precondition.
     }
     \label{lst:deque-defs}
@@ -201,7 +200,7 @@ is difficult to do in a controlled way.
 Instead, \Cref{lst:micro-repeat} shows the code used to demonstrate the
 effects of this bug.
 
-\begin{figure}[ht]
+\begin{figure}[htp]
     \lstinputlisting{listings/micro-repeat.rs}
     \caption{
         Demonstration of how an integer overflow can lead to a buffer
@@ -238,7 +237,7 @@ In this situation, the assumptions about the underlying iterator
 implementation are not obvious, and thus not considered when writing
 this method.
 
-\begin{figure}[ht]
+\begin{figure}[htp]
     \lstinputlisting{listings/bug-reverse.rs}
     \caption{
         Previous implementation of indexing into a reversed slice.
