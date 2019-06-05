@@ -1,0 +1,31 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+\usepackage{color}
+\usepackage{tikz}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber
+}
+
+
+\begin{document}
+\title{Strengthening memory safety in Rust:\\
+Exploring CHERI capabilities for a safe language}
+\author{Nicholas Sim}
+\date{June 21, 2019}
+
+\frame{\titlepage}
+
+
+\end{document}
