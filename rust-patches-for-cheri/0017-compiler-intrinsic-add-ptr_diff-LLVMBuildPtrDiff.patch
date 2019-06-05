@@ -1,0 +1,121 @@
+From d4e37345d164c04e199309d18c361238cc658c98 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Thu, 28 Mar 2019 22:54:31 +0000
+Subject: [PATCH 17/22] compiler intrinsic: add ptr_diff (LLVMBuildPtrDiff)
+
+This is necessary to fix len(). Since we can't cast ptrtoint with the
+CHERI backend, the default len() implementation in core::slice is
+broken. Use LLVM's CreatePtrDiff to resolve this.
+---
+ src/libcore/intrinsics.rs                  |  3 +++
+ src/librustc_codegen_llvm/builder.rs       |  7 +++++++
+ src/librustc_codegen_llvm/intrinsic.rs     |  5 +++++
+ src/librustc_codegen_llvm/llvm/ffi.rs      |  5 +++++
+ src/librustc_codegen_ssa/traits/builder.rs |  1 +
+ src/librustc_typeck/check/intrinsic.rs     | 14 ++++++++++++++
+ 6 files changed, 35 insertions(+)
+
+diff --git a/src/libcore/intrinsics.rs b/src/libcore/intrinsics.rs
+index 75a33394e3..f15813161f 100644
+--- a/src/libcore/intrinsics.rs
++++ b/src/libcore/intrinsics.rs
+@@ -962,6 +962,9 @@ extern "rust-intrinsic" {
+     /// value is not necessarily valid to be used to actually access memory.
+     pub fn arith_offset<T>(dst: *const T, offset: isize) -> *const T;
+ 
++    #[cfg(not(stage0))]
++    pub fn ptr_diff<T>(lhs: *const T, rhs: *const T) -> usize;
++
+     /// Equivalent to the appropriate `llvm.memcpy.p0i8.0i8.*` intrinsic, with
+     /// a size of `count` * `size_of::<T>()` and an alignment of
+     /// `min_align_of::<T>()`
+diff --git a/src/librustc_codegen_llvm/builder.rs b/src/librustc_codegen_llvm/builder.rs
+index d4d38a4645..9d08626c7a 100644
+--- a/src/librustc_codegen_llvm/builder.rs
++++ b/src/librustc_codegen_llvm/builder.rs
+@@ -1167,6 +1167,13 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
+         }
+     }
+ 
++    fn ptr_diff(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
++        self.count_insn("ptrdiff");
++        unsafe {
++            llvm::LLVMBuildPtrDiff(self.llbuilder, lhs, rhs, noname())
++        }
++    }
++
+     fn landing_pad(&mut self, ty: &'ll Type, pers_fn: &'ll Value,
+                        num_clauses: usize) -> &'ll Value {
+         self.count_insn("landingpad");
+diff --git a/src/librustc_codegen_llvm/intrinsic.rs b/src/librustc_codegen_llvm/intrinsic.rs
+index ceb08f9436..c8886a2462 100644
+--- a/src/librustc_codegen_llvm/intrinsic.rs
++++ b/src/librustc_codegen_llvm/intrinsic.rs
+@@ -256,6 +256,11 @@ impl IntrinsicCallMethods<'tcx> for Builder<'a, 'll, 'tcx> {
+                 let offset = args[1].immediate();
+                 self.gep(ptr, &[offset])
+             }
++            "ptr_diff" => {
++                let lhs = args[0].immediate();
++                let rhs = args[1].immediate();
++                self.ptr_diff(lhs, rhs)
++            }
+ 
+             "copy_nonoverlapping" => {
+                 copy_intrinsic(self, false, false, substs.type_at(0),
+diff --git a/src/librustc_codegen_llvm/llvm/ffi.rs b/src/librustc_codegen_llvm/llvm/ffi.rs
+index 45dc3dc0e5..a60c7191a4 100644
+--- a/src/librustc_codegen_llvm/llvm/ffi.rs
++++ b/src/librustc_codegen_llvm/llvm/ffi.rs
+@@ -1207,6 +1207,11 @@ extern "C" {
+                                 Index: c_uint,
+                                 Name: *const c_char)
+                                 -> &'a Value;
++    pub fn LLVMBuildPtrDiff(B: &Builder<'a>,
++                            LHS: &'a Value,
++                            RHS: &'a Value,
++                            Name: *const c_char)
++                            -> &'a Value;
+ 
+     pub fn LLVMRustBuildVectorReduceFAdd(B: &Builder<'a>,
+                                          Acc: &'a Value,
+diff --git a/src/librustc_codegen_ssa/traits/builder.rs b/src/librustc_codegen_ssa/traits/builder.rs
+index 5099107a39..4a7f164733 100644
+--- a/src/librustc_codegen_ssa/traits/builder.rs
++++ b/src/librustc_codegen_ssa/traits/builder.rs
+@@ -245,6 +245,7 @@ pub trait BuilderMethods<'a, 'tcx: 'a>:
+     fn vector_reduce_max(&mut self, src: Self::Value, is_signed: bool) -> Self::Value;
+     fn extract_value(&mut self, agg_val: Self::Value, idx: u64) -> Self::Value;
+     fn insert_value(&mut self, agg_val: Self::Value, elt: Self::Value, idx: u64) -> Self::Value;
++    fn ptr_diff(&mut self, lhs: Self::Value, rhs: Self::Value) -> Self::Value;
+ 
+     fn landing_pad(
+         &mut self,
+diff --git a/src/librustc_typeck/check/intrinsic.rs b/src/librustc_typeck/check/intrinsic.rs
+index 40c60caffa..903d230232 100644
+--- a/src/librustc_typeck/check/intrinsic.rs
++++ b/src/librustc_typeck/check/intrinsic.rs
+@@ -182,6 +182,20 @@ pub fn check_intrinsic_type<'a, 'tcx>(tcx: TyCtxt<'a, 'tcx, 'tcx>,
+                    mutbl: hir::MutImmutable
+                }))
+             }
++            "ptr_diff" => {
++              (1,
++               vec![
++                  tcx.mk_ptr(ty::TypeAndMut {
++                      ty: param(0),
++                      mutbl: hir::MutImmutable
++                  }),
++                  tcx.mk_ptr(ty::TypeAndMut {
++                      ty: param(0),
++                      mutbl: hir::MutImmutable
++                  })
++               ],
++               tcx.types.usize)
++            }
+             "copy" | "copy_nonoverlapping" => {
+               (1,
+                vec![
+-- 
+2.14.1
+

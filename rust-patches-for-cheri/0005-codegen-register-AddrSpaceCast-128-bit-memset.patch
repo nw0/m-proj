@@ -1,0 +1,41 @@
+From adcfb9c004dad62216ed1f2025510ecd3d314224 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 4 Feb 2019 10:26:24 +0000
+Subject: [PATCH 05/22] codegen: register AddrSpaceCast, 128-bit memset
+
+---
+ src/librustc_codegen_llvm/context.rs  | 1 +
+ src/librustc_codegen_llvm/llvm/ffi.rs | 5 +++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/src/librustc_codegen_llvm/context.rs b/src/librustc_codegen_llvm/context.rs
+index 23e3a8425d..02a244eb95 100644
+--- a/src/librustc_codegen_llvm/context.rs
++++ b/src/librustc_codegen_llvm/context.rs
+@@ -537,6 +537,7 @@ impl CodegenCx<'b, 'tcx> {
+         ifn!("llvm.memset.p0i8.i16", fn(i8p, t_i8, t_i16, t_i32, i1) -> void);
+         ifn!("llvm.memset.p0i8.i32", fn(i8p, t_i8, t_i32, t_i32, i1) -> void);
+         ifn!("llvm.memset.p0i8.i64", fn(i8p, t_i8, t_i64, t_i32, i1) -> void);
++        ifn!("llvm.memset.p0i8.i128", fn(i8p, t_i8, t_i128, t_i32, i1) -> void);
+ 
+         ifn!("llvm.trap", fn() -> void);
+         ifn!("llvm.debugtrap", fn() -> void);
+diff --git a/src/librustc_codegen_llvm/llvm/ffi.rs b/src/librustc_codegen_llvm/llvm/ffi.rs
+index 2ad6d9c053..8b8e0c9470 100644
+--- a/src/librustc_codegen_llvm/llvm/ffi.rs
++++ b/src/librustc_codegen_llvm/llvm/ffi.rs
+@@ -1112,6 +1112,11 @@ extern "C" {
+                             DestTy: &'a Type,
+                             Name: *const c_char)
+                             -> &'a Value;
++    pub fn LLVMBuildAddrSpaceCast(B: &Builder<'a>,
++                            Val: &'a Value,
++                            DestTy: &'a Type,
++                            Name: *const c_char)
++                            -> &'a Value;
+     pub fn LLVMBuildPointerCast(B: &Builder<'a>,
+                                 Val: &'a Value,
+                                 DestTy: &'a Type,
+-- 
+2.14.1
+

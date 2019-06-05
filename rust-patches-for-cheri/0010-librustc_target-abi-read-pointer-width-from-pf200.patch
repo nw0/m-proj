@@ -1,0 +1,25 @@
+From 9da1cd2eff16c90028458f72a37f396ac6ef7d5c Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 18 Mar 2019 19:29:43 +0000
+Subject: [PATCH 10/22] librustc_target: abi: read pointer width from pf200
+
+---
+ src/librustc_target/abi/mod.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/librustc_target/abi/mod.rs b/src/librustc_target/abi/mod.rs
+index 8b96a8c165..37ef295ccb 100644
+--- a/src/librustc_target/abi/mod.rs
++++ b/src/librustc_target/abi/mod.rs
+@@ -112,7 +112,7 @@ impl TargetDataLayout {
+                 ["a", ref a..] => dl.aggregate_align = align(a, "a")?,
+                 ["f32", ref a..] => dl.f32_align = align(a, "f32")?,
+                 ["f64", ref a..] => dl.f64_align = align(a, "f64")?,
+-                [p @ "p", s, ref a..] | [p @ "p0", s, ref a..] => {
++                [p @ "p", s, ref a..] | [p @ "p0", s, ref a..] | [p @ "pf200", s, ref a..] => {
+                     dl.pointer_size = size(s, p)?;
+                     dl.pointer_align = align(a, p)?;
+                 }
+-- 
+2.14.1
+

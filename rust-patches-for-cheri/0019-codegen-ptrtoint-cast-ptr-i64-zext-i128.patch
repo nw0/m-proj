@@ -1,0 +1,34 @@
+From e1253cc8913a1f9f01af4a2afcef817e8294a26d Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nsim@posteo.net>
+Date: Thu, 4 Apr 2019 21:54:42 +0100
+Subject: [PATCH 19/22] codegen: ptrtoint: cast ptr -> i64, zext -> i128
+
+---
+ src/librustc_codegen_ssa/mir/rvalue.rs | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/src/librustc_codegen_ssa/mir/rvalue.rs b/src/librustc_codegen_ssa/mir/rvalue.rs
+index 05ad087732..14b07992b3 100644
+--- a/src/librustc_codegen_ssa/mir/rvalue.rs
++++ b/src/librustc_codegen_ssa/mir/rvalue.rs
+@@ -355,8 +355,15 @@ impl<'a, 'tcx: 'a, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
+                             (CastTy::RPtr(_), CastTy::Ptr(_)) =>
+                                 bx.pointercast(llval, ll_t_out),
+                             (CastTy::Ptr(_), CastTy::Int(_)) |
+-                            (CastTy::FnPtr, CastTy::Int(_)) =>
+-                                bx.ptrtoint(llval, ll_t_out),
++                            (CastTy::FnPtr, CastTy::Int(_)) => {
++                                if bx.cx().type_isize() == bx.cx().type_i128() {
++                                    let _lo = ll_t_out;
++                                    let int = bx.ptrtoint(llval, bx.cx().type_i64());
++                                    bx.zext(int, bx.cx().type_i128())
++                                } else {
++                                    bx.ptrtoint(llval, ll_t_out)
++                                }
++                            }
+                             (CastTy::Int(_), CastTy::Ptr(_)) => {
+                                 let usize_llval = bx.intcast(llval, bx.cx().type_isize(), signed);
+                                 let ptr_int = if bx.cx().type_isize() == bx.cx().type_i128() {
+-- 
+2.14.1
+

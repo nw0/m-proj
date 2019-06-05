@@ -1,0 +1,34 @@
+From c1b5ef63559e473da1f3dacb131804845c697d79 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 4 Feb 2019 10:27:21 +0000
+Subject: [PATCH 13/22] target: mute pointer width complaints
+
+Rust only "supports" one pointer width
+---
+ src/librustc_target/abi/mod.rs | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/librustc_target/abi/mod.rs b/src/librustc_target/abi/mod.rs
+index d9f04fc87b..4f698f0b8b 100644
+--- a/src/librustc_target/abi/mod.rs
++++ b/src/librustc_target/abi/mod.rs
+@@ -165,11 +165,11 @@ impl TargetDataLayout {
+                                endian_str, target.target_endian));
+         }
+ 
+-        if dl.pointer_size.bits().to_string() != target.target_pointer_width {
+-            return Err(format!("inconsistent target specification: \"data-layout\" claims \
+-                                pointers are {}-bit, while \"target-pointer-width\" is `{}`",
+-                               dl.pointer_size.bits(), target.target_pointer_width));
+-        }
++        //if dl.pointer_size.bits().to_string() != target.target_pointer_width {
++        //    return Err(format!("inconsistent target specification: \"data-layout\" claims \
++        //                        pointers are {}-bit, while \"target-pointer-width\" is `{}`",
++        //                       dl.pointer_size.bits(), target.target_pointer_width));
++        //}
+ 
+         Ok(dl)
+     }
+-- 
+2.14.1
+

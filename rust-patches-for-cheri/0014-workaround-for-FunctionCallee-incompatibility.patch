@@ -1,0 +1,25 @@
+From 621252568b349fd3493d84b029ff710e55a0893c Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 25 Mar 2019 23:43:52 +0000
+Subject: [PATCH 14/22] workaround for FunctionCallee incompatibility
+
+---
+ src/rustllvm/RustWrapper.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/rustllvm/RustWrapper.cpp b/src/rustllvm/RustWrapper.cpp
+index a00417a362..0d8cc79176 100644
+--- a/src/rustllvm/RustWrapper.cpp
++++ b/src/rustllvm/RustWrapper.cpp
+@@ -117,7 +117,7 @@ extern "C" LLVMValueRef LLVMRustGetOrInsertFunction(LLVMModuleRef M,
+                                                     const char *Name,
+                                                     LLVMTypeRef FunctionTy) {
+   return wrap(
+-      unwrap(M)->getOrInsertFunction(Name, unwrap<FunctionType>(FunctionTy)));
++      (unwrap(M)->getOrInsertFunction(Name, unwrap<FunctionType>(FunctionTy))).getCallee());
+ }
+ 
+ extern "C" LLVMValueRef
+-- 
+2.14.1
+

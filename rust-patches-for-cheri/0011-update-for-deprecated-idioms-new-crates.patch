@@ -1,0 +1,52 @@
+From 350a8866a17aa27019955b508e252cda0f534fdd Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 25 Mar 2019 13:33:23 +0000
+Subject: [PATCH 11/22] update for deprecated idioms, new crates
+
+---
+ src/librustc_target/abi/call/cheri.rs             | 18 ++++--------------
+ src/librustc_target/spec/cheri_unknown_freebsd.rs |  2 +-
+ 2 files changed, 5 insertions(+), 15 deletions(-)
+
+diff --git a/src/librustc_target/abi/call/cheri.rs b/src/librustc_target/abi/call/cheri.rs
+index d375b16316..5ba05c6bcd 100644
+--- a/src/librustc_target/abi/call/cheri.rs
++++ b/src/librustc_target/abi/call/cheri.rs
+@@ -1,17 +1,7 @@
+-// Copyright 2016 The Rust Project Developers. See the COPYRIGHT
+-// file at the top-level directory of this distribution and at
+-// http://rust-lang.org/COPYRIGHT.
+-//
+-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+-// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+-// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+-// option. This file may not be copied, modified, or distributed
+-// except according to those terms.
+-
+-use abi::call::{ArgAttribute, ArgType, CastTarget, FnType, PassMode, Reg, RegKind, Uniform};
+-use abi::{self, HasDataLayout, LayoutOf, Size, TyLayout, TyLayoutMethods};
+-
+-fn extend_integer_width_mips<Ty>(arg: &mut ArgType<Ty>, bits: u64) {
++use crate::abi::call::{ArgAttribute, ArgType, CastTarget, FnType, PassMode, Reg, RegKind, Uniform};
++use crate::abi::{self, HasDataLayout, LayoutOf, Size, TyLayout, TyLayoutMethods};
++
++fn extend_integer_width_mips<Ty>(arg: &mut ArgType<'_, Ty>, bits: u64) {
+     // Always sign extend u32 values on 64-bit mips
+     if let abi::Abi::Scalar(ref scalar) = arg.layout.abi {
+         if let abi::Int(i, signed) = scalar.value {
+diff --git a/src/librustc_target/spec/cheri_unknown_freebsd.rs b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+index 183dd2be9f..370e7daf7a 100644
+--- a/src/librustc_target/spec/cheri_unknown_freebsd.rs
++++ b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+@@ -8,7 +8,7 @@
+ // option. This file may not be copied, modified, or distributed
+ // except according to those terms.
+ 
+-use spec::{LinkerFlavor, Target, TargetResult};
++use crate::spec::{LinkerFlavor, Target, TargetResult};
+ 
+ pub fn target() -> TargetResult {
+     let mut base = super::freebsd_base::opts();
+-- 
+2.14.1
+

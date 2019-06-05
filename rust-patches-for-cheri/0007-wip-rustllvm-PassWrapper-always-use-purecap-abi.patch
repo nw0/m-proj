@@ -1,0 +1,29 @@
+From 178c67abd6be05d03010343d36c77af20fd8788a Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 18 Feb 2019 12:03:09 +0000
+Subject: [PATCH 07/22] [wip] rustllvm: PassWrapper: always use purecap abi
+
+Still experiencing linking problem: attempting to compile a minimal
+no_core program fails to link with cheri-ld. More than one object file
+is generated, so some of them don't pass through this conditional.
+---
+ src/rustllvm/PassWrapper.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/rustllvm/PassWrapper.cpp b/src/rustllvm/PassWrapper.cpp
+index 25595e1498..8fd53fad7b 100644
+--- a/src/rustllvm/PassWrapper.cpp
++++ b/src/rustllvm/PassWrapper.cpp
+@@ -359,6 +359,9 @@ extern "C" LLVMTargetMachineRef LLVMRustCreateTargetMachine(
+   Options.FunctionSections = FunctionSections;
+   Options.MCOptions.AsmVerbose = AsmComments;
+   Options.MCOptions.PreserveAsmComments = AsmComments;
++  if (strcmp(TripleStr, "cheri-unknown-freebsd") == 0) {
++      Options.MCOptions.ABIName = "purecap";
++  }
+ 
+   if (TrapUnreachable) {
+     // Tell LLVM to codegen `unreachable` into an explicit trap instruction.
+-- 
+2.14.1
+

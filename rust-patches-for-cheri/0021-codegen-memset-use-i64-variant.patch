@@ -1,0 +1,40 @@
+From 6dfc605978684256db5724d441a85707932d986e Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nsim@posteo.net>
+Date: Fri, 5 Apr 2019 16:50:37 +0100
+Subject: [PATCH 21/22] codegen: memset: use i64 variant
+
+---
+ src/librustc_codegen_llvm/builder.rs | 4 ++--
+ src/librustc_codegen_llvm/context.rs | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/librustc_codegen_llvm/builder.rs b/src/librustc_codegen_llvm/builder.rs
+index b7d50032fb..9170529b7e 100644
+--- a/src/librustc_codegen_llvm/builder.rs
++++ b/src/librustc_codegen_llvm/builder.rs
+@@ -1002,8 +1002,8 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
+         align: Align,
+         flags: MemFlags,
+     ) {
+-        let ptr_width = &self.sess().target.target.target_pointer_width;
+-        let intrinsic_key = format!("llvm.memset.p0i8.i{}", ptr_width);
++        let size = self.intcast(size, self.type_i64(), false);
++        let intrinsic_key = format!("llvm.memset.p0i8.i{}", 64);
+         let llintrinsicfn = self.get_intrinsic(&intrinsic_key);
+         let ptr = self.pointercast(ptr, self.type_i8p());
+         let align = self.const_u32(align.bytes() as u32);
+diff --git a/src/librustc_codegen_llvm/context.rs b/src/librustc_codegen_llvm/context.rs
+index 02a244eb95..23e3a8425d 100644
+--- a/src/librustc_codegen_llvm/context.rs
++++ b/src/librustc_codegen_llvm/context.rs
+@@ -537,7 +537,6 @@ impl CodegenCx<'b, 'tcx> {
+         ifn!("llvm.memset.p0i8.i16", fn(i8p, t_i8, t_i16, t_i32, i1) -> void);
+         ifn!("llvm.memset.p0i8.i32", fn(i8p, t_i8, t_i32, t_i32, i1) -> void);
+         ifn!("llvm.memset.p0i8.i64", fn(i8p, t_i8, t_i64, t_i32, i1) -> void);
+-        ifn!("llvm.memset.p0i8.i128", fn(i8p, t_i8, t_i128, t_i32, i1) -> void);
+ 
+         ifn!("llvm.trap", fn() -> void);
+         ifn!("llvm.debugtrap", fn() -> void);
+-- 
+2.14.1
+

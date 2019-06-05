@@ -1,0 +1,25 @@
+From 173990d37e48886e516414e3c406d72ec3bacd1d Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Thu, 28 Mar 2019 12:15:10 +0000
+Subject: [PATCH 16/22] target: features: +chericap,etc (from clang)
+
+---
+ src/librustc_target/spec/cheri_unknown_freebsd.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/librustc_target/spec/cheri_unknown_freebsd.rs b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+index 370e7daf7a..0e4c021793 100644
+--- a/src/librustc_target/spec/cheri_unknown_freebsd.rs
++++ b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+@@ -13,7 +13,7 @@ use crate::spec::{LinkerFlavor, Target, TargetResult};
+ pub fn target() -> TargetResult {
+     let mut base = super::freebsd_base::opts();
+     base.cpu = "cheri128".to_string();
+-    base.features = "+mips64r2".to_string();
++    base.features = "+cheri128,+chericap,+soft-float,-noabicalls".to_string();
+     base.max_atomic_width = Some(64);
+     base.has_elf_tls = false;
+     base.pre_link_args.get_mut(&LinkerFlavor::Gcc).unwrap().push("-mabi=purecap".to_string());
+-- 
+2.14.1
+

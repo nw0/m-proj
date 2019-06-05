@@ -1,0 +1,30 @@
+From 34aea1670f77d2aec9d195a571c161055fe97895 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nsim@posteo.net>
+Date: Wed, 3 Apr 2019 17:36:11 +0100
+Subject: [PATCH 18/22] codegen: inttoptr: cast i128 -> i64 before inttoptr
+
+---
+ src/librustc_codegen_ssa/mir/rvalue.rs | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/librustc_codegen_ssa/mir/rvalue.rs b/src/librustc_codegen_ssa/mir/rvalue.rs
+index b813167132..05ad087732 100644
+--- a/src/librustc_codegen_ssa/mir/rvalue.rs
++++ b/src/librustc_codegen_ssa/mir/rvalue.rs
+@@ -359,7 +359,12 @@ impl<'a, 'tcx: 'a, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
+                                 bx.ptrtoint(llval, ll_t_out),
+                             (CastTy::Int(_), CastTy::Ptr(_)) => {
+                                 let usize_llval = bx.intcast(llval, bx.cx().type_isize(), signed);
+-                                bx.inttoptr(usize_llval, ll_t_out)
++                                let ptr_int = if bx.cx().type_isize() == bx.cx().type_i128() {
++                                    bx.trunc(usize_llval, bx.cx().type_i64())
++                                } else {
++                                    usize_llval
++                                };
++                                bx.inttoptr(ptr_int, ll_t_out)
+                             }
+                             (CastTy::Int(_), CastTy::Float) =>
+                                 cast_int_to_float(&mut bx, signed, llval, ll_t_in, ll_t_out),
+-- 
+2.14.1
+

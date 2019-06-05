@@ -1,0 +1,26 @@
+From 43b526626405c9f2fb2490112f53db0ac8d53830 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 25 Mar 2019 23:44:24 +0000
+Subject: [PATCH 15/22] update zeno header location
+
+---
+ src/librustc_llvm/build.rs | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/librustc_llvm/build.rs b/src/librustc_llvm/build.rs
+index 7fa83dd977..2f5261c4dc 100644
+--- a/src/librustc_llvm/build.rs
++++ b/src/librustc_llvm/build.rs
+@@ -122,7 +122,8 @@ fn main() {
+     // Link in our own LLVM shims, compiled with the same flags as LLVM
+     let mut cmd = Command::new(&llvm_config);
+     cmd.arg("--cxxflags");
+-    let cxxflags = output(&mut cmd);
++    let mut cxxflags = output(&mut cmd);
++    cxxflags.push_str("-I /usr/include/c++/v1");
+     let mut cfg = cc::Build::new();
+     cfg.warnings(false);
+     for flag in cxxflags.split_whitespace() {
+-- 
+2.14.1
+

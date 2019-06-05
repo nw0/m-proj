@@ -1,0 +1,65 @@
+From 2bbd23ba198d41650b5c0b221caf863954821f1c Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nsim@posteo.net>
+Date: Fri, 17 May 2019 12:45:55 +0100
+Subject: [PATCH 22/22] target: add mips64-unknown-freebsd
+
+---
+ src/librustc_target/spec/mips64_unknown_freebsd.rs | 33 ++++++++++++++++++++++
+ src/librustc_target/spec/mod.rs                    |  1 +
+ 2 files changed, 34 insertions(+)
+ create mode 100644 src/librustc_target/spec/mips64_unknown_freebsd.rs
+
+diff --git a/src/librustc_target/spec/mips64_unknown_freebsd.rs b/src/librustc_target/spec/mips64_unknown_freebsd.rs
+new file mode 100644
+index 0000000000..d774877fb1
+--- /dev/null
++++ b/src/librustc_target/spec/mips64_unknown_freebsd.rs
+@@ -0,0 +1,33 @@
++// Copyright 2016 The Rust Project Developers. See the COPYRIGHT
++// file at the top-level directory of this distribution and at
++// http://rust-lang.org/COPYRIGHT.
++//
++// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
++// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
++// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
++// option. This file may not be copied, modified, or distributed
++// except according to those terms.
++
++use crate::spec::{LinkerFlavor, Target, TargetResult};
++
++pub fn target() -> TargetResult {
++    let mut base = super::freebsd_base::opts();
++    base.cpu = "mips64r2".to_string();
++    base.features = "+mips64r2,+soft-float".to_string();
++    base.max_atomic_width = Some(64);
++    base.has_elf_tls = false;
++
++    Ok(Target {
++        llvm_target: "mips64-unknown-freebsd".to_string(),
++        target_endian: "big".to_string(),
++        target_pointer_width: "64".to_string(),
++        target_c_int_width: "32".to_string(),
++        data_layout: "E-m:e-i8:8:32-i16:16:32-i64:64-n32:64-S128".to_string(),
++        arch: "mips64".to_string(),
++        target_os: "freebsd".to_string(),
++        target_env: String::new(),
++        target_vendor: "unknown".to_string(),
++        linker_flavor: LinkerFlavor::Gcc,
++        options: base,
++    })
++}
+diff --git a/src/librustc_target/spec/mod.rs b/src/librustc_target/spec/mod.rs
+index bb26184991..f339a73b33 100644
+--- a/src/librustc_target/spec/mod.rs
++++ b/src/librustc_target/spec/mod.rs
+@@ -385,6 +385,7 @@ supported_targets! {
+     ("i686-unknown-freebsd", i686_unknown_freebsd),
+     ("powerpc64-unknown-freebsd", powerpc64_unknown_freebsd),
+     ("x86_64-unknown-freebsd", x86_64_unknown_freebsd),
++    ("mips64-unknown-freebsd", mips64_unknown_freebsd),
+     ("cheri-unknown-freebsd", cheri_unknown_freebsd),
+ 
+     ("i686-unknown-dragonfly", i686_unknown_dragonfly),
+-- 
+2.14.1
+

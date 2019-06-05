@@ -1,0 +1,308 @@
+From 2fdcdb328cbd2b3a563fff1bcacf4da89bc47a82 Mon Sep 17 00:00:00 2001
+From: Khilan Gudka <Khilan.Gudka@cl.cam.ac.uk>
+Date: Tue, 8 Jan 2019 11:08:26 +0000
+Subject: [PATCH 01/22] Add very preliminary support for cheri(128).
+
+We are currently only compiling to mips64 code.
+---
+ src/librustc_target/abi/call/cheri.rs             | 166 ++++++++++++++++++++++
+ src/librustc_target/abi/call/mod.rs               |   2 +
+ src/librustc_target/spec/cheri_unknown_freebsd.rs |  35 +++++
+ src/librustc_target/spec/mod.rs                   |   1 +
+ src/libstd/env.rs                                 |   5 +
+ src/libstd/sys_common/alloc.rs                    |   1 +
+ src/libunwind/libunwind.rs                        |   3 +
+ 7 files changed, 213 insertions(+)
+ create mode 100644 src/librustc_target/abi/call/cheri.rs
+ create mode 100644 src/librustc_target/spec/cheri_unknown_freebsd.rs
+
+diff --git a/src/librustc_target/abi/call/cheri.rs b/src/librustc_target/abi/call/cheri.rs
+new file mode 100644
+index 0000000000..d375b16316
+--- /dev/null
++++ b/src/librustc_target/abi/call/cheri.rs
+@@ -0,0 +1,166 @@
++// Copyright 2016 The Rust Project Developers. See the COPYRIGHT
++// file at the top-level directory of this distribution and at
++// http://rust-lang.org/COPYRIGHT.
++//
++// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
++// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
++// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
++// option. This file may not be copied, modified, or distributed
++// except according to those terms.
++
++use abi::call::{ArgAttribute, ArgType, CastTarget, FnType, PassMode, Reg, RegKind, Uniform};
++use abi::{self, HasDataLayout, LayoutOf, Size, TyLayout, TyLayoutMethods};
++
++fn extend_integer_width_mips<Ty>(arg: &mut ArgType<Ty>, bits: u64) {
++    // Always sign extend u32 values on 64-bit mips
++    if let abi::Abi::Scalar(ref scalar) = arg.layout.abi {
++        if let abi::Int(i, signed) = scalar.value {
++            if !signed && i.size().bits() == 32 {
++                if let PassMode::Direct(ref mut attrs) = arg.mode {
++                    attrs.set(ArgAttribute::SExt);
++                    return;
++                }
++            }
++        }
++    }
++
++    arg.extend_integer_width_to(bits);
++}
++
++fn float_reg<'a, Ty, C>(cx: &C, ret: &ArgType<'a, Ty>, i: usize) -> Option<Reg>
++    where Ty: TyLayoutMethods<'a, C> + Copy,
++          C: LayoutOf<Ty = Ty, TyLayout = TyLayout<'a, Ty>> + HasDataLayout
++{
++    match ret.layout.field(cx, i).abi {
++        abi::Abi::Scalar(ref scalar) => match scalar.value {
++            abi::Float(abi::FloatTy::F32) => Some(Reg::f32()),
++            abi::Float(abi::FloatTy::F64) => Some(Reg::f64()),
++            _ => None
++        },
++        _ => None
++    }
++}
++
++fn classify_ret_ty<'a, Ty, C>(cx: &C, ret: &mut ArgType<'a, Ty>)
++    where Ty: TyLayoutMethods<'a, C> + Copy,
++          C: LayoutOf<Ty = Ty, TyLayout = TyLayout<'a, Ty>> + HasDataLayout
++{
++    if !ret.layout.is_aggregate() {
++        extend_integer_width_mips(ret, 64);
++        return;
++    }
++
++    let size = ret.layout.size;
++    let bits = size.bits();
++    if bits <= 128 {
++        // Unlike other architectures which return aggregates in registers, MIPS n64 limits the
++        // use of float registers to structures (not unions) containing exactly one or two
++        // float fields.
++
++        if let abi::FieldPlacement::Arbitrary { .. } = ret.layout.fields {
++            if ret.layout.fields.count() == 1 {
++                if let Some(reg) = float_reg(cx, ret, 0) {
++                    ret.cast_to(reg);
++                    return;
++                }
++            } else if ret.layout.fields.count() == 2 {
++                if let Some(reg0) = float_reg(cx, ret, 0) {
++                    if let Some(reg1) = float_reg(cx, ret, 1) {
++                        ret.cast_to(CastTarget::pair(reg0, reg1));
++                        return;
++                    }
++                }
++            }
++        }
++
++        // Cast to a uniform int structure
++        ret.cast_to(Uniform {
++            unit: Reg::i64(),
++            total: size
++        });
++    } else {
++        ret.make_indirect();
++    }
++}
++
++fn classify_arg_ty<'a, Ty, C>(cx: &C, arg: &mut ArgType<'a, Ty>)
++    where Ty: TyLayoutMethods<'a, C> + Copy,
++          C: LayoutOf<Ty = Ty, TyLayout = TyLayout<'a, Ty>> + HasDataLayout
++{
++    if !arg.layout.is_aggregate() {
++        extend_integer_width_mips(arg, 64);
++        return;
++    }
++
++    let dl = cx.data_layout();
++    let size = arg.layout.size;
++    let mut prefix = [None; 8];
++    let mut prefix_index = 0;
++
++    match arg.layout.fields {
++        abi::FieldPlacement::Array { .. } => {
++            // Arrays are passed indirectly
++            arg.make_indirect();
++            return;
++        }
++        abi::FieldPlacement::Union(_) => {
++            // Unions and are always treated as a series of 64-bit integer chunks
++        },
++        abi::FieldPlacement::Arbitrary { .. } => {
++            // Structures are split up into a series of 64-bit integer chunks, but any aligned
++            // doubles not part of another aggregate are passed as floats.
++            let mut last_offset = Size::ZERO;
++
++            for i in 0..arg.layout.fields.count() {
++                let field = arg.layout.field(cx, i);
++                let offset = arg.layout.fields.offset(i);
++
++                // We only care about aligned doubles
++                if let abi::Abi::Scalar(ref scalar) = field.abi {
++                    if let abi::Float(abi::FloatTy::F64) = scalar.value {
++                        if offset.is_aligned(dl.f64_align.abi) {
++                            // Insert enough integers to cover [last_offset, offset)
++                            assert!(last_offset.is_aligned(dl.f64_align.abi));
++                            for _ in 0..((offset - last_offset).bits() / 64)
++                                .min((prefix.len() - prefix_index) as u64) {
++
++                                prefix[prefix_index] = Some(RegKind::Integer);
++                                prefix_index += 1;
++                            }
++
++                            if prefix_index == prefix.len() {
++                                break;
++                            }
++
++                            prefix[prefix_index] = Some(RegKind::Float);
++                            prefix_index += 1;
++                            last_offset = offset + Reg::f64().size;
++                        }
++                    }
++                }
++            }
++        }
++    };
++
++    // Extract first 8 chunks as the prefix
++    let rest_size = size - Size::from_bytes(8) * prefix_index as u64;
++    arg.cast_to(CastTarget {
++        prefix,
++        prefix_chunk: Size::from_bytes(8),
++        rest: Uniform { unit: Reg::i64(), total: rest_size }
++    });
++}
++
++pub fn compute_abi_info<'a, Ty, C>(cx: &C, fty: &mut FnType<'a, Ty>)
++    where Ty: TyLayoutMethods<'a, C> + Copy,
++          C: LayoutOf<Ty = Ty, TyLayout = TyLayout<'a, Ty>> + HasDataLayout
++{
++    if !fty.ret.is_ignore() {
++        classify_ret_ty(cx, &mut fty.ret);
++    }
++
++    for arg in &mut fty.args {
++        if arg.is_ignore() { continue; }
++        classify_arg_ty(cx, arg);
++    }
++}
+diff --git a/src/librustc_target/abi/call/mod.rs b/src/librustc_target/abi/call/mod.rs
+index fbbd120f93..2f4020162b 100644
+--- a/src/librustc_target/abi/call/mod.rs
++++ b/src/librustc_target/abi/call/mod.rs
+@@ -6,6 +6,7 @@ mod aarch64;
+ mod amdgpu;
+ mod arm;
+ mod asmjs;
++mod cheri;
+ mod hexagon;
+ mod mips;
+ mod mips64;
+@@ -560,6 +561,7 @@ impl<'a, Ty> FnType<'a, Ty> {
+             "aarch64" => aarch64::compute_abi_info(cx, self),
+             "amdgpu" => amdgpu::compute_abi_info(cx, self),
+             "arm" => arm::compute_abi_info(cx, self),
++            "cheri" => cheri::compute_abi_info(cx, self),
+             "mips" => mips::compute_abi_info(cx, self),
+             "mips64" => mips64::compute_abi_info(cx, self),
+             "powerpc" => powerpc::compute_abi_info(cx, self),
+diff --git a/src/librustc_target/spec/cheri_unknown_freebsd.rs b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+new file mode 100644
+index 0000000000..482b082efd
+--- /dev/null
++++ b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+@@ -0,0 +1,35 @@
++// Copyright 2016 The Rust Project Developers. See the COPYRIGHT
++// file at the top-level directory of this distribution and at
++// http://rust-lang.org/COPYRIGHT.
++//
++// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
++// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
++// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
++// option. This file may not be copied, modified, or distributed
++// except according to those terms.
++
++use spec::{LinkerFlavor, Target, TargetOptions, TargetResult};
++
++pub fn target() -> TargetResult {
++    Ok(Target {
++        llvm_target: "cheri-unknown-freebsd".to_string(),
++        target_endian: "big".to_string(),
++        target_pointer_width: "64".to_string(),
++        target_c_int_width: "32".to_string(),
++        data_layout: "E-m:m-pf200:128:128-i8:8:32-i16:16:32-i64:64-n32:64-S128".to_string(),
++        arch: "cheri".to_string(),
++        target_os: "freebsd".to_string(),
++        target_env: String::new(),
++        target_vendor: "unknown".to_string(),
++        linker_flavor: LinkerFlavor::Gcc,
++        options: TargetOptions {
++            // NOTE(mips64r2) matches C toolchain
++            cpu: "mips64r2".to_string(),
++            features: "+mips64r2".to_string(),
++            max_atomic_width: Some(64),
++            has_elf_tls: false,
++
++            ..super::freebsd_base::opts()
++        },
++    })
++}
+diff --git a/src/librustc_target/spec/mod.rs b/src/librustc_target/spec/mod.rs
+index fdb1db645c..bb26184991 100644
+--- a/src/librustc_target/spec/mod.rs
++++ b/src/librustc_target/spec/mod.rs
+@@ -385,6 +385,7 @@ supported_targets! {
+     ("i686-unknown-freebsd", i686_unknown_freebsd),
+     ("powerpc64-unknown-freebsd", powerpc64_unknown_freebsd),
+     ("x86_64-unknown-freebsd", x86_64_unknown_freebsd),
++    ("cheri-unknown-freebsd", cheri_unknown_freebsd),
+ 
+     ("i686-unknown-dragonfly", i686_unknown_dragonfly),
+     ("x86_64-unknown-dragonfly", x86_64_unknown_dragonfly),
+diff --git a/src/libstd/env.rs b/src/libstd/env.rs
+index 97c67f562a..4f3262c40d 100644
+--- a/src/libstd/env.rs
++++ b/src/libstd/env.rs
+@@ -923,6 +923,11 @@ mod arch {
+     pub const ARCH: &str = "aarch64";
+ }
+ 
++#[cfg(target_arch = "cheri")]
++mod arch {
++    pub const ARCH: &str = "cheri";
++}
++
+ #[cfg(target_arch = "mips")]
+ mod arch {
+     pub const ARCH: &str = "mips";
+diff --git a/src/libstd/sys_common/alloc.rs b/src/libstd/sys_common/alloc.rs
+index 978a70bee0..8c3a279340 100644
+--- a/src/libstd/sys_common/alloc.rs
++++ b/src/libstd/sys_common/alloc.rs
+@@ -16,6 +16,7 @@ use crate::ptr;
+ pub const MIN_ALIGN: usize = 8;
+ #[cfg(all(any(target_arch = "x86_64",
+               target_arch = "aarch64",
++              target_arch = "cheri",
+               target_arch = "mips64",
+               target_arch = "s390x",
+               target_arch = "sparc64")))]
+diff --git a/src/libunwind/libunwind.rs b/src/libunwind/libunwind.rs
+index 339b554ed6..6e4cbf84ca 100644
+--- a/src/libunwind/libunwind.rs
++++ b/src/libunwind/libunwind.rs
+@@ -43,6 +43,9 @@ pub const unwinder_private_data_size: usize = 5;
+ #[cfg(target_arch = "aarch64")]
+ pub const unwinder_private_data_size: usize = 2;
+ 
++#[cfg(target_arch = "cheri")]
++pub const unwinder_private_data_size: usize = 2;
++
+ #[cfg(target_arch = "mips")]
+ pub const unwinder_private_data_size: usize = 2;
+ 
+-- 
+2.14.1
+

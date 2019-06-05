@@ -1,0 +1,26 @@
+From 3278d3ee432b1ce4276ce458f4464f1aaab5350c Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 14 Jan 2019 14:37:25 +0000
+Subject: [PATCH 02/22] librustc_target: cheri: update data layout str as per
+ clang
+
+---
+ src/librustc_target/spec/cheri_unknown_freebsd.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/librustc_target/spec/cheri_unknown_freebsd.rs b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+index 482b082efd..b0be5bf31c 100644
+--- a/src/librustc_target/spec/cheri_unknown_freebsd.rs
++++ b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+@@ -16,7 +16,7 @@ pub fn target() -> TargetResult {
+         target_endian: "big".to_string(),
+         target_pointer_width: "64".to_string(),
+         target_c_int_width: "32".to_string(),
+-        data_layout: "E-m:m-pf200:128:128-i8:8:32-i16:16:32-i64:64-n32:64-S128".to_string(),
++        data_layout: "E-m:e-pf200:128:128:128:64-i8:8:32-i16:16:32-i64:64-n32:64-S128".to_string(),
+         arch: "cheri".to_string(),
+         target_os: "freebsd".to_string(),
+         target_env: String::new(),
+-- 
+2.14.1
+

@@ -1,0 +1,67 @@
+From 80e613326a4d41941c82ca1e2a9280975a49d9b3 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 4 Feb 2019 13:17:17 +0000
+Subject: [PATCH 06/22] codegen: ptr_to: call LLVMPointerType with address
+ space
+
+---
+ src/librustc_codegen_llvm/allocator.rs |  3 ++-
+ src/librustc_codegen_llvm/type_.rs     | 11 +++++++----
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/src/librustc_codegen_llvm/allocator.rs b/src/librustc_codegen_llvm/allocator.rs
+index 1fe020561d..decc874363 100644
+--- a/src/librustc_codegen_llvm/allocator.rs
++++ b/src/librustc_codegen_llvm/allocator.rs
+@@ -19,7 +19,8 @@ pub(crate) unsafe fn codegen(tcx: TyCtxt<'_, '_, '_>, mods: &mut ModuleLlvm, kin
+         tws => bug!("Unsupported target word size for int: {}", tws),
+     };
+     let i8 = llvm::LLVMInt8TypeInContext(llcx);
+-    let i8p = llvm::LLVMPointerType(i8, 0);
++    let addr_space = (tcx.data_layout).instruction_address_space as c_uint;
++    let i8p = llvm::LLVMPointerType(i8, addr_space);
+     let void = llvm::LLVMVoidTypeInContext(llcx);
+ 
+     for method in ALLOCATOR_METHODS {
+diff --git a/src/librustc_codegen_llvm/type_.rs b/src/librustc_codegen_llvm/type_.rs
+index d5424fa459..5368caf027 100644
+--- a/src/librustc_codegen_llvm/type_.rs
++++ b/src/librustc_codegen_llvm/type_.rs
+@@ -14,6 +14,7 @@ use crate::abi::{LlvmType, FnTypeExt};
+ use rustc::util::nodemap::FxHashMap;
+ use rustc::ty::Ty;
+ use rustc::ty::layout::TyLayout;
++use rustc_target::abi::HasDataLayout;
+ use rustc_target::abi::call::{CastTarget, FnType, Reg};
+ use rustc_data_structures::small_c_str::SmallCStr;
+ use rustc_codegen_ssa::common::TypeKind;
+@@ -188,7 +189,8 @@ impl BaseTypeMethods<'tcx> for CodegenCx<'ll, 'tcx> {
+     fn type_ptr_to(&self, ty: &'ll Type) -> &'ll Type {
+         assert_ne!(self.type_kind(ty), TypeKind::Function,
+                    "don't call ptr_to on function types, use ptr_to_llvm_type on FnType instead");
+-        ty.ptr_to()
++        let addr_space = self.data_layout().instruction_address_space as c_uint;
++        ty.ptr_to(addr_space)
+     }
+ 
+     fn element_type(&self, ty: &'ll Type) -> &'ll Type {
+@@ -256,12 +258,13 @@ impl Type {
+     }
+ 
+     pub fn i8p_llcx(llcx: &'ll llvm::Context) -> &'ll Type {
+-        Type::i8_llcx(llcx).ptr_to()
++        // This fn is only called under msvc
++        Type::i8_llcx(llcx).ptr_to(0 as c_uint)
+     }
+ 
+-    fn ptr_to(&self) -> &Type {
++    fn ptr_to(&self, addr_space: c_uint) -> &Type {
+         unsafe {
+-            llvm::LLVMPointerType(&self, 0)
++            llvm::LLVMPointerType(&self, addr_space)
+         }
+     }
+ }
+-- 
+2.14.1
+

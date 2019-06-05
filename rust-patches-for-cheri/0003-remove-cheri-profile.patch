@@ -1,0 +1,67 @@
+From b6cf56f359b5b9a66431104e55f080ff311af236 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 28 Jan 2019 14:04:23 +0000
+Subject: [PATCH 03/22] remove cheri profile
+
+---
+ src/librustc_target/spec/cheri_unknown_freebsd.rs | 35 -----------------------
+ src/librustc_target/spec/mod.rs                   |  1 -
+ 2 files changed, 36 deletions(-)
+ delete mode 100644 src/librustc_target/spec/cheri_unknown_freebsd.rs
+
+diff --git a/src/librustc_target/spec/cheri_unknown_freebsd.rs b/src/librustc_target/spec/cheri_unknown_freebsd.rs
+deleted file mode 100644
+index b0be5bf31c..0000000000
+--- a/src/librustc_target/spec/cheri_unknown_freebsd.rs
++++ /dev/null
+@@ -1,35 +0,0 @@
+-// Copyright 2016 The Rust Project Developers. See the COPYRIGHT
+-// file at the top-level directory of this distribution and at
+-// http://rust-lang.org/COPYRIGHT.
+-//
+-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+-// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+-// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+-// option. This file may not be copied, modified, or distributed
+-// except according to those terms.
+-
+-use spec::{LinkerFlavor, Target, TargetOptions, TargetResult};
+-
+-pub fn target() -> TargetResult {
+-    Ok(Target {
+-        llvm_target: "cheri-unknown-freebsd".to_string(),
+-        target_endian: "big".to_string(),
+-        target_pointer_width: "64".to_string(),
+-        target_c_int_width: "32".to_string(),
+-        data_layout: "E-m:e-pf200:128:128:128:64-i8:8:32-i16:16:32-i64:64-n32:64-S128".to_string(),
+-        arch: "cheri".to_string(),
+-        target_os: "freebsd".to_string(),
+-        target_env: String::new(),
+-        target_vendor: "unknown".to_string(),
+-        linker_flavor: LinkerFlavor::Gcc,
+-        options: TargetOptions {
+-            // NOTE(mips64r2) matches C toolchain
+-            cpu: "mips64r2".to_string(),
+-            features: "+mips64r2".to_string(),
+-            max_atomic_width: Some(64),
+-            has_elf_tls: false,
+-
+-            ..super::freebsd_base::opts()
+-        },
+-    })
+-}
+diff --git a/src/librustc_target/spec/mod.rs b/src/librustc_target/spec/mod.rs
+index bb26184991..fdb1db645c 100644
+--- a/src/librustc_target/spec/mod.rs
++++ b/src/librustc_target/spec/mod.rs
+@@ -385,7 +385,6 @@ supported_targets! {
+     ("i686-unknown-freebsd", i686_unknown_freebsd),
+     ("powerpc64-unknown-freebsd", powerpc64_unknown_freebsd),
+     ("x86_64-unknown-freebsd", x86_64_unknown_freebsd),
+-    ("cheri-unknown-freebsd", cheri_unknown_freebsd),
+ 
+     ("i686-unknown-dragonfly", i686_unknown_dragonfly),
+     ("x86_64-unknown-dragonfly", x86_64_unknown_dragonfly),
+-- 
+2.14.1
+

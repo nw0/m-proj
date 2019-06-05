@@ -1,0 +1,26 @@
+From 86a8f24c4f7a6a7b204b41aebcf5b49b9cab08bc Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nicholassimws@gmail.com>
+Date: Mon, 4 Feb 2019 10:25:07 +0000
+Subject: [PATCH 04/22] config: force Rust to always use atomic ops on cheri
+ ptrs
+
+---
+ src/librustc/session/config.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/librustc/session/config.rs b/src/librustc/session/config.rs
+index 0ae7c10cf5..cf9bafe246 100644
+--- a/src/librustc/session/config.rs
++++ b/src/librustc/session/config.rs
+@@ -1484,7 +1484,7 @@ pub fn default_configuration(sess: &Session) -> ast::CrateConfig {
+         ret.insert((Symbol::intern("target_thread_local"), None));
+     }
+     for &i in &[8, 16, 32, 64, 128] {
+-        if i >= min_atomic_width && i <= max_atomic_width {
++        if (i >= min_atomic_width && i <= max_atomic_width) || (max_atomic_width == 64 && i == 128 && wordsz == &"128".to_string() && arch == &"cheri".to_string()) {
+             let s = i.to_string();
+             ret.insert((
+                 Symbol::intern("target_has_atomic"),
+-- 
+2.14.1
+

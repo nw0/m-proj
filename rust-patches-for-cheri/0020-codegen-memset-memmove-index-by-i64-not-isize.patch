@@ -1,0 +1,35 @@
+From 828c19079730d289a6c42d901fc37edfa0933dc5 Mon Sep 17 00:00:00 2001
+From: Nicholas Sim <nsim@posteo.net>
+Date: Fri, 5 Apr 2019 16:04:19 +0100
+Subject: [PATCH 20/22] codegen: memset, memmove: index by i64, not isize
+
+CHERI does not permit indexing by i128
+---
+ src/librustc_codegen_llvm/builder.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/librustc_codegen_llvm/builder.rs b/src/librustc_codegen_llvm/builder.rs
+index 9d08626c7a..b7d50032fb 100644
+--- a/src/librustc_codegen_llvm/builder.rs
++++ b/src/librustc_codegen_llvm/builder.rs
+@@ -964,7 +964,7 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
+             self.store_with_flags(val, ptr, dst_align, flags);
+             return;
+         }
+-        let size = self.intcast(size, self.type_isize(), false);
++        let size = self.intcast(size, self.type_i64(), false);
+         let is_volatile = flags.contains(MemFlags::VOLATILE);
+         let dst = self.pointercast(dst, self.type_i8p());
+         let src = self.pointercast(src, self.type_i8p());
+@@ -984,7 +984,7 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
+             self.store_with_flags(val, ptr, dst_align, flags);
+             return;
+         }
+-        let size = self.intcast(size, self.type_isize(), false);
++        let size = self.intcast(size, self.type_i64(), false);
+         let is_volatile = flags.contains(MemFlags::VOLATILE);
+         let dst = self.pointercast(dst, self.type_i8p());
+         let src = self.pointercast(src, self.type_i8p());
+-- 
+2.14.1
+
