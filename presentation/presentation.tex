@@ -49,8 +49,10 @@ Exploring CHERI capabilities for a safe language}
     \item Under development here
     \item Mainly studied under C: capabilities known to be effective for
     unsafe languages
+    \item Do safe languages benefit more? Less?
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}
 \frametitle{Rust: safe language}
@@ -65,6 +67,22 @@ Exploring CHERI capabilities for a safe language}
     \item (New slide here?)
     \item 7 vulnerabilities and counting in standard library + compiler
     \item 5 of these fully prevented by capabilities!
+    \item Bounds checking
+    \item Faster? Slower? Other benefits?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What I did (rename)}
+
+\begin{itemize}
+    \item Added CHERI support in Rust
+    \item Not full support---discuss some limitations + why?
+    \item Analysis of past vulnerabilities
+    \item Demonstration that capabilities mitigate them
+    \item How to optimise capabilities (compared to C)
+    \item How other features e.g.\ sealing improve Rust guarantees
 \end{itemize}
 \end{frame}
 
