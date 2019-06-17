@@ -22,7 +22,9 @@
 \begin{document}
 \title{Strengthening memory safety in Rust:\\
 Exploring CHERI capabilities for a safe language}
-\author{Nicholas Sim}
+\author{Nicholas Sim\\~\\
+\small \emph{supervised by}\\
+Simon Moore\\Khilan Gudka}
 \date{June 21, 2019}
 
 \frame{\titlepage}
@@ -45,8 +47,6 @@ Exploring CHERI capabilities for a safe language}
     \item An instruction set architecture, extends RISC
     \item Offers hardware capabilities: unforgeable tokens for pointers
     \item Protects memory from unauthorised access
-    \item MORE
-    \item Under development here
     \item Mainly studied under C: capabilities known to be effective for
     unsafe languages
     \item Do safe languages benefit more? Less?
@@ -90,20 +90,26 @@ Exploring CHERI capabilities for a safe language}
     \item Demonstration that capabilities mitigate them
     \item Evaluation of techniques to optimise capability usage
     \item Methods to use CHERI features e.g.\ sealing improve Rust guarantees
-    \item How capability interactions with the language (pointer width,
+    \item How capabilities interact with the language (pointer width,
     undefined behaviour)
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}
-\frametitle{Evaluation: Improving Rust safety}
+\frametitle{Evaluation: Fine-grained protection in Rust}
 
 \begin{itemize}
-    \item (I plan to discuss sealing and the hybrid ABI, especially
-    selectively using capabilities and performance vs C. 1--2 slides.)
-    \item In particular I don't plan to mention the microbenchmarks in
-    this section
+    \item Rust is fast: rivals C!
+    \item Like JNI, cross-domain calls are unprotected
+    \item This violates Rust's invariants (e.g.\ object immutability)
+    \item \emph{Capability sealing} can protect memory across processes
+    \item Previous Rust vulnerabilities in Unsafe Rust
+    \item Extension: selectively protect objects reachable by Unsafe Rust
+    \item Achieved through sealing, hybrid ABI
+    \item Principle of \emph{economy of mechanism}
+    \item \(\Rightarrow\) minimises memory overheads (fewer capability pointers)
+    \item \(\Rightarrow\) faster than C?
 \end{itemize}
 \end{frame}
 
