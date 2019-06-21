@@ -41,7 +41,7 @@ Simon Moore\\Khilan Gudka}
 
 
 \begin{frame}
-\frametitle{CHERI: capablity architecture}
+\frametitle{CHERI: capability architecture}
 
 \begin{itemize}
     \item An instruction set architecture, extends RISC
@@ -76,7 +76,6 @@ Simon Moore\\Khilan Gudka}
     \item 5 fully prevented by capabilities!
     \item Array bounds checks: irrelevant with capabilities
     \item Possible to optimise checks?
-    \item Other benefits? (write)
 \end{itemize}
 \end{frame}
 
@@ -89,9 +88,8 @@ Simon Moore\\Khilan Gudka}
     \item Analysis of past vulnerabilities
     \item Demonstration that capabilities mitigate them
     \item Evaluation of techniques to optimise capability usage
-    \item Methods to use CHERI features e.g.\ sealing improve Rust guarantees
-    \item How capabilities interact with the language (pointer width,
-    undefined behaviour)
+    \item Techniques using CHERI features to improve Rust guarantees
+    \item How capabilities interact with safe languages
 \end{itemize}
 \end{frame}
 
@@ -100,13 +98,11 @@ Simon Moore\\Khilan Gudka}
 \frametitle{Evaluation: Fine-grained protection in Rust}
 
 \begin{itemize}
-    \item Rust is fast: rivals C!
     \item Like JNI, cross-domain calls are unprotected
     \item This violates Rust's invariants (e.g.\ object immutability)
     \item \emph{Capability sealing} can protect memory across processes
     \item Previous Rust vulnerabilities in Unsafe Rust
     \item Extension: selectively protect objects reachable by Unsafe Rust
-    \item Achieved through sealing, hybrid ABI
     \item Principle of \emph{economy of mechanism}
     \item \(\Rightarrow\) minimises memory overheads (fewer capability pointers)
     \item \(\Rightarrow\) faster than C?
@@ -118,10 +114,9 @@ Simon Moore\\Khilan Gudka}
 \frametitle{Evaluation: in the report}
 
 \begin{itemize}
-    \item Rust semantics provide guarantees under CHERI that C cannot
+    \item Preserve Rust semantics even in cross-process, system calls
     \item Eliminate bounds checks, leaks, use-after-free, and some forms
     of undefined behaviour in Rust
-    \item Preserve Rust semantics even in cross-process, system calls
     \item Unsafety and undefined behaviour inextricably linked in Rust
     \item Rust's pointer-width \texttt{usize} presents problems for CHERI
     \item Implications of capabilities for other safe languages
@@ -133,14 +128,10 @@ Simon Moore\\Khilan Gudka}
 \frametitle{Conclusion}
 
 \begin{itemize}
-    \item (This presentation gave an overview of Rust, CHERI)
-    \item Examined how capabilities apply to a safe language (as opposed
-    to C)
-    \item (Less obviously useful, but Rust can make good use of capabilities)
-    \item Rust's pointer provenance model provides good support for
-    CHERI in principle
-    \item Can strengthen Rust guarantees (e.g. sealing for FFI), rule out undefined behaviour
-    \item How to optimise capability usage to focus specifically on unsafe code
+    \item Examined how capabilities apply to a safe language
+    \item Rust's pointer provenance model supports CHERI
+    \item Can strengthen Rust guarantees, rule out undefined behaviour
+    \item How to optimise capability usage for unsafe code
 \end{itemize}
 \end{frame}
 
